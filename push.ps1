@@ -27,9 +27,14 @@ if($versionSuffix -eq "")
 else {
     dotnet pack -o $tempNupkgFolder src/FakeXrmEasy.Plugins/FakeXrmEasy.Plugins.csproj /p:VersionSuffix=$versionSuffix
 }
+if(!($LASTEXITCODE -eq 0)) {
+    throw "Error when packing the assembly"
+}
 
-
-Write-Host "Pushing FakeXrmEasy.Abstractions to local folder..."
+Write-Host "Pushing FakeXrmEasy.Plugins to local folder..."
 dotnet nuget push $tempNupkgFolder/*.nupkg -s $packageSource
+if(!($LASTEXITCODE -eq 0)) {
+    throw "Error pushing NuGet package"
+}
 
-Write-Host "Succeeded :)"
+Write-Host "Succeeded :)" -ForegroundColor Green
