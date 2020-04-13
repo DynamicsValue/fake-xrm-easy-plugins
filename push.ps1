@@ -6,10 +6,6 @@ param (
 
 Write-Host "Running with packageSource '$($packageSource)' and versionSuffix '$($versionSuffix)'..."
 
-Write-Host "Building..."
-
-./build.ps1
-
 $tempNupkgFolder = './nupkgs'
 Write-Host "Checking if temp nupkgs folder '$($localPackagesFolder)' exists..."
 
@@ -33,7 +29,7 @@ else {
 }
 
 
-Write-Host "Pushing FakeXrmEasy.Plugins to local folder..."
+Write-Host "Pushing FakeXrmEasy.Abstractions to local folder..."
 dotnet nuget push $tempNupkgFolder/*.nupkg -s $packageSource
 
 Write-Host "Succeeded :)"

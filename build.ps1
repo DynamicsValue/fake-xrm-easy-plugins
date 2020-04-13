@@ -10,7 +10,7 @@ if(!($packagesFolderExists))
 }
 
 dotnet restore
-dotnet build
-dotnet test 
+dotnet build --configuration Debug --no-restore
+dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings
 
 Write-Host "Succeeded :)"
