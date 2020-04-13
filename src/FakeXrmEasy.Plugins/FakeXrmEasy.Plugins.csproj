@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>FakeXrmEasy.Plugins</PackageId>
+    <VersionPrefix>2.0.0.1-Alpha</VersionPrefix>
+    <Authors>Jordi Montaña</Authors>
+    <Company>Dynamics Value</Company>
+    <Title>FakeXrmEasy Plugins</Title>
+    <PackageDescription>FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is an abstractions package containing only interfaces</PackageDescription>
+    <Copyright>(c) 2014 Jordi Montaña</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
+    <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
+    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-plugins</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/"/>
+  </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.11-Alpha" />
+      <PackageReference Include="Microsoft.Dynamics.Sdk.Messages" Version="0.0.1.11-Alpha" />
+  </ItemGroup>
+
+</Project>
