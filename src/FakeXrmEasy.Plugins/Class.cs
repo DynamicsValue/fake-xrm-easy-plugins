@@ -4,6 +4,6 @@ namespace FakeXrmEasy.Plugins
 {
     public class Class
     {
-        kljaksljdlkajsdlkjaskjdsa //testing broken build in CI
+        //kljaksljdlkajsdlkjaskjdsa //testing broken build in CI
     }
 }
