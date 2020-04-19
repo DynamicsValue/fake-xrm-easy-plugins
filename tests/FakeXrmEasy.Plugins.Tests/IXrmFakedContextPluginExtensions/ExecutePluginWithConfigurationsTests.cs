@@ -105,7 +105,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
             var endpointId = Guid.NewGuid();
             var fakedContext = new XrmFakedContext();
 
-            var fakedServiceEndpointNotificationService = fakedContext.PluginContextProperties.ServiceEndpointNotificationService;
+            var fakedServiceEndpointNotificationService = fakedContext.GetPluginContextProperties().ServiceEndpointNotificationService;
 
             A.CallTo(() => fakedServiceEndpointNotificationService.Execute(A<EntityReference>._, A<IExecutionContext>._))
                 .Returns("response");
@@ -128,7 +128,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
         public void Should_retrieve_entity_data_source()
         {
             var context = new XrmFakedContext();
-            context.PluginContextProperties.EntityDataSourceRetriever = new Entity("abc_customdatasource")
+            context.GetPluginContextProperties().EntityDataSourceRetriever = new Entity("abc_customdatasource")
             {
                 ["abc_crmurl"] = "https://...",
                 ["abc_username"] = "abcd",

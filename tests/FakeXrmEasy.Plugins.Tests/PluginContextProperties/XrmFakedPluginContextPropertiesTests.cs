@@ -34,7 +34,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginContextProperties
             var fakedContext = new XrmFakedContext();
 
             //Get tracing service
-            var fakeTracingService = fakedContext.GetFakeTracingService();
+            var fakeTracingService = fakedContext.GetPluginContextProperties().TracingService;
 
             Assert.NotNull(fakeTracingService);
         }
@@ -45,10 +45,10 @@ namespace FakeXrmEasy.Plugins.Tests.PluginContextProperties
             var fakedContext = new XrmFakedContext();
 
             //Get tracing service
-            var fakeTracingService1 = fakedContext.GetFakeTracingService();
+            var fakeTracingService1 = fakedContext.GetPluginContextProperties().TracingService;
             fakeTracingService1.Trace("foobar");
 
-            var fakeTracingService2 = fakedContext.GetFakeTracingService();
+            var fakeTracingService2 = fakedContext.GetPluginContextProperties().TracingService;
 
             Assert.NotNull(fakeTracingService1);
             Assert.NotNull(fakeTracingService2);

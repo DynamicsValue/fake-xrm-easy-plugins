@@ -31,7 +31,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
             fakedContext.ExecutePluginWith<FollowupPlugin>(inputParameters, outputParameters, null, null);
 
             //The plugin creates a followup activity, check that that one exists
-            var tasks = (from t in fakedContext.CreateQuery<Task>()
+            var tasks = (from t in fakedContext.CreateQuery<Crm.Task>()
                          select t).ToList();
 
             Assert.True(tasks.Count == 1);

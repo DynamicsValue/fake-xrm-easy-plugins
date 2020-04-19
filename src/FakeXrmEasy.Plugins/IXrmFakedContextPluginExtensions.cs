@@ -93,7 +93,7 @@ namespace FakeXrmEasy.Plugins
             ctx.PreEntityImages.AddRange(preEntityImages);
             ctx.PostEntityImages.AddRange(postEntityImages);
 
-            var fakedServiceProvider = context.PluginContextProperties.GetServiceProvider(ctx);
+            var fakedServiceProvider = context.GetPluginContextProperties().GetServiceProvider(ctx);
 
             var fakedPlugin = A.Fake<IPlugin>();
             A.CallTo(() => fakedPlugin.Execute(A<IServiceProvider>._))
