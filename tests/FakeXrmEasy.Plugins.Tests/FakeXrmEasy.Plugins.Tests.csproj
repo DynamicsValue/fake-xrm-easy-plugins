@@ -13,6 +13,10 @@
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\FakeXrmEasy.Plugins\FakeXrmEasy.Plugins.csproj" />
   </ItemGroup>

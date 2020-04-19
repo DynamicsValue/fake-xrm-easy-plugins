@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>FakeXrmEasy.Plugins</PackageId>
-    <VersionPrefix>2.0.0.1</VersionPrefix>
+    <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
     <Company>Dynamics Value</Company>
     <Title>FakeXrmEasy Plugins</Title>
@@ -17,13 +17,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
-    <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/"/>
+    <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+    <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+      <PackageReference Include="FakeItEasy" Version="6.0.0" />
       <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.11-Alpha" />
       <PackageReference Include="Microsoft.Dynamics.Sdk.Messages" Version="0.0.1.11-Alpha" />
+
+      <PackageReference Include="FakeXrmEasy.Abstractions" Version="2.0.1-*" />
+      <PackageReference Include="FakeXrmEasy.Core" Version="2.0.1-*" />
   </ItemGroup>
 
 </Project>
