@@ -10,19 +10,20 @@ using FakeXrmEasy.Abstractions.Plugins.Enums;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
-    public class PipelineTests
+    public class PipelineTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_context_is_initialised_pipeline_is_disabled_by_default()
         {
-            var context = new XrmFakedContext();
-            Assert.False(context.UsePipelineSimulation);
+            Assert.False((_context as XrmFakedContext).UsePipelineSimulation);
         }
 
         [Fact]
         public void When_AccountNumberPluginIsRegisteredAsPluginStep_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet()
         {
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
+
 
             context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation);
 
@@ -37,7 +38,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_PluginIsRegisteredWithEntity_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet()
         {
-            var context = new XrmFakedContext() { UsePipelineSimulation = true }; 
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             context.RegisterPluginStep<AccountNumberPlugin, Account>("Create");
 
@@ -52,7 +54,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_PluginIsRegisteredForOtherEntity_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsNotSet()
         {
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             context.RegisterPluginStep<AccountNumberPlugin, Contact>("Create");
 
@@ -67,7 +70,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsDeletePreOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -101,7 +105,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsDeletePostOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -135,7 +140,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsDeletePostOperationAsyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -169,7 +175,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsUpdatePreOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -208,7 +215,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsUpdatePostOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -247,7 +255,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsUpdatePostOperationAsyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -286,7 +295,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsCreatePreOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -316,7 +326,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsCreatePostOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -346,7 +357,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsCreatePostOperationAsyncronous_Expect_CorrectValues()
         {
             // Arange
-            var context = new XrmFakedContext() { UsePipelineSimulation = true };
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
 
@@ -375,7 +387,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_PluginStepRegisteredAsCreatePostOperation_Entity_Available()
         {
-            var context = new XrmFakedContext {UsePipelineSimulation = true};
+            (_context as XrmFakedContext).UsePipelineSimulation = true;
+            var context = _context as XrmFakedContext;
 
             var target = new Account
             {
