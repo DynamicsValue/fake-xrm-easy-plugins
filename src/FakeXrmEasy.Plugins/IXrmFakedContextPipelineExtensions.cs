@@ -8,7 +8,7 @@ using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace FakeXrmEasy.Plugins
+namespace FakeXrmEasy.Pipeline
 {
     public static class IXrmFakedContextPipelineExtensions
     {
@@ -102,6 +102,14 @@ namespace FakeXrmEasy.Plugins
                 ["rank"] = rank
             };
             context.AddEntityWithDefaults(sdkMessageProcessingStep);
+        }
+
+        private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        {
+            var target = GetTargetForRequest(request);
+            var plugins = context.GetStepsForStage(method, stage, mode, target);
+
+            context.ExecutePipelinePlugins(plugins, target);
         }
 
         private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
@@ -217,6 +225,11 @@ namespace FakeXrmEasy.Plugins
             // Todo: Filter on attributes
 
             return plugins;
+        }
+
+        private static object GetTargetForRequest(OrganizationRequest request)
+        {
+
         }
     }
 }
