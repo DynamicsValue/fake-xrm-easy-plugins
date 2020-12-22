@@ -13,8 +13,6 @@ namespace FakeXrmEasy.Middleware.Pipeline
         public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder) 
         {
             builder.Add(context => {
-                var service = context.GetOrganizationService();
-
                 var pipelineOptions = new PipelineOptions()
                 {
                     UsePipelineSimulation = true
@@ -65,6 +63,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
         private static void ProcessPostOperation(IXrmFakedContext context, OrganizationRequest request) 
         {
             context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, request);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, request);
         }
 
     }

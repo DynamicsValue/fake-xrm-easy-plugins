@@ -6,7 +6,9 @@ using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using FakeXrmEasy.Plugins;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -104,21 +106,52 @@ namespace FakeXrmEasy.Pipeline
             context.AddEntityWithDefaults(sdkMessageProcessingStep);
         }
 
-        private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        internal static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        {
+            var plugins = context.GetPluginStepsForOrganizationRequest(method, stage, mode, request);
+            if(plugins == null)
+                return;
+
+            var target = GetTargetForRequest(request);
+            if(target is Entity)
+            {
+                context.ExecutePipelineStage(method, stage, mode, target as Entity);
+            }
+            else if (target is EntityReference)
+            {
+                context.ExecutePipelineStage(method, stage, mode, target as EntityReference);
+            }
+        }
+
+        private static IEnumerable<Entity> GetPluginStepsForOrganizationRequest(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
         {
             var target = GetTargetForRequest(request);
-            var plugins = context.GetStepsForStage(method, stage, mode, target);
+            if(target is Entity)
+            {
+                return context.GetStepsForStage(method, stage, mode, target as Entity);
+            }
+            else if (target is EntityReference)
+            {
+                var entityReference = target as EntityReference;
+                var entityType = context.FindReflectedType(entityReference.LogicalName);
+                if (entityType == null)
+                {
+                    return null;
+                }
 
-            context.ExecutePipelinePlugins(plugins, target);
+                return context.GetStepsForStage(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
+            }
+
+            return null;
         }
 
         private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
         {
             var plugins = context.GetStepsForStage(method, stage, mode, entity);
-
             context.ExecutePipelinePlugins(plugins, entity);
         }
 
+        
         private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, EntityReference entityReference)
         {
             var entityType = context.FindReflectedType(entityReference.LogicalName);
@@ -150,7 +183,7 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.PreEntityImages = new EntityImageCollection();
                 pluginContext.PostEntityImages = new EntityImageCollection();
 
-                pluginMethod.Invoke(context, new object[] { pluginContext });
+                pluginMethod.Invoke(null, new object[] { context, pluginContext });
             }
         }
 
@@ -162,7 +195,7 @@ namespace FakeXrmEasy.Pipeline
             var pluginTypeName = (string)pluginEntity.GetAttributeValue<AliasedValue>("plugintype.typename").Value;
             var pluginType = assembly.GetType(pluginTypeName);
 
-            var methodInfo = typeof(XrmFakedContext).GetMethod("ExecutePluginWith", new[] { typeof(XrmFakedPluginExecutionContext) });
+            var methodInfo = typeof(IXrmFakedContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
             var pluginMethod = methodInfo.MakeGenericMethod(pluginType);
 
             return pluginMethod;
@@ -229,7 +262,27 @@ namespace FakeXrmEasy.Pipeline
 
         private static object GetTargetForRequest(OrganizationRequest request)
         {
-
+            if(request is CreateRequest)
+            {
+                return ((CreateRequest) request).Target;
+            }
+            else if(request is UpdateRequest)
+            {
+                return ((UpdateRequest) request).Target;
+            }
+            else if(request is UpsertRequest)
+            {
+                return ((UpsertRequest) request).Target;
+            }
+            else if(request is RetrieveRequest)
+            {
+                return ((RetrieveRequest) request).Target;
+            }
+            else if(request is DeleteRequest)
+            {
+                return ((DeleteRequest) request).Target;
+            }
+            return null;
         }
     }
 }

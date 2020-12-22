@@ -8,9 +8,11 @@ using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 
+using FakeXrmEasy.Pipeline;
+
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
-    public class PipelineTests: FakeXrmEasyTestsBase
+    public class PipelineTests: FakeXrmEasyPipelineTests
     {
         [Fact]
         public void When_context_is_initialised_pipeline_is_disabled_by_default()
@@ -21,15 +23,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_AccountNumberPluginIsRegisteredAsPluginStep_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet()
         {
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
-            var context = _context as XrmFakedContext;
+            _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation);
 
+            _context.ExecutePluginWith<CreateAccountPlugin>();
 
-            context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation);
-
-            context.ExecutePluginWith<CreateAccountPlugin>();
-
-            var account = context.CreateQuery<Account>().FirstOrDefault();
+            var account = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.NotNull(account);
             Assert.True(account.Attributes.ContainsKey("accountnumber"));
             Assert.NotNull(account["accountnumber"]);
@@ -38,14 +36,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_PluginIsRegisteredWithEntity_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet()
         {
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
-            var context = _context as XrmFakedContext;
+            _context.RegisterPluginStep<AccountNumberPlugin, Account>("Create");
 
-            context.RegisterPluginStep<AccountNumberPlugin, Account>("Create");
+            _context.ExecutePluginWith<CreateAccountPlugin>();
 
-            context.ExecutePluginWith<CreateAccountPlugin>();
-
-            var account = context.CreateQuery<Account>().FirstOrDefault();
+            var account = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.NotNull(account);
             Assert.True(account.Attributes.ContainsKey("accountnumber"));
             Assert.NotNull(account["accountnumber"]);
@@ -54,14 +49,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_PluginIsRegisteredForOtherEntity_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsNotSet()
         {
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
-            var context = _context as XrmFakedContext;
+            _context.RegisterPluginStep<AccountNumberPlugin, Contact>("Create");
 
-            context.RegisterPluginStep<AccountNumberPlugin, Contact>("Create");
+            _context.ExecutePluginWith<CreateAccountPlugin>();
 
-            context.ExecutePluginWith<CreateAccountPlugin>();
-
-            var account = context.CreateQuery<Account>().FirstOrDefault();
+            var account = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.NotNull(account);
             Assert.False(account.Attributes.ContainsKey("accountnumber"));
         }
@@ -70,9 +62,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsDeletePreOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
-            var context = _context as XrmFakedContext;
-
             var id = Guid.NewGuid();
 
             var entities = new List<Entity>
@@ -82,16 +71,17 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                     Id = id
                 }
             };
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             // Act
-            context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
 
-            var service = context.GetOrganizationService();
+            var service = _context.GetOrganizationService();
             service.Delete(Contact.EntityLogicalName, id);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var tracingService = (_context as XrmFakedContext).GetFakeTracingService();
+            var trace = tracingService.DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Delete", trace);
@@ -105,9 +95,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsDeletePostOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
-            var context = _context as XrmFakedContext;
-
             var id = Guid.NewGuid();
 
             var entities = new List<Entity>
@@ -117,16 +104,17 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                     Id = id
                 }
             };
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             // Act
-            context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous);
 
-            var service = context.GetOrganizationService();
+            var service = _context.GetOrganizationService();
             service.Delete(Contact.EntityLogicalName, id);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var tracingService = (_context as XrmFakedContext).GetFakeTracingService();
+            var trace = tracingService.DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Delete", trace);
@@ -140,9 +128,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsDeletePostOperationAsyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
-            var context = _context as XrmFakedContext;
-
             var id = Guid.NewGuid();
 
             var entities = new List<Entity>
@@ -152,16 +137,17 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                     Id = id
                 }
             };
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             // Act
-            context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous);
 
-            var service = context.GetOrganizationService();
+            var service = _context.GetOrganizationService();
             service.Delete(Contact.EntityLogicalName, id);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var tracingService = (_context as XrmFakedContext).GetFakeTracingService();
+            var trace = tracingService.DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Delete", trace);
