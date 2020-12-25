@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void When_AccountNumberPluginIsRegisteredAsPluginStep_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet()
+        public void When_AccountNumberPluginIsRegisteredAsPluginStep_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet_InPreOperation()
         {
             _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation);
 
@@ -34,7 +34,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void When_PluginIsRegisteredWithEntity_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet()
+        public void When_PluginIsRegisteredWithEntity_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsNotSet_In_PostOperation()
         {
             _context.RegisterPluginStep<AccountNumberPlugin, Account>("Create");
 
@@ -42,8 +42,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             var account = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.NotNull(account);
-            Assert.True(account.Attributes.ContainsKey("accountnumber"));
-            Assert.NotNull(account["accountnumber"]);
+            Assert.False(account.Attributes.ContainsKey("accountnumber"));
         }
 
         [Fact]
