@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks Condition="'$(CoreOnly)' != 'True'">netcoreapp3.1;net462</TargetFrameworks>
+    <TargetFrameworks Condition="'$(CoreOnly)' == 'True'">netcoreapp3.1</TargetFrameworks>
     <PackageId>FakeXrmEasy.Plugins</PackageId>
     <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
@@ -21,15 +22,50 @@
     <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
+    <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2013</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2015</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2016</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_365</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9;NETCOREAPP3_1;FAKE_XRM_EASY_NETCORE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.11-Alpha" />
+    <PackageReference Include="Microsoft.Dynamics.Sdk.Messages" Version="0.0.1.11-Alpha" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.0.64" />
+  </ItemGroup>
+
   <ItemGroup>
       <PackageReference Include="FakeItEasy" Version="6.0.0" />
-      <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.11-Alpha" />
-      <PackageReference Include="Microsoft.Dynamics.Sdk.Messages" Version="0.0.1.11-Alpha" />
-
       <PackageReference Include="FakeXrmEasy.Abstractions" Version="2.0.1-*" />
       <PackageReference Include="FakeXrmEasy.Core" Version="2.0.1-*" />
   </ItemGroup>
