@@ -270,7 +270,7 @@ namespace FakeXrmEasy.Pipeline
             {
                 return ((UpdateRequest) request).Target;
             }
-#if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+#if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
             else if(request is UpsertRequest)
             {
                 return ((UpsertRequest) request).Target;
