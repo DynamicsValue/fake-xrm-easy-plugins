@@ -1,8 +1,10 @@
 
-using System;
+using FakeItEasy;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
 using Microsoft.Xrm.Sdk;
-using FakeItEasy;
+using System;
+
 
 namespace FakeXrmEasy.Plugins 
 {
@@ -18,10 +20,10 @@ namespace FakeXrmEasy.Plugins
         protected readonly IOrganizationServiceFactory _organizationServiceFactory;
         protected readonly IServiceEndpointNotificationService _serviceEndpointNotificationService;
 
-        public XrmFakedPluginContextProperties(IOrganizationService service) 
+        public XrmFakedPluginContextProperties(IOrganizationService service, IXrmFakedTracingService tracingService) 
         {
             _service = service;
-            _tracingService = new XrmFakedTracingService();
+            _tracingService = tracingService;
 
             _organizationServiceFactory = A.Fake<IOrganizationServiceFactory>();
             A.CallTo(() => _organizationServiceFactory.CreateOrganizationService(A<Guid?>._)).ReturnsLazily((Guid? g) => _service);
