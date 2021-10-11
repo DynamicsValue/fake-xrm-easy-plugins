@@ -1,8 +1,10 @@
 
-using System;
+using FakeItEasy;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
 using Microsoft.Xrm.Sdk;
-using FakeItEasy;
+using System;
+
 
 namespace FakeXrmEasy.Plugins 
 {
@@ -10,37 +12,44 @@ namespace FakeXrmEasy.Plugins
     {
         protected readonly IOrganizationService _service;
         protected readonly IXrmFakedTracingService _tracingService;
+
+#if FAKE_XRM_EASY_9
         protected readonly IEntityDataSourceRetrieverService _entityDataSourceRetrieverService;
+#endif
+
         protected readonly IOrganizationServiceFactory _organizationServiceFactory;
         protected readonly IServiceEndpointNotificationService _serviceEndpointNotificationService;
 
-        public XrmFakedPluginContextProperties(IOrganizationService service) 
+        public XrmFakedPluginContextProperties(IOrganizationService service, IXrmFakedTracingService tracingService) 
         {
             _service = service;
-            _tracingService = new XrmFakedTracingService();
+            _tracingService = tracingService;
 
             _organizationServiceFactory = A.Fake<IOrganizationServiceFactory>();
             A.CallTo(() => _organizationServiceFactory.CreateOrganizationService(A<Guid?>._)).ReturnsLazily((Guid? g) => _service);
 
             _serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>();
 
-            #if FAKE_XRM_EASY_9
+#if FAKE_XRM_EASY_9
                 _entityDataSourceRetrieverService = A.Fake<IEntityDataSourceRetrieverService>();
                 A.CallTo(() => _entityDataSourceRetrieverService.RetrieveEntityDataSource())
                     .ReturnsLazily(() => EntityDataSourceRetriever);
-            #endif
+#endif
         }
 
 
         public IOrganizationService OrganizationService => _service;
         public IXrmFakedTracingService TracingService => _tracingService;
+        #if FAKE_XRM_EASY_9
         public IEntityDataSourceRetrieverService EntityDataSourceRetrieverService => _entityDataSourceRetrieverService;
+        #endif
+
         public IOrganizationServiceFactory OrganizationServiceFactory => _organizationServiceFactory;
         public IServiceEndpointNotificationService ServiceEndpointNotificationService => _serviceEndpointNotificationService;
 
-        #if FAKE_XRM_EASY_9
+#if FAKE_XRM_EASY_9
         public Entity EntityDataSourceRetriever { get; set; }
-        #endif
+#endif
 
         public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
         {

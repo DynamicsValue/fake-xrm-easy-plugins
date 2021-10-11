@@ -79,7 +79,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Delete(Contact.EntityLogicalName, id);
 
             // Assert
-            var tracingService = (_context as XrmFakedContext).GetFakeTracingService();
+            var tracingService = _context.GetTracingService();
             var trace = tracingService.DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
@@ -112,7 +112,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Delete(Contact.EntityLogicalName, id);
 
             // Assert
-            var tracingService = (_context as XrmFakedContext).GetFakeTracingService();
+            var tracingService = _context.GetTracingService();
             var trace = tracingService.DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
@@ -145,7 +145,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Delete(Contact.EntityLogicalName, id);
 
             // Assert
-            var tracingService = (_context as XrmFakedContext).GetFakeTracingService();
+            var tracingService = _context.GetTracingService();
             var trace = tracingService.DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
@@ -186,7 +186,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Update(updatedEntity);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Update", trace);
@@ -226,7 +226,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Update(updatedEntity);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Update", trace);
@@ -266,7 +266,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Update(updatedEntity);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Update", trace);
@@ -297,7 +297,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Create(newEntity);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Create", trace);
@@ -328,7 +328,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Create(newEntity);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Create", trace);
@@ -359,7 +359,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             service.Create(newEntity);
 
             // Assert
-            var trace = context.GetFakeTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(5, trace.Length);
             Assert.Contains("Message Name: Create", trace);
