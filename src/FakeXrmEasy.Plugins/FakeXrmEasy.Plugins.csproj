@@ -13,13 +13,14 @@
     <Company>Dynamics Value</Company>
     <Title>FakeXrmEasy Plugins</Title>
     <PackageDescription>FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is an abstractions package containing only interfaces</PackageDescription>
-    <Copyright>(c) 2014 Jordi Montaña</Copyright>
+    <Copyright>(c) 2021 DynamicsValue S.L.</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
     <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
     <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-plugins</RepositoryUrl>
     <Configurations>Debug;Release;FAKE_XRM_EASY;FAKE_XRM_EASY_2013;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_365;FAKE_XRM_EASY_9</Configurations>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
