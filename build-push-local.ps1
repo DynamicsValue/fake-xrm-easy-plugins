@@ -4,6 +4,5 @@ param (
 )
 
 ./build.ps1 -targetFramework $targetFramework
-./pack.ps1 -targetFrameworks $targetFramework -versionSuffix "zlocal"
-./push.ps1 -packageSource "local-packages"
+./pack-push.ps1 -targetFrameworks $targetFramework -versionSuffix "zlocal"
 

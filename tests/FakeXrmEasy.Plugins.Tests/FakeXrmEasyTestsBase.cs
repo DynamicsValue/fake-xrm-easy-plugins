@@ -1,4 +1,5 @@
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 
@@ -11,7 +12,7 @@ namespace FakeXrmEasy.Plugins.Tests
 
         public FakeXrmEasyTestsBase()
         {
-            _context = XrmFakedContextFactory.New();
+            _context = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5);
             _service = _context.GetOrganizationService();
         }
     }

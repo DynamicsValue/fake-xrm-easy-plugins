@@ -16,10 +16,10 @@ if(!($packagesFolderExists))
 
 if($targetFrameworks -eq "all")
 {
-    dotnet restore --no-cache /p:Configuration=$configuration /p:PackTests=$packTests
+    dotnet restore --no-cache --force /p:Configuration=$configuration /p:PackTests=$packTests
 }
 else {
-    dotnet restore --no-cache /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks
+    dotnet restore --no-cache --force /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks
 }
 
 
