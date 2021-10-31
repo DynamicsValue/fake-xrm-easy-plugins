@@ -64,7 +64,7 @@ jobs:
       run: dotnet nuget enable source github
       
     - name: Build
-      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFramework 'all'
+      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
@@ -125,7 +125,7 @@ jobs:
         run: dotnet nuget enable source github 
 
       - name: Build
-        run: pwsh ./build.ps1 -targetFramework 'all'
+        run: pwsh ./build.ps1 -targetFrameworks 'all'
         env: 
           NUGET_USERNAME: DynamicsValue
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
