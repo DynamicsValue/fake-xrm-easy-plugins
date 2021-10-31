@@ -5,21 +5,20 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
 {
-    public class ExecutePluginWithTargetAndImagesTests
+    public class ExecutePluginWithTargetAndImagesTests : FakeXrmEasyTestsBase
     {
 
         [Fact]
         public void When_passing_preentityimages_it_gets_added_to_context()
         {
             // arrange
-            var context = new XrmFakedContext();
             var target = new Entity();
 
             EntityImageCollection preEntityImages = new EntityImageCollection();
             preEntityImages.Add("PreImage", new Entity());
 
             // act
-            context.ExecutePluginWithTargetAndPreEntityImages<EntityImagesPlugin>(target, preEntityImages);
+            _context.ExecutePluginWithTargetAndPreEntityImages<EntityImagesPlugin>(target, preEntityImages);
 
             // assert
             EntityImageCollection postImagesReturned = target["PostEntityImages"] as EntityImageCollection;
@@ -37,14 +36,13 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
         public void When_passing_postentityimages_it_gets_added_to_context()
         {
             // arrange
-            var context = new XrmFakedContext();
             var target = new Entity();
 
             EntityImageCollection postEntityImages = new EntityImageCollection();
             postEntityImages.Add("PostImage", new Entity());
 
             // act
-            context.ExecutePluginWithTargetAndPostEntityImages<EntityImagesPlugin>(target, postEntityImages);
+            _context.ExecutePluginWithTargetAndPostEntityImages<EntityImagesPlugin>(target, postEntityImages);
 
             // assert
             EntityImageCollection preImagesReturned = target["PreEntityImages"] as EntityImageCollection;
