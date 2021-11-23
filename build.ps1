@@ -27,6 +27,15 @@ else
     New-Item $restoredPackagesFolder -ItemType Directory
 }
 
+Write-Host " -> Cleaning..." -ForegroundColor Yellow
+if($targetFrameworks -eq "all")
+{
+    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests
+}
+else {
+    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks
+}
+
 
 if($targetFrameworks -eq "all")
 {
