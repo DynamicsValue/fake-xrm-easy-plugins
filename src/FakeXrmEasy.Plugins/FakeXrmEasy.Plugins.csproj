@@ -6,7 +6,6 @@
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">netcoreapp3.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">netcoreapp3.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">netcoreapp3.1</TargetFrameworks>
-    <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY'">netcoreapp3.1</TargetFrameworks>
     <PackageId>FakeXrmEasy.Plugins</PackageId>
     <VersionPrefix>3.0.1</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
@@ -33,10 +32,6 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
-    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
@@ -72,10 +67,6 @@
     <PackageReference Include="FakeItEasy" Version="6.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2011" Version="3.0.1-*" />
-    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="3.0.1-*" />
-  </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
     <PackageReference Include="FakeXrmEasy.Abstractions.v2013" Version="3.0.1-*" />
     <PackageReference Include="FakeXrmEasy.Core.v2013" Version="3.0.1-*" />
