@@ -15,12 +15,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
     public class PipelineTests: FakeXrmEasyPipelineTests
     {
         [Fact]
-        public void When_context_is_initialised_pipeline_is_disabled_by_default()
-        {
-            Assert.False((_context as XrmFakedContext).UsePipelineSimulation);
-        }
-
-        [Fact]
         public void When_AccountNumberPluginIsRegisteredAsPluginStep_And_OtherPluginCreatesAnAccount_Expect_AccountNumberIsSet_InPreOperation()
         {
             _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation);
@@ -160,7 +154,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsUpdatePreOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
@@ -200,7 +193,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsUpdatePostOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
@@ -240,7 +232,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsUpdatePostOperationAsyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
@@ -280,7 +271,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsCreatePreOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
@@ -311,7 +301,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsCreatePostOperationSyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
@@ -342,7 +331,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void When_PluginStepRegisteredAsCreatePostOperationAsyncronous_Expect_CorrectValues()
         {
             // Arange
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var id = Guid.NewGuid();
@@ -372,7 +360,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void When_PluginStepRegisteredAsCreatePostOperation_Entity_Available()
         {
-            (_context as XrmFakedContext).UsePipelineSimulation = true;
             var context = _context as XrmFakedContext;
 
             var target = new Account
@@ -382,11 +369,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             };
 
             context.RegisterPluginStep<PostOperationUpdatePlugin>("Create");
-            IOrganizationService serivce = context.GetOrganizationService();
+            IOrganizationService service = context.GetOrganizationService();
 
-            serivce.Create(target);
+            service.Create(target);
 
-            var updatedAccount = serivce.Retrieve(Account.EntityLogicalName, target.Id, new ColumnSet(true)).ToEntity<Account>();
+            var updatedAccount = service.Retrieve(Account.EntityLogicalName, target.Id, new ColumnSet(true)).ToEntity<Account>();
 
             Assert.Equal("Updated", updatedAccount.Name);
         }

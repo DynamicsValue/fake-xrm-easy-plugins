@@ -1,6 +1,7 @@
 
 using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.Plugins;
 using Microsoft.Xrm.Sdk;
 using System;
