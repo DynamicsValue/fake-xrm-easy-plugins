@@ -151,6 +151,7 @@ namespace FakeXrmEasy.Plugins
             A.CallTo(() => context.OperationCreatedOn).ReturnsLazily(() => ctx.OperationCreatedOn);
             A.CallTo(() => context.IsolationMode).ReturnsLazily(() => ctx.IsolationMode);
             A.CallTo(() => context.IsInTransaction).ReturnsLazily(() => ctx.IsInTransaction);
+            A.CallTo(() => context.PrimaryEntityId).ReturnsLazily(() => ctx.PrimaryEntityId);
 
 
             // Create message will pass an Entity as the target but this is not always true
