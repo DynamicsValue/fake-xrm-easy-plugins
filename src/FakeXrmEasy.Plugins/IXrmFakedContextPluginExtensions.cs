@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace FakeXrmEasy.Plugins
 {
+    /// <summary>
+    /// Adds extension methods to an IXrmFakedContext useful for developing and testing plugins
+    /// </summary>
     public static class IXrmFakedContextPluginExtensions
     {
         /// <summary>
@@ -35,6 +38,11 @@ namespace FakeXrmEasy.Plugins
             };
         }
 
+        /// <summary>
+        /// Returns the default plugin context properties of this IXrmFakedContext
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static IXrmFakedPluginContextProperties GetPluginContextProperties(this IXrmFakedContext context) 
         {
             if(context.PluginContextProperties == null) 

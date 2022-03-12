@@ -8,8 +8,16 @@ using FakeXrmEasy.Pipeline;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
+    /// <summary>
+    /// Provides extensions for plugin pipeline simulation
+    /// </summary>
     public static class MiddlewareBuilderPipelineExtensions
     {
+        /// <summary>
+        /// Enables Pipeline Simulation in middleware
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder) 
         {
             builder.Add(context => {
@@ -24,6 +32,11 @@ namespace FakeXrmEasy.Middleware.Pipeline
             return builder;
         }
 
+        /// <summary>
+        /// Inserts pipeline simulation into the middleware. When using pipeline simulation, this method should be called before all the other Use*() methods
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder UsePipelineSimulation(this IMiddlewareBuilder builder) 
         {
 
