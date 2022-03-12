@@ -143,6 +143,7 @@ namespace FakeXrmEasy.Plugins
             A.CallTo(() => context.OrganizationId).ReturnsLazily(() => ctx.OrganizationId);
             A.CallTo(() => context.InitiatingUserId).ReturnsLazily(() => ctx.InitiatingUserId == Guid.Empty ? newUserId : ctx.InitiatingUserId);
             A.CallTo(() => context.UserId).ReturnsLazily(() => ctx.UserId == Guid.Empty ? newUserId : ctx.UserId);
+            A.CallTo(() => context.PrimaryEntityId).ReturnsLazily(() => ctx.PrimaryEntityId);
             A.CallTo(() => context.PrimaryEntityName).ReturnsLazily(() => ctx.PrimaryEntityName);
             A.CallTo(() => context.SecondaryEntityName).ReturnsLazily(() => ctx.SecondaryEntityName);
             A.CallTo(() => context.SharedVariables).ReturnsLazily(() => ctx.SharedVariables);
@@ -151,8 +152,6 @@ namespace FakeXrmEasy.Plugins
             A.CallTo(() => context.OperationCreatedOn).ReturnsLazily(() => ctx.OperationCreatedOn);
             A.CallTo(() => context.IsolationMode).ReturnsLazily(() => ctx.IsolationMode);
             A.CallTo(() => context.IsInTransaction).ReturnsLazily(() => ctx.IsInTransaction);
-            A.CallTo(() => context.PrimaryEntityId).ReturnsLazily(() => ctx.PrimaryEntityId);
-
 
             // Create message will pass an Entity as the target but this is not always true
             // For instance, a Delete request will receive an EntityReference
