@@ -127,32 +127,38 @@ namespace FakeXrmEasy.Plugins
             return context;
         }
 
+        /// <summary>
+        /// Populates plugin context properties from a given fake plugin context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
         protected void PopulateExecutionContextPropertiesFromFakedContext(IExecutionContext context, XrmFakedPluginExecutionContext ctx)
         {
             var newUserId = Guid.NewGuid();
 
+            A.CallTo(() => context.BusinessUnitId).ReturnsLazily(() => ctx.BusinessUnitId);
+            A.CallTo(() => context.CorrelationId).ReturnsLazily(() => ctx.CorrelationId);
             A.CallTo(() => context.Depth).ReturnsLazily(() => ctx.Depth <= 0 ? 1 : ctx.Depth);
-            A.CallTo(() => context.IsExecutingOffline).ReturnsLazily(() => ctx.IsExecutingOffline);
+            A.CallTo(() => context.InitiatingUserId).ReturnsLazily(() => ctx.InitiatingUserId == Guid.Empty ? newUserId : ctx.InitiatingUserId);
             A.CallTo(() => context.InputParameters).ReturnsLazily(() => ctx.InputParameters);
-            A.CallTo(() => context.OutputParameters).ReturnsLazily(() => ctx.OutputParameters);
-            A.CallTo(() => context.PreEntityImages).ReturnsLazily(() => ctx.PreEntityImages);
-            A.CallTo(() => context.PostEntityImages).ReturnsLazily(() => ctx.PostEntityImages);
+            A.CallTo(() => context.IsExecutingOffline).ReturnsLazily(() => ctx.IsExecutingOffline);
+            A.CallTo(() => context.IsInTransaction).ReturnsLazily(() => ctx.IsInTransaction);
+            A.CallTo(() => context.IsolationMode).ReturnsLazily(() => ctx.IsolationMode);
             A.CallTo(() => context.MessageName).ReturnsLazily(() => ctx.MessageName);
             A.CallTo(() => context.Mode).ReturnsLazily(() => ctx.Mode);
-            A.CallTo(() => context.OrganizationName).ReturnsLazily(() => ctx.OrganizationName);
+            A.CallTo(() => context.OperationCreatedOn).ReturnsLazily(() => ctx.OperationCreatedOn);
             A.CallTo(() => context.OrganizationId).ReturnsLazily(() => ctx.OrganizationId);
-            A.CallTo(() => context.InitiatingUserId).ReturnsLazily(() => ctx.InitiatingUserId == Guid.Empty ? newUserId : ctx.InitiatingUserId);
-            A.CallTo(() => context.UserId).ReturnsLazily(() => ctx.UserId == Guid.Empty ? newUserId : ctx.UserId);
+            A.CallTo(() => context.OrganizationName).ReturnsLazily(() => ctx.OrganizationName);
+            A.CallTo(() => context.OutputParameters).ReturnsLazily(() => ctx.OutputParameters);
+            A.CallTo(() => context.OwningExtension).ReturnsLazily(() => ctx.OwningExtension);
+            A.CallTo(() => context.PostEntityImages).ReturnsLazily(() => ctx.PostEntityImages);
+            A.CallTo(() => context.PreEntityImages).ReturnsLazily(() => ctx.PreEntityImages);
             A.CallTo(() => context.PrimaryEntityId).ReturnsLazily(() => ctx.PrimaryEntityId);
             A.CallTo(() => context.PrimaryEntityName).ReturnsLazily(() => ctx.PrimaryEntityName);
             A.CallTo(() => context.SecondaryEntityName).ReturnsLazily(() => ctx.SecondaryEntityName);
             A.CallTo(() => context.SharedVariables).ReturnsLazily(() => ctx.SharedVariables);
-            A.CallTo(() => context.BusinessUnitId).ReturnsLazily(() => ctx.BusinessUnitId);
-            A.CallTo(() => context.CorrelationId).ReturnsLazily(() => ctx.CorrelationId);
-            A.CallTo(() => context.OperationCreatedOn).ReturnsLazily(() => ctx.OperationCreatedOn);
-            A.CallTo(() => context.IsolationMode).ReturnsLazily(() => ctx.IsolationMode);
-            A.CallTo(() => context.IsInTransaction).ReturnsLazily(() => ctx.IsInTransaction);
-
+            A.CallTo(() => context.UserId).ReturnsLazily(() => ctx.UserId == Guid.Empty ? newUserId : ctx.UserId);
+            
             // Create message will pass an Entity as the target but this is not always true
             // For instance, a Delete request will receive an EntityReference
             if (ctx.InputParameters != null && ctx.InputParameters.ContainsKey("Target"))
