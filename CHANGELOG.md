@@ -2,6 +2,7 @@
 
 ### Changed
 
+Marked several execute plugin methods as obsolete
 Populate OwningExtension in plugin execution context from default fake plugin context DynamicsValue/fake-xrm-easy#17
 Populate PrimaryEntityId in plugin execution context from default fake plugin context DynamicsValue/fake-xrm-easy#8
 
