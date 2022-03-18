@@ -2,7 +2,8 @@
 
 ### Added
 
-Support for PreImages and Postimages in Pipeline Simulation DynamicsValue/fake-xrm-easy#19
+Support for PreImages and Postimages in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
+Support for ILogger and PluginTelemetry - DynamicsValue/fake-xrm-easy#24
 ### Changed
 
 Marked several execute plugin methods as obsolete

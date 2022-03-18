@@ -4,11 +4,17 @@ using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.Plugins;
 using Microsoft.Xrm.Sdk;
+#if FAKE_XRM_EASY_9
+using Microsoft.Xrm.Sdk.PluginTelemetry;
+#endif
 using System;
 
 
 namespace FakeXrmEasy.Plugins 
 {
+    /// <summary>
+    /// Implementation to override default plugin context properties
+    /// </summary>
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {
         protected readonly IOrganizationService _service;
@@ -16,6 +22,7 @@ namespace FakeXrmEasy.Plugins
 
 #if FAKE_XRM_EASY_9
         protected readonly IEntityDataSourceRetrieverService _entityDataSourceRetrieverService;
+        protected ILogger _loggerService;
 #endif
 
         protected readonly IOrganizationServiceFactory _organizationServiceFactory;
@@ -35,6 +42,8 @@ namespace FakeXrmEasy.Plugins
                 _entityDataSourceRetrieverService = A.Fake<IEntityDataSourceRetrieverService>();
                 A.CallTo(() => _entityDataSourceRetrieverService.RetrieveEntityDataSource())
                     .ReturnsLazily(() => EntityDataSourceRetriever);
+
+            _loggerService = A.Fake<ILogger>();
 #endif
         }
 
@@ -49,7 +58,15 @@ namespace FakeXrmEasy.Plugins
         public IServiceEndpointNotificationService ServiceEndpointNotificationService => _serviceEndpointNotificationService;
 
 #if FAKE_XRM_EASY_9
+        /// <summary>
+        /// Provides a default EntityDataSourceRetriever
+        /// </summary>
         public Entity EntityDataSourceRetriever { get; set; }
+   
+        /// <summary>
+        /// Provides a custom implementation for an ILogger interface or returns the current implementation
+        /// </summary>
+        public ILogger Logger { get => _loggerService; set => _loggerService = value; }
 #endif
 
         public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
@@ -64,6 +81,11 @@ namespace FakeXrmEasy.Plugins
                    if (t == typeof(IOrganizationService))
                    {
                        return _service;
+                   }
+
+                   if (t == typeof(ILogger))
+                   {
+                       return _loggerService;
                    }
 
                    if (t == typeof(ITracingService))
