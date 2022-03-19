@@ -267,17 +267,29 @@ namespace FakeXrmEasy.Pipeline
 
             var entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
             var service = context.GetOrganizationService();
-            var plugins = service.RetrieveMultiple(query).Entities.AsEnumerable();
-            plugins = plugins.Where(p =>
+            var pluginSteps = service.RetrieveMultiple(query).Entities.AsEnumerable();
+            pluginSteps = pluginSteps.Where(p =>
             {
                 var primaryObjectTypeCode = p.GetAttributeValue<AliasedValue>("sdkmessagefilter.primaryobjecttypecode");
 
                 return primaryObjectTypeCode == null || entityTypeCode.HasValue && (int)primaryObjectTypeCode.Value == entityTypeCode.Value;
             });
 
-            // Todo: Filter on attributes
+            //Filter attributes
+            pluginSteps = pluginSteps.Where(p =>
+            {
+                string attributes = p.GetAttributeValue<string>("filteringattributes");
+                if (!string.IsNullOrEmpty(attributes))
+                {
+                    string[] filteringAttributes = attributes.ToLowerInvariant().Split(',');
 
-            return plugins;
+                    return filteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr));
+                }
+
+                return true;
+            });
+
+            return pluginSteps;
         }
 
         private static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
