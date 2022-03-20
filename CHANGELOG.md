@@ -2,6 +2,7 @@
 
 ### Added
 
+Support for PreValidation execution in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
 Support for PreImages and Postimages in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
 Support for triggering plugins in PipelineSimulation based on filtering attributes - DynamicsValue/fake-xrm-easy#19
 Support for ILogger and PluginTelemetry - DynamicsValue/fake-xrm-easy#24

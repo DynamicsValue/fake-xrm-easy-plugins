@@ -46,6 +46,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
                     
                     if(CanHandleRequest(context, request)) 
                     {
+                        ProcessPreValidation(context, request);
                         ProcessPreOperation(context, request);
                         var response = next.Invoke(context, request);
                         ProcessPostOperation(context, request);
@@ -66,6 +67,11 @@ namespace FakeXrmEasy.Middleware.Pipeline
         {
             var pipelineOptions = context.GetProperty<PipelineOptions>();
             return pipelineOptions?.UsePipelineSimulation == true;
+        }
+
+        private static void ProcessPreValidation(IXrmFakedContext context, OrganizationRequest request)
+        {
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, request);
         }
 
         private static void ProcessPreOperation(IXrmFakedContext context, OrganizationRequest request) 

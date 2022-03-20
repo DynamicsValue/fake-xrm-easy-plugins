@@ -140,7 +140,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void When_PluginStepRegisteredAsUpdatePreOperationSyncronous_Expect_CorrectValues()
+        public void Should_trigger_plugin_registered_on_sync_update_preoperation()
         {
             // Arange
             _context.Initialize(_contact);
@@ -166,7 +166,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void When_PluginStepRegisteredAsUpdatePostOperationSyncronous_Expect_CorrectValues()
+        public void Should_trigger_plugin_registered_on_sync_update_postoperation()
         {
             // Arange
             _context.Initialize(_contact);
@@ -192,7 +192,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void Should_trigger_plugin_in_the_post_operation_stage_async_when_plugin_step_is_registered_with_correct_values()
+        public void Should_trigger_plugin_registered_on_async_update_postoperation()
         {
             // Arange
             _context.Initialize(_contact);
@@ -292,6 +292,54 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             var updatedAccount = _service.Retrieve(Account.EntityLogicalName, target.Id, new ColumnSet(true)).ToEntity<Account>();
 
             Assert.Equal("Updated", updatedAccount.Name);
+        }
+
+
+
+        [Fact]
+        public void Should_trigger_plugin_registered_on_sync_update_prevalidation()
+        {
+            // Arange
+            _context.Initialize(_contact);
+            _context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Update", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous);
+
+            // Act
+            var updatedEntity = new Contact
+            {
+                Id = _contact.Id
+            };
+
+            _service.Update(updatedEntity);
+
+            // Assert
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            Assert.Equal(5, trace.Length);
+            Assert.Contains("Message Name: Update", trace);
+            Assert.Contains("Stage: 10", trace);
+            Assert.Contains("Mode: 0", trace);
+            Assert.Contains($"Entity Logical Name: {Contact.EntityLogicalName}", trace);
+            Assert.Contains($"Entity ID: {_contact.Id}", trace);
+        }
+
+        [Fact]
+        public void Should_trigger_plugin_registered_on_sync_create_prevalidation()
+        {
+            // Arange
+            _context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous);
+
+            // Act
+            _service.Create(_contact);
+
+            // Assert
+            var trace = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            Assert.Equal(5, trace.Length);
+            Assert.Contains("Message Name: Create", trace);
+            Assert.Contains("Stage: 10", trace);
+            Assert.Contains("Mode: 0", trace);
+            Assert.Contains($"Entity Logical Name: {Contact.EntityLogicalName}", trace);
+            Assert.Contains($"Entity ID: {_contact.Id}", trace);
         }
 
         [Theory]
