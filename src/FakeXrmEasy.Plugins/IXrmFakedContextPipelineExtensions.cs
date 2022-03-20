@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Plugins;
+using FakeXrmEasy.Extensions;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -126,20 +127,25 @@ namespace FakeXrmEasy.Pipeline
             }
         }
 
-        internal static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        internal static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, 
+            OrganizationRequest request, object target = null, Entity preEntity = null, Entity postEntity = null)
         {
             var plugins = context.GetPluginStepsForOrganizationRequest(method, stage, mode, request);
             if(plugins == null)
                 return;
 
-            var target = GetTargetForRequest(request);
-            if(target is Entity)
+            if (target == null)
             {
-                context.ExecutePipelineStage(method, stage, mode, target as Entity);
+                target = GetTargetForRequest(request);
+            }
+
+            if (target is Entity)
+            {
+                context.ExecutePipelineStage(method, stage, mode, target as Entity, preEntity, postEntity);
             }
             else if (target is EntityReference)
             {
-                context.ExecutePipelineStage(method, stage, mode, target as EntityReference);
+                context.ExecutePipelineStage(method, stage, mode, target as EntityReference, preEntity, postEntity);
             }
         }
 
@@ -165,14 +171,16 @@ namespace FakeXrmEasy.Pipeline
             return null;
         }
 
-        private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
+        private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, 
+                                                Entity entity, Entity previousValues = null, Entity resultingAttributes = null)
         {
             var plugins = context.GetStepsForStage(method, stage, mode, entity);
-            context.ExecutePipelinePlugins(plugins, entity);
+            context.ExecutePipelinePlugins(plugins, entity, previousValues, resultingAttributes);
         }
 
         
-        private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, EntityReference entityReference)
+        private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, 
+                                                EntityReference entityReference, Entity previousValues = null, Entity resultingAttributes = null)
         {
             var entityType = context.FindReflectedType(entityReference.LogicalName);
             if (entityType == null)
@@ -182,26 +190,38 @@ namespace FakeXrmEasy.Pipeline
 
             var plugins = context.GetStepsForStage(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
 
-            context.ExecutePipelinePlugins(plugins, entityReference);
+            context.ExecutePipelinePlugins(plugins, entityReference, previousValues, resultingAttributes);
         }
 
-        private static void ExecutePipelinePlugins(this IXrmFakedContext context, IEnumerable<Entity> plugins, object target)
+        private static void ExecutePipelinePlugins(this IXrmFakedContext context, IEnumerable<Entity> pluginSteps, object target, Entity previousValues, Entity resultingAttributes)
         {
-            foreach (var plugin in plugins)
+            foreach (var pluginStep in pluginSteps)
             {
-                var pluginMethod = GetPluginMethod(plugin);
+                var pluginMethod = GetPluginMethod(pluginStep);
+
+                IEnumerable<Entity> preImageDefinitions = null;
+                if (previousValues != null)
+                {
+                    preImageDefinitions = context.GetImageDefinitions(pluginStep.Id, ProcessingStepImageType.PreImage);
+                }
+
+                IEnumerable<Entity> postImageDefinitions = null;
+                if (resultingAttributes != null)
+                {
+                    postImageDefinitions = context.GetImageDefinitions(pluginStep.Id, ProcessingStepImageType.PostImage);
+                }
 
                 var pluginContext = context.GetDefaultPluginContext();
-                pluginContext.Mode = plugin.GetAttributeValue<OptionSetValue>("mode").Value;
-                pluginContext.Stage = plugin.GetAttributeValue<OptionSetValue>("stage").Value;
-                pluginContext.MessageName = (string)plugin.GetAttributeValue<AliasedValue>("sdkmessage.name").Value;
+                pluginContext.Mode = pluginStep.GetAttributeValue<OptionSetValue>("mode").Value;
+                pluginContext.Stage = pluginStep.GetAttributeValue<OptionSetValue>("stage").Value;
+                pluginContext.MessageName = (string)pluginStep.GetAttributeValue<AliasedValue>("sdkmessage.name").Value;
                 pluginContext.InputParameters = new ParameterCollection
                 {
                     { "Target", target }
                 };
                 pluginContext.OutputParameters = new ParameterCollection();
-                pluginContext.PreEntityImages = new EntityImageCollection();
-                pluginContext.PostEntityImages = new EntityImageCollection();
+                pluginContext.PreEntityImages = GetEntityImageCollection(preImageDefinitions, previousValues);
+                pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, resultingAttributes);
 
                 pluginMethod.Invoke(null, new object[] { context, pluginContext });
             }
@@ -292,6 +312,39 @@ namespace FakeXrmEasy.Pipeline
             return pluginSteps;
         }
 
+        private static IEnumerable<Entity> GetImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
+        {
+            var query = new QueryExpression("sdkmessageprocessingstepimage")
+            {
+                ColumnSet = new ColumnSet("name", "imagetype", "attributes"),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, stepId)
+                    }
+                },
+                Orders =
+                {
+                    new OrderExpression("rank", OrderType.Ascending)
+                }
+            };
+
+            FilterExpression filter = new FilterExpression(LogicalOperator.Or)
+            {
+                Conditions = { new ConditionExpression("imagetype", ConditionOperator.Equal, (int)ProcessingStepImageType.Both) }
+            };
+
+            if (imageType == ProcessingStepImageType.PreImage || imageType == ProcessingStepImageType.PostImage)
+            {
+                filter.AddCondition(new ConditionExpression("imagetype", ConditionOperator.Equal, (int)imageType));
+            }
+
+            query.Criteria.AddFilter(filter);
+
+            return context.GetOrganizationService().RetrieveMultiple(query).Entities.AsEnumerable();
+        }
+
         private static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
         {
             var query = new QueryExpression("sdkmessageprocessingstepimage")
@@ -327,7 +380,41 @@ namespace FakeXrmEasy.Pipeline
             return service.RetrieveMultiple(query).Entities.AsEnumerable();
         }
 
-        private static object GetTargetForRequest(OrganizationRequest request)
+        private static EntityImageCollection GetEntityImageCollection(IEnumerable<Entity> imageDefinitions, Entity values)
+        {
+            EntityImageCollection collection = new EntityImageCollection();
+
+            if (values != null && imageDefinitions != null)
+            {
+                foreach (Entity imageDefinition in imageDefinitions)
+                {
+                    string name = imageDefinition.GetAttributeValue<string>("name");
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        name = string.Empty;
+                    }
+
+                    string attributes = imageDefinition.GetAttributeValue<string>("attributes");
+
+                    Entity preImage = values.Clone(values.GetType());
+                    if (!string.IsNullOrEmpty(attributes))
+                    {
+                        string[] specifiedAttributes = attributes.Split(',');
+
+                        foreach (KeyValuePair<string, object> attr in values.Attributes.Where(x => !specifiedAttributes.Contains(x.Key)))
+                        {
+                            preImage.Attributes.Remove(attr.Key);
+                        }
+                    }
+
+                    collection.Add(name, preImage);
+                }
+            }
+
+            return collection;
+        }
+
+        internal static object GetTargetForRequest(OrganizationRequest request)
         {
             if(request is CreateRequest)
             {
@@ -353,5 +440,7 @@ namespace FakeXrmEasy.Pipeline
             }
             return null;
         }
+
+        
     }
 }

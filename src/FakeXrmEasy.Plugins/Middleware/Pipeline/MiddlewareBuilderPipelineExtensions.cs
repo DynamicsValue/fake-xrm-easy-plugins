@@ -5,6 +5,7 @@ using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk;
 
 using FakeXrmEasy.Pipeline;
+using FakeXrmEasy.Extensions;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -46,10 +47,16 @@ namespace FakeXrmEasy.Middleware.Pipeline
                     
                     if(CanHandleRequest(context, request)) 
                     {
-                        ProcessPreValidation(context, request);
-                        ProcessPreOperation(context, request);
+                        var preImage = GetPreImageEntityForRequest(context, request);
+
+                        ProcessPreValidation(context, request, preImage);
+                        ProcessPreOperation(context, request, preImage);
+
                         var response = next.Invoke(context, request);
-                        ProcessPostOperation(context, request);
+
+                        var postImage = GetPostImageEntityForRequest(context, request);
+
+                        ProcessPostOperation(context, request, preImage, postImage);
                         return response;
                     }
                     else 
@@ -69,21 +76,74 @@ namespace FakeXrmEasy.Middleware.Pipeline
             return pipelineOptions?.UsePipelineSimulation == true;
         }
 
-        private static void ProcessPreValidation(IXrmFakedContext context, OrganizationRequest request)
+        private static void ProcessPreValidation(IXrmFakedContext context, OrganizationRequest request, Entity preEntity = null, Entity postEntity = null)
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, request);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, request, preEntity, postEntity);
         }
 
-        private static void ProcessPreOperation(IXrmFakedContext context, OrganizationRequest request) 
+        private static void ProcessPreOperation(IXrmFakedContext context, OrganizationRequest request, Entity preEntity = null, Entity postEntity = null) 
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, request);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, request, preEntity, postEntity);
         }
 
-        private static void ProcessPostOperation(IXrmFakedContext context, OrganizationRequest request) 
+        private static void ProcessPostOperation(IXrmFakedContext context, OrganizationRequest request, Entity preEntity = null, Entity postEntity = null) 
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, request);
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, request);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, request, preEntity, postEntity);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, request, preEntity, postEntity);
         }
 
+        private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
+        {
+            var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
+            if (target == null)
+            {
+                return null;
+            }
+
+            string logicalName = "";
+            Guid id = Guid.Empty;
+
+            if (target is Entity)
+            {
+                var targetEntity = target as Entity;
+                logicalName = targetEntity.LogicalName;
+                id = targetEntity.Id;
+            }
+
+            else if (target is EntityReference)
+            {
+                var targetEntityRef = target as EntityReference;
+                logicalName = targetEntityRef.LogicalName;
+                id = targetEntityRef.Id;
+            }
+
+            var preImage = context.GetEntityById(logicalName, id);
+            return preImage.Clone(preImage.GetType());  //Clone no longer needed after resolving https://github.com/DynamicsValue/fake-xrm-easy/issues/27
+        }
+
+        private static Entity GetPostImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
+        {
+            var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
+            if (target == null)
+            {
+                return null;
+            }
+
+            string logicalName = "";
+            Guid id = Guid.Empty;
+
+            if (target is Entity)
+            {
+                var targetEntity = target as Entity;
+                return targetEntity;
+            }
+
+            else if (target is EntityReference)
+            {
+                return null;
+            }
+
+            return null;
+        }
     }
 }

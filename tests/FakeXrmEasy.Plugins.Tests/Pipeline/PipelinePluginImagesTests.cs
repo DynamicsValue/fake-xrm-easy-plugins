@@ -70,9 +70,10 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             _context.RegisterPluginStep<EntityImagesInPluginPipeline>("Update", registeredImages: new PluginImageDefinition[] { preImageDefinition });
 
-            // act
+            //Act
             _service.Update(_target);
 
+            //Assert
             var allAccounts = _context.CreateQuery<Account>().ToList();
 
             var updatedAccount = allAccounts.Where(a => a.Id == _account.Id);
@@ -86,6 +87,41 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             var preImage = preImages.First();
             Assert.Equal(registeredPreImageName, preImage.GetAttributeValue<string>("preimagename"));
+        }
+
+        [Fact]
+        public void Should_pass_all_preimages_when_multiple_of_them_are_registered()
+        {
+            _context.Initialize(new List<Entity>()
+            {
+                _newContact, _previousContact, _account
+            });
+
+            string registeredPreImageName1 = "PreImage1";
+            PluginImageDefinition preImageDefinition1 = new PluginImageDefinition(registeredPreImageName1, ProcessingStepImageType.PreImage);
+
+            string registeredPreImageName2 = "PreImage2";
+            PluginImageDefinition preImageDefinition2 = new PluginImageDefinition(registeredPreImageName2, ProcessingStepImageType.PreImage);
+
+            _context.RegisterPluginStep<EntityImagesInPluginPipeline>("Update", registeredImages: new PluginImageDefinition[] { preImageDefinition1, preImageDefinition2 });
+
+            //Act
+            _service.Update(_target);
+
+            //Assert
+            var allAccounts = _context.CreateQuery<Account>().ToList();
+
+            var updatedAccount = allAccounts.Where(a => a.Id == _account.Id);
+            Assert.NotNull(updatedAccount);
+
+            var preImages = allAccounts.Where(a => a.Contains(preImageStoredAttributeName)).ToList();
+            var postImages = allAccounts.Where(a => a.Contains(postImageStoredAttributeName)).ToList();
+
+            Assert.Equal(2, preImages.Count);
+            Assert.Empty(postImages);
+
+            Assert.Equal(registeredPreImageName1, preImages.First().GetAttributeValue<string>("preimagename"));
+            Assert.Equal(registeredPreImageName2, preImages.Last().GetAttributeValue<string>("preimagename"));
         }
     }
 }
