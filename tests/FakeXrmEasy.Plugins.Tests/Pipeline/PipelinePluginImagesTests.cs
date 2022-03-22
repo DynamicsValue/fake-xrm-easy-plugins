@@ -1,8 +1,8 @@
 ﻿using Crm;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
+using FakeXrmEasy.Plugins.Images;
 using FakeXrmEasy.Plugins.Tests.PluginsForTesting;
-using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;

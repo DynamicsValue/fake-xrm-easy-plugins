@@ -10,6 +10,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Plugins.Images;
 
 namespace FakeXrmEasy.Pipeline
 {

@@ -15,19 +15,29 @@ namespace FakeXrmEasy.Middleware.Pipeline
     public static class MiddlewareBuilderPipelineExtensions
     {
         /// <summary>
-        /// Enables Pipeline Simulation in middleware
+        /// Enables Pipeline Simulation in middleware with default options
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
         public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder) 
         {
             builder.Add(context => {
-                var pipelineOptions = new PipelineOptions()
-                {
-                    UsePipelineSimulation = true
-                };
+                context.SetProperty(new PipelineOptions());
+            });
 
-                context.SetProperty(pipelineOptions);
+            return builder;
+        }
+
+        /// <summary>
+        /// Enables Piepeline Simulation in middleware with custom options
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="options">The custom options</param>
+        /// <returns></returns>
+        public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder, PipelineOptions options)
+        {
+            builder.Add(context => {
+                context.SetProperty(options);
             });
 
             return builder;
@@ -49,14 +59,20 @@ namespace FakeXrmEasy.Middleware.Pipeline
                     {
                         var preImage = GetPreImageEntityForRequest(context, request);
 
-                        ProcessPreValidation(context, request, preImage);
-                        ProcessPreOperation(context, request, preImage);
+                        //ProcessPreValidation(context, request, preImage);
+                        //ProcessPreOperation(context, request, preImage);
+                        
+                        ProcessPreValidation(context, request, null);
+                        ProcessPreOperation(context, request, null);
 
                         var response = next.Invoke(context, request);
 
                         var postImage = GetPostImageEntityForRequest(context, request);
+                        //ProcessPostOperation(context, request, preImage, postImage);
 
-                        ProcessPostOperation(context, request, preImage, postImage);
+                        ProcessPostOperation(context, request, null, null);
+
+
                         return response;
                     }
                     else 
