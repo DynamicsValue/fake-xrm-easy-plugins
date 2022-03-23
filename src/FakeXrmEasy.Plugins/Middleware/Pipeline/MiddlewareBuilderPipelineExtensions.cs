@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk;
 
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Plugins.Images;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -57,22 +58,23 @@ namespace FakeXrmEasy.Middleware.Pipeline
                     
                     if(CanHandleRequest(context, request)) 
                     {
-                        var preImage = GetPreImageEntityForRequest(context, request);
+                        var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation) ?
+                                            GetPreImageEntityForRequest(context, request) : null;
 
-                        //ProcessPreValidation(context, request, preImage);
-                        //ProcessPreOperation(context, request, preImage);
-                        
+                        var preImagePostOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
+                                            GetPreImageEntityForRequest(context, request) : null;
+
+
                         ProcessPreValidation(context, request, null);
-                        ProcessPreOperation(context, request, null);
+                        ProcessPreOperation(context, request, preImagePreOperation);
 
                         var response = next.Invoke(context, request);
 
-                        var postImage = GetPostImageEntityForRequest(context, request);
-                        //ProcessPostOperation(context, request, preImage, postImage);
 
-                        ProcessPostOperation(context, request, null, null);
+                        var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
+                                            GetPostImageEntityForRequest(context, request) : null;
 
-
+                        ProcessPostOperation(context, request, preImagePostOperation, postImagePostOperation);
                         return response;
                     }
                     else 
