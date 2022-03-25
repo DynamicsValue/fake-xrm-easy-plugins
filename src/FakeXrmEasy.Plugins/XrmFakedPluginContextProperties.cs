@@ -22,6 +22,9 @@ namespace FakeXrmEasy.Plugins
 
 #if FAKE_XRM_EASY_9
         protected readonly IEntityDataSourceRetrieverService _entityDataSourceRetrieverService;
+        /// <summary>
+        /// Plugin telemetry logger service
+        /// </summary>
         protected ILogger _loggerService;
 #endif
 
