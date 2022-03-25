@@ -150,9 +150,6 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 return null;
             }
 
-            string logicalName = "";
-            Guid id = Guid.Empty;
-
             if (target is Entity)
             {
                 var targetEntity = target as Entity;

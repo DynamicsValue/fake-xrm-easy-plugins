@@ -26,11 +26,13 @@ namespace FakeXrmEasy.Pipeline
         /// </summary>
         /// <typeparam name="TPlugin">The plugin to register the step for.</typeparam>
         /// <typeparam name="TEntity">The entity to filter this step for.</typeparam>
+        /// <param name="context">The faked context to register this plugin against</param>
         /// <param name="message">The message that should trigger the execution of plugin.</param>
         /// <param name="stage">The stage when the plugin should be executed.</param>
         /// <param name="mode">The mode in which the plugin should be executed.</param>
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
+        /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
         public static void RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
             where TEntity : Entity, new()
@@ -45,12 +47,14 @@ namespace FakeXrmEasy.Pipeline
         /// Registers the <typeparamref name="TPlugin"/> as a SDK Message Processing Step.
         /// </summary>
         /// <typeparam name="TPlugin">The plugin to register the step for.</typeparam>
+        /// <param name="context">The faked context to register this plugin against</param>
         /// <param name="message">The message that should trigger the execution of plugin.</param>
         /// <param name="stage">The stage when the plugin should be executed.</param>
         /// <param name="mode">The mode in which the plugin should be executed.</param>
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="primaryEntityTypeCode">The entity type code to filter this step for.</param>
+        /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
         public static void RegisterPluginStep<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
         {
