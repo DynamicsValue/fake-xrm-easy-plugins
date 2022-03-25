@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Plugins.Audit;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -22,11 +23,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
         /// <returns></returns>
         public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder) 
         {
-            builder.Add(context => {
-                context.SetProperty(new PipelineOptions());
-            });
-
-            return builder;
+            return builder.AddPipelineSimulation(new PipelineOptions());
         }
 
         /// <summary>
@@ -39,6 +36,11 @@ namespace FakeXrmEasy.Middleware.Pipeline
         {
             builder.Add(context => {
                 context.SetProperty(options);
+
+                if(options.UsePluginStepAudit)
+                {
+                    context.SetProperty<IPluginStepAudit>(new PluginStepAudit());
+                }
             });
 
             return builder;
@@ -51,7 +53,6 @@ namespace FakeXrmEasy.Middleware.Pipeline
         /// <returns></returns>
         public static IMiddlewareBuilder UsePipelineSimulation(this IMiddlewareBuilder builder) 
         {
-
             Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware = next => {
 
                 return (IXrmFakedContext context, OrganizationRequest request) => {

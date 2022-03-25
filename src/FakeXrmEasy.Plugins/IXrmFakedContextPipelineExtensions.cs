@@ -11,6 +11,8 @@ using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Middleware.Pipeline;
+using FakeXrmEasy.Plugins.Audit;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -196,6 +198,8 @@ namespace FakeXrmEasy.Pipeline
 
         private static void ExecutePipelinePlugins(this IXrmFakedContext context, IEnumerable<Entity> pluginSteps, object target, Entity previousValues, Entity resultingAttributes)
         {
+            var isAuditEnabled = context.GetProperty<PipelineOptions>().UsePluginStepAudit;
+
             foreach (var pluginStep in pluginSteps)
             {
                 var pluginMethod = GetPluginMethod(pluginStep);
@@ -225,7 +229,34 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, resultingAttributes);
 
                 pluginMethod.Invoke(null, new object[] { context, pluginContext });
+
+                if(isAuditEnabled)
+                {
+                    context.AddPluginStepAuditDetails(pluginMethod, pluginContext, pluginStep, target);
+                }
             }
+        }
+
+        private static void AddPluginStepAuditDetails(this IXrmFakedContext context, MethodInfo pluginMethod, XrmFakedPluginExecutionContext pluginContext, Entity pluginStep, object target)
+        {
+            var pluginType = pluginMethod.GetGenericArguments()[0];
+            var pluginStepAuditDetails = new PluginStepAuditDetails()
+            {
+                PluginAssemblyType = pluginType,
+                PluginStepId = pluginStep.Id,
+                MessageName = pluginContext.MessageName,
+                Stage = (ProcessingStepStage)pluginContext.Stage
+            };
+            
+            if (target is Entity) 
+                pluginStepAuditDetails.TargetEntity = (Entity) target;
+            
+            if (target is EntityReference)
+                pluginStepAuditDetails.TargetEntityReference = (EntityReference)target;
+
+
+            var pluginStepAudit = context.GetProperty<IPluginStepAudit>() as PluginStepAudit;
+            pluginStepAudit.Add(pluginStepAuditDetails);
         }
 
         private static MethodInfo GetPluginMethod(Entity pluginEntity)
