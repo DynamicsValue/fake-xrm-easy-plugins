@@ -34,7 +34,7 @@ namespace FakeXrmEasy.Plugins.Tests.Audit
                 PluginAssemblyType = typeof(AccountNumberPlugin),
                 PluginStepId = Guid.NewGuid(),
                 Stage = ProcessingStepStage.Preoperation,
-                TargetEntity = new Entity(Contact.EntityLogicalName, Guid.NewGuid()),
+                TargetEntity = new Entity(Contact.EntityLogicalName) { Id = Guid.NewGuid() },
                 TargetEntityReference = new EntityReference(Contact.EntityLogicalName, Guid.NewGuid())
             };
 
