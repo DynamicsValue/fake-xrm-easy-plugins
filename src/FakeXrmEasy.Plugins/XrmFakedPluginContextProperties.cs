@@ -83,11 +83,12 @@ namespace FakeXrmEasy.Plugins
                        return _service;
                    }
 
+#if FAKE_XRM_EASY_9
                    if (t == typeof(ILogger))
                    {
                        return _loggerService;
                    }
-
+#endif
                    if (t == typeof(ITracingService))
                    {
                        return _tracingService;
