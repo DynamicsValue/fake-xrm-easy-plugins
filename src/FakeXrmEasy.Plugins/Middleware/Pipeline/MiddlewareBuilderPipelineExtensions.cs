@@ -6,6 +6,8 @@ using Microsoft.Xrm.Sdk;
 
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Plugins.Audit;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -15,19 +17,30 @@ namespace FakeXrmEasy.Middleware.Pipeline
     public static class MiddlewareBuilderPipelineExtensions
     {
         /// <summary>
-        /// Enables Pipeline Simulation in middleware
+        /// Enables Pipeline Simulation in middleware with default options
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
         public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder) 
         {
-            builder.Add(context => {
-                var pipelineOptions = new PipelineOptions()
-                {
-                    UsePipelineSimulation = true
-                };
+            return builder.AddPipelineSimulation(new PipelineOptions());
+        }
 
-                context.SetProperty(pipelineOptions);
+        /// <summary>
+        /// Enables Piepeline Simulation in middleware with custom options
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="options">The custom options</param>
+        /// <returns></returns>
+        public static IMiddlewareBuilder AddPipelineSimulation(this IMiddlewareBuilder builder, PipelineOptions options)
+        {
+            builder.Add(context => {
+                context.SetProperty(options);
+
+                if(options.UsePluginStepAudit)
+                {
+                    context.SetProperty<IPluginStepAudit>(new PluginStepAudit());
+                }
             });
 
             return builder;
@@ -40,23 +53,31 @@ namespace FakeXrmEasy.Middleware.Pipeline
         /// <returns></returns>
         public static IMiddlewareBuilder UsePipelineSimulation(this IMiddlewareBuilder builder) 
         {
-
             Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware = next => {
 
                 return (IXrmFakedContext context, OrganizationRequest request) => {
                     
                     if(CanHandleRequest(context, request)) 
                     {
-                        var preImage = GetPreImageEntityForRequest(context, request);
+                        var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation) ?
+                                            GetPreImageEntityForRequest(context, request) : null;
 
-                        ProcessPreValidation(context, request, preImage);
-                        ProcessPreOperation(context, request, preImage);
+                        var preImagePostOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
+                                            GetPreImageEntityForRequest(context, request) : null;
+
+
+                        var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
+
+                        ProcessPreValidation(context, request, target);
+                        ProcessPreOperation(context, request, target, preImagePreOperation);
 
                         var response = next.Invoke(context, request);
 
-                        var postImage = GetPostImageEntityForRequest(context, request);
 
-                        ProcessPostOperation(context, request, preImage, postImage);
+                        var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
+                                            GetPostImageEntityForRequest(context, request) : null;
+
+                        ProcessPostOperation(context, request, target, preImagePostOperation, postImagePostOperation);
                         return response;
                     }
                     else 
@@ -76,20 +97,20 @@ namespace FakeXrmEasy.Middleware.Pipeline
             return pipelineOptions?.UsePipelineSimulation == true;
         }
 
-        private static void ProcessPreValidation(IXrmFakedContext context, OrganizationRequest request, Entity preEntity = null, Entity postEntity = null)
+        private static void ProcessPreValidation(IXrmFakedContext context, OrganizationRequest request, object target, Entity preEntity = null, Entity postEntity = null)
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, request, preEntity, postEntity);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, request, target, preEntity, postEntity);
         }
 
-        private static void ProcessPreOperation(IXrmFakedContext context, OrganizationRequest request, Entity preEntity = null, Entity postEntity = null) 
+        private static void ProcessPreOperation(IXrmFakedContext context, OrganizationRequest request, object target, Entity preEntity = null, Entity postEntity = null) 
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, request, preEntity, postEntity);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, request, target, preEntity, postEntity);
         }
 
-        private static void ProcessPostOperation(IXrmFakedContext context, OrganizationRequest request, Entity preEntity = null, Entity postEntity = null) 
+        private static void ProcessPostOperation(IXrmFakedContext context, OrganizationRequest request, object target, Entity preEntity = null, Entity postEntity = null) 
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, request, preEntity, postEntity);
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, request, preEntity, postEntity);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, request, target, preEntity, postEntity);
+            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, request, target, preEntity, postEntity);
         }
 
         private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
@@ -128,9 +149,6 @@ namespace FakeXrmEasy.Middleware.Pipeline
             {
                 return null;
             }
-
-            string logicalName = "";
-            Guid id = Guid.Empty;
 
             if (target is Entity)
             {

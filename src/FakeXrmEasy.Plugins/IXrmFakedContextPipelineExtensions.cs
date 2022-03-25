@@ -10,6 +10,9 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Middleware.Pipeline;
+using FakeXrmEasy.Plugins.Audit;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -23,11 +26,13 @@ namespace FakeXrmEasy.Pipeline
         /// </summary>
         /// <typeparam name="TPlugin">The plugin to register the step for.</typeparam>
         /// <typeparam name="TEntity">The entity to filter this step for.</typeparam>
+        /// <param name="context">The faked context to register this plugin against</param>
         /// <param name="message">The message that should trigger the execution of plugin.</param>
         /// <param name="stage">The stage when the plugin should be executed.</param>
         /// <param name="mode">The mode in which the plugin should be executed.</param>
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
+        /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
         public static void RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
             where TEntity : Entity, new()
@@ -42,12 +47,14 @@ namespace FakeXrmEasy.Pipeline
         /// Registers the <typeparamref name="TPlugin"/> as a SDK Message Processing Step.
         /// </summary>
         /// <typeparam name="TPlugin">The plugin to register the step for.</typeparam>
+        /// <param name="context">The faked context to register this plugin against</param>
         /// <param name="message">The message that should trigger the execution of plugin.</param>
         /// <param name="stage">The stage when the plugin should be executed.</param>
         /// <param name="mode">The mode in which the plugin should be executed.</param>
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="primaryEntityTypeCode">The entity type code to filter this step for.</param>
+        /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
         public static void RegisterPluginStep<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
         {
@@ -195,6 +202,8 @@ namespace FakeXrmEasy.Pipeline
 
         private static void ExecutePipelinePlugins(this IXrmFakedContext context, IEnumerable<Entity> pluginSteps, object target, Entity previousValues, Entity resultingAttributes)
         {
+            var isAuditEnabled = context.GetProperty<PipelineOptions>().UsePluginStepAudit;
+
             foreach (var pluginStep in pluginSteps)
             {
                 var pluginMethod = GetPluginMethod(pluginStep);
@@ -224,7 +233,34 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, resultingAttributes);
 
                 pluginMethod.Invoke(null, new object[] { context, pluginContext });
+
+                if(isAuditEnabled)
+                {
+                    context.AddPluginStepAuditDetails(pluginMethod, pluginContext, pluginStep, target);
+                }
             }
+        }
+
+        private static void AddPluginStepAuditDetails(this IXrmFakedContext context, MethodInfo pluginMethod, XrmFakedPluginExecutionContext pluginContext, Entity pluginStep, object target)
+        {
+            var pluginType = pluginMethod.GetGenericArguments()[0];
+            var pluginStepAuditDetails = new PluginStepAuditDetails()
+            {
+                PluginAssemblyType = pluginType,
+                PluginStepId = pluginStep.Id,
+                MessageName = pluginContext.MessageName,
+                Stage = (ProcessingStepStage)pluginContext.Stage
+            };
+            
+            if (target is Entity) 
+                pluginStepAuditDetails.TargetEntity = (Entity) target;
+            
+            if (target is EntityReference)
+                pluginStepAuditDetails.TargetEntityReference = (EntityReference)target;
+
+
+            var pluginStepAudit = context.GetProperty<IPluginStepAudit>() as PluginStepAudit;
+            pluginStepAudit.Add(pluginStepAuditDetails);
         }
 
         private static MethodInfo GetPluginMethod(Entity pluginEntity)

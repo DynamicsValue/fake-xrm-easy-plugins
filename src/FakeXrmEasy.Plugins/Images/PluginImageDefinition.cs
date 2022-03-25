@@ -1,12 +1,12 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace FakeXrmEasy.Plugins
+namespace FakeXrmEasy.Plugins.Images
 {
     /// <summary>
     /// Contains necessary info about a plugin image used in Pipeline Simulation
+    /// 
+    /// 
     /// </summary>
     public class PluginImageDefinition
     {
