@@ -1,8 +1,8 @@
-name: CI
+name: CI-PR-3x
 
 on:
-  push:
-    branches: [ 2x-dev, 3x-dev ]
+  pull_request:
+    branches: [ 3x-dev ]
     paths-ignore:
       - 'coverage/**'
       - '*.md'
@@ -105,58 +105,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
-
-  pack-push:
-    needs:  [build-netcore, build-windows, sonar]
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup .NET Core for Actual Source
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.dotnet-version }}
- 
-      - name: Disable local packages feed
-        run: dotnet nuget disable source "local-packages"
-
-      - name: Enable GitHub packages feed
-        run: dotnet nuget enable source github 
-
-      - name: Build
-        run: pwsh ./build.ps1 -targetFrameworks 'all'
-        env: 
-          NUGET_USERNAME: DynamicsValue
-          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Pack Src
-        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
-        env: 
-          NUGET_USERNAME: DynamicsValue
-          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Push Src
-        run: nuget.exe push .\nupkgs\FakeXrmEasy.Plugins.*.nupkg -Source ${{ env.source-url }}
-        env: 
-          NUGET_USERNAME: DynamicsValue
-          NUGET_AUTH_TOKEN: ${{ github.token }}
-          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pack Tests
-        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
-        env: 
-          NUGET_USERNAME: DynamicsValue
-          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Push Tests
-        run: nuget.exe push .\nupkgs\FakeXrmEasy.PluginsTests.*.nupkg -Source ${{ env.source-url }}
-        env: 
-          NUGET_USERNAME: DynamicsValue
-          NUGET_AUTH_TOKEN: ${{ github.token }}
-          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    
-    
-    
-    
