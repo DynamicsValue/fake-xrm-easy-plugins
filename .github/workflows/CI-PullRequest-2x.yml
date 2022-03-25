@@ -41,7 +41,7 @@ jobs:
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
-sonar:
+  sonar:
     name: Sonar Quality Gate
     runs-on: windows-latest
     steps:
