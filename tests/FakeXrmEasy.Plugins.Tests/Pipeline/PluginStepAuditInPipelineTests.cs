@@ -101,7 +101,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                 Target = account
             });
 
-            var pluginStepAudit = _context.GetProperty<IPluginStepAudit>();
+            var pluginStepAudit = _context.GetPluginStepAudit();
             var stepsAudit = pluginStepAudit.CreateQuery().ToList();
 
             Assert.Single(stepsAudit);
@@ -111,6 +111,66 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal("Create", auditedStep.MessageName);
             Assert.Equal(stage, auditedStep.Stage);
             Assert.Equal(typeof(AccountNumberPlugin), auditedStep.PluginAssemblyType);
+        }
+
+        [Fact]
+        public void Should_capture_multiple_plugin_step_executions_if_audit_is_enabled()
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, primaryEntityTypeCode: Account.EntityTypeCode);
+            _context.RegisterPluginStep<FollowupPlugin>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, primaryEntityTypeCode: Account.EntityTypeCode);
+
+            var account = new Account() { Name = "Some name" };
+
+            _service.Execute(new CreateRequest()
+            {
+                Target = account
+            });
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Equal(2, stepsAudit.Count);
+
+            Assert.Equal("Create", stepsAudit[0].MessageName);
+            Assert.Equal(ProcessingStepStage.Preoperation, stepsAudit[0].Stage);
+            Assert.Equal(typeof(AccountNumberPlugin), stepsAudit[0].PluginAssemblyType);
+
+            Assert.Equal("Create", stepsAudit[1].MessageName);
+            Assert.Equal(ProcessingStepStage.Postoperation, stepsAudit[1].Stage);
+            Assert.Equal(typeof(FollowupPlugin), stepsAudit[1].PluginAssemblyType);
+        }
+
+        [Fact]
+        public void Should_capture_the_correct_order_of_execution_when_two_plugins_are_registered_against_then_same_message_and_stage()
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<FollowupPlugin>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, rank: 2, primaryEntityTypeCode: Account.EntityTypeCode);
+            _context.RegisterPluginStep<FollowupPlugin2>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, rank: 1, primaryEntityTypeCode: Account.EntityTypeCode);
+
+            var account = new Account() { Name = "Some name" };
+
+            _service.Execute(new CreateRequest()
+            {
+                Target = account
+            });
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Equal(2, stepsAudit.Count);
+
+            Assert.Equal("Create", stepsAudit[0].MessageName);
+            Assert.Equal(ProcessingStepStage.Postoperation, stepsAudit[0].Stage);
+            Assert.Equal(typeof(FollowupPlugin2), stepsAudit[0].PluginAssemblyType);
+
+            Assert.Equal("Create", stepsAudit[1].MessageName);
+            Assert.Equal(ProcessingStepStage.Postoperation, stepsAudit[1].Stage);
+            Assert.Equal(typeof(FollowupPlugin), stepsAudit[1].PluginAssemblyType);
         }
 
         [Fact]
@@ -128,7 +188,9 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                 Target = account
             });
 
+
             Assert.Throws<TypeAccessException>(() => _context.GetProperty<IPluginStepAudit>());
+            Assert.Throws<PluginStepAuditNotEnabledException>(() => _context.GetPluginStepAudit());
         }
 
         /*

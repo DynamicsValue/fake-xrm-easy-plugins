@@ -74,10 +74,8 @@ namespace FakeXrmEasy.Plugins
 
         public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
         {
-
             var fakedServiceProvider = A.Fake<IServiceProvider>();
 
-            
             A.CallTo(() => fakedServiceProvider.GetService(A<Type>._))
                .ReturnsLazily((Type t) =>
                {
@@ -86,12 +84,6 @@ namespace FakeXrmEasy.Plugins
                        return _service;
                    }
 
-#if FAKE_XRM_EASY_9
-                   if (t == typeof(ILogger))
-                   {
-                       return _loggerService;
-                   }
-#endif
                    if (t == typeof(ITracingService))
                    {
                        return _tracingService;
@@ -118,6 +110,11 @@ namespace FakeXrmEasy.Plugins
                    }
 
 #if FAKE_XRM_EASY_9
+                   if (t == typeof(ILogger))
+                   {
+                       return _loggerService;
+                   }
+
                    if (t == typeof(IEntityDataSourceRetrieverService))
                    {
                        return _entityDataSourceRetrieverService;
@@ -130,6 +127,11 @@ namespace FakeXrmEasy.Plugins
         
         }
 
+        /// <summary>
+        /// Returns a fake plugin execution context from a default plugin context in code
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         protected IPluginExecutionContext GetFakedPluginContext(XrmFakedPluginExecutionContext ctx)
         {
             var context = A.Fake<IPluginExecutionContext>();
@@ -143,7 +145,11 @@ namespace FakeXrmEasy.Plugins
         }
 
         
-
+        /// <summary>
+        /// Returns a fake execution context
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         protected IExecutionContext GetFakedExecutionContext(XrmFakedPluginExecutionContext ctx)
         {
             var context = A.Fake<IExecutionContext>();
