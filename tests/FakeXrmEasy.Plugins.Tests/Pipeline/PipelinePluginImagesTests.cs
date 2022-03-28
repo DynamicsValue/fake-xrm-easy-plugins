@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
-    public class PipelinePluginImagesTests: FakeXrmEasyPipelineTests
+    public class PipelinePluginImagesTests: FakeXrmEasyPipelineTestsBase
     {
         private readonly Contact _previousContact;
         private readonly Contact _newContact;

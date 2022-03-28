@@ -134,10 +134,10 @@ namespace FakeXrmEasy.Pipeline
             }
         }
 
-        internal static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, 
+        internal static void ExecutePipelineStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, 
             OrganizationRequest request, object target = null, Entity preEntity = null, Entity postEntity = null)
         {
-            var plugins = context.GetPluginStepsForOrganizationRequest(method, stage, mode, request);
+            var plugins = context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, request);
             if(plugins == null)
                 return;
 
@@ -148,20 +148,20 @@ namespace FakeXrmEasy.Pipeline
 
             if (target is Entity)
             {
-                context.ExecutePipelineStage(method, stage, mode, target as Entity, preEntity, postEntity);
+                context.ExecutePipelineStage(requestName, stage, mode, target as Entity, preEntity, postEntity);
             }
             else if (target is EntityReference)
             {
-                context.ExecutePipelineStage(method, stage, mode, target as EntityReference, preEntity, postEntity);
+                context.ExecutePipelineStage(requestName, stage, mode, target as EntityReference, preEntity, postEntity);
             }
         }
 
-        private static IEnumerable<Entity> GetPluginStepsForOrganizationRequest(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        internal static IEnumerable<Entity> GetPluginStepsForOrganizationRequest(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
         {
             var target = GetTargetForRequest(request);
             if(target is Entity)
             {
-                return context.GetStepsForStage(method, stage, mode, target as Entity);
+                return context.GetStepsForStage(requestName, stage, mode, target as Entity);
             }
             else if (target is EntityReference)
             {
@@ -172,7 +172,7 @@ namespace FakeXrmEasy.Pipeline
                     return null;
                 }
 
-                return context.GetStepsForStage(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
+                return context.GetStepsForStage(requestName, stage, mode, (Entity)Activator.CreateInstance(entityType));
             }
 
             return null;
@@ -277,7 +277,7 @@ namespace FakeXrmEasy.Pipeline
             return pluginMethod;
         }
 
-        private static IEnumerable<Entity> GetStepsForStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
+        private static IEnumerable<Entity> GetStepsForStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
         {
             var query = new QueryExpression("sdkmessageprocessingstep")
             {
@@ -309,7 +309,7 @@ namespace FakeXrmEasy.Pipeline
                         {
                             Conditions =
                             {
-                                new ConditionExpression("name", ConditionOperator.Equal, method)
+                                new ConditionExpression("name", ConditionOperator.Equal, requestName)
                             }
                         }
                     },

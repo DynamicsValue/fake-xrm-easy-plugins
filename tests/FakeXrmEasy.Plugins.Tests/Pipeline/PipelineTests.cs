@@ -11,7 +11,7 @@ using FakeXrmEasy.Pipeline;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
-    public class PipelineTests: FakeXrmEasyPipelineTests
+    public class PipelineTests: FakeXrmEasyPipelineTestsBase
     {
         private readonly Account _account;
         private readonly Contact _contact;
