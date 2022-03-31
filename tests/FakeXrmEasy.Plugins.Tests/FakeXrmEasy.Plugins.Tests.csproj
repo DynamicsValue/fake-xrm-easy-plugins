@@ -70,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
+    
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[8.2.0.2,9.0)" />
     <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="[8.2.0.1,9.0)" />
   </ItemGroup>
@@ -112,6 +113,7 @@
       <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
       <PackageReference Include="xunit.runner.console" Version="2.4.1" />
       <PackageReference Include="coverlet.collector" Version="1.2.1" />
+      <PackageReference Include="BenchmarkDotNet" Version="[0.10.3]" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == ''">
