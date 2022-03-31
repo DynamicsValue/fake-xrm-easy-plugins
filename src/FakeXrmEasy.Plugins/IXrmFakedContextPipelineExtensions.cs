@@ -138,7 +138,7 @@ namespace FakeXrmEasy.Pipeline
         internal static void ExecutePipelineStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, 
             OrganizationRequest request, object target = null, Entity preEntity = null, Entity postEntity = null)
         {
-            var plugins = context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, request);
+            var plugins = context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, request);
             if(plugins == null)
                 return;
 
@@ -204,7 +204,7 @@ namespace FakeXrmEasy.Pipeline
         private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, 
                                                 Entity entity, Entity previousValues = null, Entity resultingAttributes = null)
         {
-            var plugins = context.GetStepsForStageWithRetrieveMultiple(method, stage, mode, entity);
+            var plugins = context.GetStepsForStage(method, stage, mode, entity);
             context.ExecutePipelinePlugins(plugins, entity, previousValues, resultingAttributes);
         }
 
@@ -218,7 +218,7 @@ namespace FakeXrmEasy.Pipeline
                 return;
             }
 
-            var plugins = context.GetStepsForStageWithRetrieveMultiple(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
+            var plugins = context.GetStepsForStage(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
 
             context.ExecutePipelinePlugins(plugins, entityReference, previousValues, resultingAttributes);
         }
@@ -438,7 +438,9 @@ namespace FakeXrmEasy.Pipeline
                                }).OrderBy(ps => ps.Rank)
                                  .ToList();
 
-            return pluginSteps.Where(ps => ps.FilteringAttributes.Count == 0 || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
+            return pluginSteps
+                        .Where(ps => ps.EntityTypeCode == null || ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode)
+                        .Where(ps => ps.FilteringAttributes.Count == 0 || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
         }
 
         private static IEnumerable<Entity> GetImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
