@@ -9,12 +9,12 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 {
-    public class GetStepsForStageTests : FakeXrmEasyTestsBase
+    public class GetStepsForStageWithRetrieveMultipleTests : FakeXrmEasyTestsBase
     {
         private readonly CreateRequest _createRequest;
         private readonly Account _target;
 
-        public GetStepsForStageTests()
+        public GetStepsForStageWithRetrieveMultipleTests()
         {
             _target = new Account() { };
 
@@ -99,6 +99,40 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
             var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
             Assert.Empty(steps);
+        }
+
+        [Theory]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_multiple_registered_plugin_steps_for_exact_request_name_stage_and_mode_ordered_by_rank(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            _context.RegisterPluginStep<FollowupPlugin2>(requestName, stage, mode, rank: 2);
+            _context.RegisterPluginStep<FollowupPlugin>(requestName, stage, mode, rank: 1);
+
+            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest).ToList();
+            Assert.Equal(2, steps.Count);
+
+            var firstPluginStep = steps[0];
+            Assert.Equal((int)stage, (firstPluginStep["stage"] as OptionSetValue).Value);
+            Assert.Equal((int)mode, (firstPluginStep["mode"] as OptionSetValue).Value);
+            Assert.Equal(requestName, (firstPluginStep["sdkmessage.name"] as AliasedValue).Value);
+
+            var firstPluginType = typeof(FollowupPlugin);
+            Assert.Equal(firstPluginType.Assembly.GetName().Name, (firstPluginStep["plugintype.assemblyname"] as AliasedValue).Value);
+            Assert.Equal(firstPluginType.FullName, (firstPluginStep["plugintype.typename"] as AliasedValue).Value);
+
+            var secondPluginStep = steps[1];
+            Assert.Equal((int)stage, (secondPluginStep["stage"] as OptionSetValue).Value);
+            Assert.Equal((int)mode, (secondPluginStep["mode"] as OptionSetValue).Value);
+            Assert.Equal(requestName, (secondPluginStep["sdkmessage.name"] as AliasedValue).Value);
+
+            var secondPluginType = typeof(FollowupPlugin2);
+            Assert.Equal(secondPluginType.Assembly.GetName().Name, (secondPluginStep["plugintype.assemblyname"] as AliasedValue).Value);
+            Assert.Equal(secondPluginType.FullName, (secondPluginStep["plugintype.typename"] as AliasedValue).Value);
         }
     }
 }

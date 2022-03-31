@@ -161,7 +161,7 @@ namespace FakeXrmEasy.Pipeline
             var target = GetTargetForRequest(request);
             if(target is Entity)
             {
-                return context.GetStepsForStage(requestName, stage, mode, target as Entity);
+                return context.GetStepsForStageWithRetrieveMultiple(requestName, stage, mode, target as Entity);
             }
             else if (target is EntityReference)
             {
@@ -172,7 +172,7 @@ namespace FakeXrmEasy.Pipeline
                     return null;
                 }
 
-                return context.GetStepsForStage(requestName, stage, mode, (Entity)Activator.CreateInstance(entityType));
+                return context.GetStepsForStageWithRetrieveMultiple(requestName, stage, mode, (Entity)Activator.CreateInstance(entityType));
             }
 
             return null;
@@ -181,7 +181,7 @@ namespace FakeXrmEasy.Pipeline
         private static void ExecutePipelineStage(this IXrmFakedContext context, string method, ProcessingStepStage stage, ProcessingStepMode mode, 
                                                 Entity entity, Entity previousValues = null, Entity resultingAttributes = null)
         {
-            var plugins = context.GetStepsForStage(method, stage, mode, entity);
+            var plugins = context.GetStepsForStageWithRetrieveMultiple(method, stage, mode, entity);
             context.ExecutePipelinePlugins(plugins, entity, previousValues, resultingAttributes);
         }
 
@@ -195,7 +195,7 @@ namespace FakeXrmEasy.Pipeline
                 return;
             }
 
-            var plugins = context.GetStepsForStage(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
+            var plugins = context.GetStepsForStageWithRetrieveMultiple(method, stage, mode, (Entity)Activator.CreateInstance(entityType));
 
             context.ExecutePipelinePlugins(plugins, entityReference, previousValues, resultingAttributes);
         }
@@ -277,7 +277,7 @@ namespace FakeXrmEasy.Pipeline
             return pluginMethod;
         }
 
-        private static IEnumerable<Entity> GetStepsForStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
+        private static IEnumerable<Entity> GetStepsForStageWithRetrieveMultiple(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
         {
             var query = new QueryExpression("sdkmessageprocessingstep")
             {
