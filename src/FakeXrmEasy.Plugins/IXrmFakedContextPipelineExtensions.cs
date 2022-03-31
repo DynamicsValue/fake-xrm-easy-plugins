@@ -371,48 +371,6 @@ namespace FakeXrmEasy.Pipeline
 
         private static IEnumerable<PluginStepDefinition> GetStepsForStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
         {
-            var query = new QueryExpression("sdkmessageprocessingstep")
-            {
-                ColumnSet = new ColumnSet("configuration", "filteringattributes", "stage", "mode"),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("stage", ConditionOperator.Equal, (int)stage),
-                        new ConditionExpression("mode", ConditionOperator.Equal, (int)mode)
-                    }
-                },
-                Orders =
-                {
-                    new OrderExpression("rank", OrderType.Ascending)
-                },
-                LinkEntities =
-                {
-                    new LinkEntity("sdkmessageprocessingstep", "sdkmessagefilter", "sdkmessagefilterid", "sdkmessagefilterid", JoinOperator.LeftOuter)
-                    {
-                        EntityAlias = "sdkmessagefilter",
-                        Columns = new ColumnSet("primaryobjecttypecode")
-                    },
-                    new LinkEntity("sdkmessageprocessingstep", "sdkmessage", "sdkmessageid", "sdkmessageid", JoinOperator.Inner)
-                    {
-                        EntityAlias = "sdkmessage",
-                        Columns = new ColumnSet("name"),
-                        LinkCriteria =
-                        {
-                            Conditions =
-                            {
-                                new ConditionExpression("name", ConditionOperator.Equal, requestName)
-                            }
-                        }
-                    },
-                    new LinkEntity("sdkmessageprocessingstep", "plugintype", "eventhandler", "plugintypeid", JoinOperator.Inner)
-                    {
-                        EntityAlias = "plugintype",
-                        Columns = new ColumnSet("assemblyname", "typename")
-                    }
-                }
-            };
-
             var entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
 
             var pluginSteps = (from step in context.CreateQuery("sdkmessageprocessingstep")
