@@ -137,7 +137,7 @@ namespace FakeXrmEasy.Pipeline
         internal static void ExecutePipelineStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, 
             OrganizationRequest request, object target = null, Entity preEntity = null, Entity postEntity = null)
         {
-            var plugins = context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, request);
+            var plugins = context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, request);
             if(plugins == null)
                 return;
 
@@ -156,7 +156,7 @@ namespace FakeXrmEasy.Pipeline
             }
         }
 
-        internal static IEnumerable<Entity> GetPluginStepsForOrganizationRequest(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        internal static IEnumerable<Entity> GetPluginStepsForOrganizationRequestWithRetrieveMultiple(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
         {
             var target = GetTargetForRequest(request);
             if(target is Entity)
