@@ -3,7 +3,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 
-namespace FakeXrmEasy.Plugins.Images
+namespace FakeXrmEasy.Plugins.PluginImages
 {
     /// <summary>
     /// Defines a PostImage is available for specific requests and stages

@@ -6,7 +6,7 @@ using Microsoft.Xrm.Sdk;
 
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Plugins.Audit;
 
 namespace FakeXrmEasy.Middleware.Pipeline

@@ -1,7 +1,7 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
 using System.Collections.Generic;
 
-namespace FakeXrmEasy.Plugins.Images
+namespace FakeXrmEasy.Plugins.PluginImages
 {
     /// <summary>
     /// Contains necessary info about a plugin image used in Pipeline Simulation
@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Plugins.Images
         public ProcessingStepImageType ImageType { get; private set; }
 
         /// <summary>
-        /// 
+        /// Attributes that this plugin image contains
         /// </summary>
         public IEnumerable<string> Attributes { get; private set; }
 

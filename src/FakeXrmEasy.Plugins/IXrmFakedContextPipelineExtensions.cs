@@ -10,7 +10,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
@@ -432,41 +432,6 @@ namespace FakeXrmEasy.Pipeline
             query.Criteria.AddFilter(filter);
 
             return context.GetOrganizationService().RetrieveMultiple(query).Entities.AsEnumerable();
-        }
-
-        private static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
-        {
-            var query = new QueryExpression("sdkmessageprocessingstepimage")
-            {
-                ColumnSet = new ColumnSet("name", "imagetype", "attributes"),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, stepId)
-                    }
-                },
-                Orders =
-                {
-                    new OrderExpression("rank", OrderType.Ascending)
-                }
-            };
-
-            FilterExpression filter = new FilterExpression(LogicalOperator.Or)
-            {
-                Conditions = { new ConditionExpression("imagetype", ConditionOperator.Equal, (int)ProcessingStepImageType.Both) }
-            };
-
-            if (imageType == ProcessingStepImageType.PreImage || imageType == ProcessingStepImageType.PostImage)
-            {
-                filter.AddCondition(new ConditionExpression("imagetype", ConditionOperator.Equal, (int)imageType));
-            }
-
-            query.Criteria.AddFilter(filter);
-
-            var service = context.GetOrganizationService();
-
-            return service.RetrieveMultiple(query).Entities.AsEnumerable();
         }
 
         private static EntityImageCollection GetEntityImageCollection(IEnumerable<Entity> imageDefinitions, Entity values)

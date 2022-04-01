@@ -2,6 +2,7 @@
 
 ### Added
 
+Improved performance of retrieval of Plugin steps, added benchmark tests DynamicsValue/fake-xrm-easy#14
 PluginStepAudit and new UsePluginStepAudit in PipelineOptions - DynamicsValue/fake-xrm-easy#19
 PreValidation execution in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
 PreImages and Postimages execution in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
