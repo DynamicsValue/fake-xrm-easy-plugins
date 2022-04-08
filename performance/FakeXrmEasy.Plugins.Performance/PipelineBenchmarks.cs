@@ -3,7 +3,10 @@ using Crm;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Performance.PluginsForTesting;
+using FakeXrmEasy.Plugins.PluginImages;
 using Microsoft.Xrm.Sdk.Messages;
+using System;
+using System.Linq;
 
 namespace FakeXrmEasy.Plugins.Performance
 {
@@ -11,7 +14,7 @@ namespace FakeXrmEasy.Plugins.Performance
     {
         private readonly CreateRequest _createRequest;
         private readonly Account _target;
-
+        private Guid _lastPluginStepId;
         public PipelineBenchmarks()
         {
             _target = new Account() { };
@@ -21,22 +24,37 @@ namespace FakeXrmEasy.Plugins.Performance
                 Target = _target
             };
 
+            string registeredPreImageName = "PostImage";
+            PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, ProcessingStepImageType.PostImage);
+
             for (var i = 0; i < 1000; i++)
             {
-                _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, rank: i + 1);
+                _lastPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, rank: i + 1, registeredImages: new PluginImageDefinition[] { preImageDefinition });
             }
         }
 
         [Benchmark]
         public void GetPluginStepsWithRetrieveMultiple()
         {
-            _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, _createRequest);
+            _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
 
         [Benchmark]
-        public void GetPluginStepsWithoutRetrieveMultiple()
+        public void GetPluginStepsWithQuery()
         {
-            _context.GetPluginStepsForOrganizationRequest("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, _createRequest);
+            _context.GetPluginStepsForOrganizationRequest("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
+        }
+
+        [Benchmark]
+        public void GetPluginStepImageWithRetrieveMultiple()
+        {
+            _context.GetPluginImageDefinitionsWithRetrieveMultiple(_lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
+        }
+
+        [Benchmark]
+        public void GetPluginStepImageWithQuery()
+        {
+            _context.GetPluginImageDefinitionsWithQuery(_lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
         }
     }
 }
