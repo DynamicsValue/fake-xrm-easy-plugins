@@ -3,6 +3,7 @@ using System;
 
 namespace FakeXrmEasy.Tests.PluginsForTesting
 {
+
     public class AccountNumberPlugin : IPlugin
     {
         /// <summary>

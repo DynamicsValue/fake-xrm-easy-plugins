@@ -34,14 +34,14 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
-        public static void RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, IEnumerable<PluginImageDefinition> registeredImages = null)
+        public static Guid RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
             where TEntity : Entity, new()
         {
             var entity = new TEntity();
             var entityTypeCode = (int)entity.GetType().GetField("EntityTypeCode").GetValue(entity);
 
-            context.RegisterPluginStep<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, registeredImages);
+            return context.RegisterPluginStep<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, registeredImages);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="primaryEntityTypeCode">The entity type code to filter this step for.</param>
         /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
-        public static void RegisterPluginStep<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
+        public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
         {
             // Message
@@ -104,9 +104,11 @@ namespace FakeXrmEasy.Pipeline
             }
 
             // Message Step
+            var sdkMessageProcessingStepId = Guid.NewGuid();
+
             var sdkMessageProcessingStep = new Entity("sdkmessageprocessingstep")
             {
-                Id = Guid.NewGuid(),
+                Id = sdkMessageProcessingStepId,
                 ["eventhandler"] = pluginType.ToEntityReference(),
                 ["sdkmessageid"] = sdkMessage.ToEntityReference(),
                 ["sdkmessagefilterid"] = sdkFilter?.ToEntityReference(),
@@ -133,6 +135,8 @@ namespace FakeXrmEasy.Pipeline
                     context.AddEntityWithDefaults(sdkMessageProcessingStepImage);
                 }
             }
+
+            return sdkMessageProcessingStepId;
         }
 
         internal static void ExecutePipelineStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, 
@@ -234,13 +238,13 @@ namespace FakeXrmEasy.Pipeline
                 IEnumerable<Entity> preImageDefinitions = null;
                 if (previousValues != null)
                 {
-                    preImageDefinitions = context.GetImageDefinitions(pluginStep.Id, ProcessingStepImageType.PreImage);
+                    preImageDefinitions = context.GetPluginImageDefinitions(pluginStep.Id, ProcessingStepImageType.PreImage);
                 }
 
                 IEnumerable<Entity> postImageDefinitions = null;
                 if (resultingAttributes != null)
                 {
-                    postImageDefinitions = context.GetImageDefinitions(pluginStep.Id, ProcessingStepImageType.PostImage);
+                    postImageDefinitions = context.GetPluginImageDefinitions(pluginStep.Id, ProcessingStepImageType.PostImage);
                 }
 
                 var pluginContext = context.GetDefaultPluginContext();
@@ -401,7 +405,7 @@ namespace FakeXrmEasy.Pipeline
                         .Where(ps => ps.FilteringAttributes.Count == 0 || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
         }
 
-        private static IEnumerable<Entity> GetImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
+        internal static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
         {
             var query = new QueryExpression("sdkmessageprocessingstepimage")
             {
@@ -412,10 +416,6 @@ namespace FakeXrmEasy.Pipeline
                     {
                         new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, stepId)
                     }
-                },
-                Orders =
-                {
-                    new OrderExpression("rank", OrderType.Ascending)
                 }
             };
 
