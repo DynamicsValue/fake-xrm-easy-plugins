@@ -407,6 +407,12 @@ namespace FakeXrmEasy.Pipeline
 
         internal static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
         {
+            return context.GetPluginImageDefinitionsWithQuery(stepId, imageType);
+        }
+
+
+        internal static IEnumerable<Entity> GetPluginImageDefinitionsWithRetrieveMultiple(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
+        {
             var query = new QueryExpression("sdkmessageprocessingstepimage")
             {
                 ColumnSet = new ColumnSet("name", "imagetype", "attributes"),
@@ -432,6 +438,16 @@ namespace FakeXrmEasy.Pipeline
             query.Criteria.AddFilter(filter);
 
             return context.GetOrganizationService().RetrieveMultiple(query).Entities.AsEnumerable();
+        }
+
+        internal static IEnumerable<Entity> GetPluginImageDefinitionsWithQuery(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
+        {
+            return (from pluginStepImage in context.CreateQuery("sdkmessageprocessingstepimage")
+                    where ((EntityReference)pluginStepImage["sdkmessageprocessingstepid"]).Id == stepId
+                    where ((OptionSetValue) pluginStepImage["imagetype"]).Value == (int)ProcessingStepImageType.Both 
+                            || ((imageType == ProcessingStepImageType.PreImage || imageType == ProcessingStepImageType.PostImage) &&
+                                    ((OptionSetValue)pluginStepImage["imagetype"]).Value == (int)imageType)
+                    select pluginStepImage).AsEnumerable();
         }
 
         private static EntityImageCollection GetEntityImageCollection(IEnumerable<Entity> imageDefinitions, Entity values)

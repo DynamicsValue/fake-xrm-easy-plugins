@@ -28,7 +28,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData(ProcessingStepImageType.PostImage, ProcessingStepImageType.PreImage, false)]
         [InlineData(ProcessingStepImageType.PreImage, ProcessingStepImageType.Both, false)]
         [InlineData(ProcessingStepImageType.PostImage, ProcessingStepImageType.Both, false)]
-        public void Should_filter_image_by_relevant_pluging_step_and_not_others(ProcessingStepImageType registrationType, ProcessingStepImageType queryType, bool shouldContain)
+        public void Should_filter_image_by_relevant_pluging_step_and_not_others(ProcessingStepImageType registrationType, ProcessingStepImageType queryType, bool shouldContainImage)
         {
             string registeredPreImageName = "PreImage";
             PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, registrationType);
@@ -39,8 +39,45 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             var pluginImagesFirstPluginStep = _context.GetPluginImageDefinitions(pluginStepIdWithImages, queryType).ToList();
             var pluginImagesSecondPluginStep = _context.GetPluginImageDefinitions(otherPluginStepId, queryType).ToList();
 
-            Assert.Equal(shouldContain, pluginImagesFirstPluginStep.Count > 0);
+            Assert.Equal(shouldContainImage, pluginImagesFirstPluginStep.Count > 0);
             Assert.Empty(pluginImagesSecondPluginStep);
+
+            if(shouldContainImage)
+            {
+                Assert.True(pluginImagesFirstPluginStep[0].Attributes.Contains("name"));
+                Assert.True(pluginImagesFirstPluginStep[0].Attributes.Contains("imagetype"));
+            }
+
+        }
+
+        [Theory]
+        [InlineData(ProcessingStepImageType.PreImage, ProcessingStepImageType.PreImage, true)]
+        [InlineData(ProcessingStepImageType.PostImage, ProcessingStepImageType.PostImage, true)]
+        [InlineData(ProcessingStepImageType.Both, ProcessingStepImageType.PreImage, true)]
+        [InlineData(ProcessingStepImageType.Both, ProcessingStepImageType.PostImage, true)]
+        [InlineData(ProcessingStepImageType.PreImage, ProcessingStepImageType.PostImage, false)]
+        [InlineData(ProcessingStepImageType.PostImage, ProcessingStepImageType.PreImage, false)]
+        [InlineData(ProcessingStepImageType.PreImage, ProcessingStepImageType.Both, false)]
+        [InlineData(ProcessingStepImageType.PostImage, ProcessingStepImageType.Both, false)]
+        public void Should_filter_image_by_relevant_pluging_step_and_not_others_with_attributes(ProcessingStepImageType registrationType, ProcessingStepImageType queryType, bool shouldContainImage)
+        {
+            string registeredPreImageName = "PreImage";
+            PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, registrationType, new string[] { "name" });
+
+            var pluginStepIdWithImages = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, registeredImages: new PluginImageDefinition[] { preImageDefinition });
+            var otherPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+
+            var pluginImagesFirstPluginStep = _context.GetPluginImageDefinitions(pluginStepIdWithImages, queryType).ToList();
+            var pluginImagesSecondPluginStep = _context.GetPluginImageDefinitions(otherPluginStepId, queryType).ToList();
+
+            Assert.Equal(shouldContainImage, pluginImagesFirstPluginStep.Count > 0);
+            Assert.Empty(pluginImagesSecondPluginStep);
+
+            if (shouldContainImage)
+            {
+                Assert.True(pluginImagesFirstPluginStep[0].Attributes.Contains("attributes"));
+            }
+
         }
     }
 }
