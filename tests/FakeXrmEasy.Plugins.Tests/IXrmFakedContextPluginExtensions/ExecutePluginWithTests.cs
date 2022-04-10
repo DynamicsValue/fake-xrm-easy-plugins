@@ -173,6 +173,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
             pluginContext.PostEntityImages = new EntityImageCollection();
             pluginContext.OrganizationId = Guid.NewGuid();
             pluginContext.OrganizationName = "SomeOrg";
+            pluginContext.OwningExtension = new EntityReference(SdkMessageProcessingStep.EntityLogicalName, Guid.NewGuid());
             pluginContext.InitiatingUserId = Guid.NewGuid();
             pluginContext.UserId = Guid.NewGuid();
             pluginContext.SecondaryEntityName = "none";
@@ -200,6 +201,8 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
             Assert.Equal(pluginContext.PostEntityImages, executionContext.PostEntityImages);
             Assert.Equal(pluginContext.OrganizationId, executionContext.OrganizationId);
             Assert.Equal(pluginContext.OrganizationName, executionContext.OrganizationName);
+            Assert.Equal(pluginContext.OwningExtension.Id, executionContext.OwningExtension.Id);
+            Assert.Equal(pluginContext.OwningExtension.LogicalName, executionContext.OwningExtension.LogicalName);
             Assert.Equal(pluginContext.InitiatingUserId, executionContext.InitiatingUserId);
             Assert.Equal(pluginContext.UserId, executionContext.UserId);
             Assert.Equal(pluginContext.SecondaryEntityName, executionContext.SecondaryEntityName);

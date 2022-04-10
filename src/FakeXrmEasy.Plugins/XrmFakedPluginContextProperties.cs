@@ -4,11 +4,17 @@ using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.Plugins;
 using Microsoft.Xrm.Sdk;
+#if FAKE_XRM_EASY_9
+using Microsoft.Xrm.Sdk.PluginTelemetry;
+#endif
 using System;
 
 
 namespace FakeXrmEasy.Plugins 
 {
+    /// <summary>
+    /// Implementation to override default plugin context properties
+    /// </summary>
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {
         protected readonly IOrganizationService _service;
@@ -16,6 +22,10 @@ namespace FakeXrmEasy.Plugins
 
 #if FAKE_XRM_EASY_9
         protected readonly IEntityDataSourceRetrieverService _entityDataSourceRetrieverService;
+        /// <summary>
+        /// Plugin telemetry logger service
+        /// </summary>
+        protected ILogger _loggerService;
 #endif
 
         protected readonly IOrganizationServiceFactory _organizationServiceFactory;
@@ -35,6 +45,8 @@ namespace FakeXrmEasy.Plugins
                 _entityDataSourceRetrieverService = A.Fake<IEntityDataSourceRetrieverService>();
                 A.CallTo(() => _entityDataSourceRetrieverService.RetrieveEntityDataSource())
                     .ReturnsLazily(() => EntityDataSourceRetriever);
+
+            _loggerService = A.Fake<ILogger>();
 #endif
         }
 
@@ -49,15 +61,21 @@ namespace FakeXrmEasy.Plugins
         public IServiceEndpointNotificationService ServiceEndpointNotificationService => _serviceEndpointNotificationService;
 
 #if FAKE_XRM_EASY_9
+        /// <summary>
+        /// Provides a default EntityDataSourceRetriever
+        /// </summary>
         public Entity EntityDataSourceRetriever { get; set; }
+   
+        /// <summary>
+        /// Provides a custom implementation for an ILogger interface or returns the current implementation
+        /// </summary>
+        public ILogger Logger { get => _loggerService; set => _loggerService = value; }
 #endif
 
         public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
         {
-
             var fakedServiceProvider = A.Fake<IServiceProvider>();
 
-            
             A.CallTo(() => fakedServiceProvider.GetService(A<Type>._))
                .ReturnsLazily((Type t) =>
                {
@@ -92,6 +110,11 @@ namespace FakeXrmEasy.Plugins
                    }
 
 #if FAKE_XRM_EASY_9
+                   if (t == typeof(ILogger))
+                   {
+                       return _loggerService;
+                   }
+
                    if (t == typeof(IEntityDataSourceRetrieverService))
                    {
                        return _entityDataSourceRetrieverService;
@@ -104,6 +127,11 @@ namespace FakeXrmEasy.Plugins
         
         }
 
+        /// <summary>
+        /// Returns a fake plugin execution context from a default plugin context in code
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         protected IPluginExecutionContext GetFakedPluginContext(XrmFakedPluginExecutionContext ctx)
         {
             var context = A.Fake<IPluginExecutionContext>();
@@ -117,7 +145,11 @@ namespace FakeXrmEasy.Plugins
         }
 
         
-
+        /// <summary>
+        /// Returns a fake execution context
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         protected IExecutionContext GetFakedExecutionContext(XrmFakedPluginExecutionContext ctx)
         {
             var context = A.Fake<IExecutionContext>();
@@ -127,33 +159,38 @@ namespace FakeXrmEasy.Plugins
             return context;
         }
 
+        /// <summary>
+        /// Populates plugin context properties from a given fake plugin context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
         protected void PopulateExecutionContextPropertiesFromFakedContext(IExecutionContext context, XrmFakedPluginExecutionContext ctx)
         {
             var newUserId = Guid.NewGuid();
 
+            A.CallTo(() => context.BusinessUnitId).ReturnsLazily(() => ctx.BusinessUnitId);
+            A.CallTo(() => context.CorrelationId).ReturnsLazily(() => ctx.CorrelationId);
             A.CallTo(() => context.Depth).ReturnsLazily(() => ctx.Depth <= 0 ? 1 : ctx.Depth);
-            A.CallTo(() => context.IsExecutingOffline).ReturnsLazily(() => ctx.IsExecutingOffline);
+            A.CallTo(() => context.InitiatingUserId).ReturnsLazily(() => ctx.InitiatingUserId == Guid.Empty ? newUserId : ctx.InitiatingUserId);
             A.CallTo(() => context.InputParameters).ReturnsLazily(() => ctx.InputParameters);
-            A.CallTo(() => context.OutputParameters).ReturnsLazily(() => ctx.OutputParameters);
-            A.CallTo(() => context.PreEntityImages).ReturnsLazily(() => ctx.PreEntityImages);
-            A.CallTo(() => context.PostEntityImages).ReturnsLazily(() => ctx.PostEntityImages);
+            A.CallTo(() => context.IsExecutingOffline).ReturnsLazily(() => ctx.IsExecutingOffline);
+            A.CallTo(() => context.IsInTransaction).ReturnsLazily(() => ctx.IsInTransaction);
+            A.CallTo(() => context.IsolationMode).ReturnsLazily(() => ctx.IsolationMode);
             A.CallTo(() => context.MessageName).ReturnsLazily(() => ctx.MessageName);
             A.CallTo(() => context.Mode).ReturnsLazily(() => ctx.Mode);
-            A.CallTo(() => context.OrganizationName).ReturnsLazily(() => ctx.OrganizationName);
+            A.CallTo(() => context.OperationCreatedOn).ReturnsLazily(() => ctx.OperationCreatedOn);
             A.CallTo(() => context.OrganizationId).ReturnsLazily(() => ctx.OrganizationId);
-            A.CallTo(() => context.InitiatingUserId).ReturnsLazily(() => ctx.InitiatingUserId == Guid.Empty ? newUserId : ctx.InitiatingUserId);
-            A.CallTo(() => context.UserId).ReturnsLazily(() => ctx.UserId == Guid.Empty ? newUserId : ctx.UserId);
+            A.CallTo(() => context.OrganizationName).ReturnsLazily(() => ctx.OrganizationName);
+            A.CallTo(() => context.OutputParameters).ReturnsLazily(() => ctx.OutputParameters);
+            A.CallTo(() => context.OwningExtension).ReturnsLazily(() => ctx.OwningExtension);
+            A.CallTo(() => context.PostEntityImages).ReturnsLazily(() => ctx.PostEntityImages);
+            A.CallTo(() => context.PreEntityImages).ReturnsLazily(() => ctx.PreEntityImages);
+            A.CallTo(() => context.PrimaryEntityId).ReturnsLazily(() => ctx.PrimaryEntityId);
             A.CallTo(() => context.PrimaryEntityName).ReturnsLazily(() => ctx.PrimaryEntityName);
             A.CallTo(() => context.SecondaryEntityName).ReturnsLazily(() => ctx.SecondaryEntityName);
             A.CallTo(() => context.SharedVariables).ReturnsLazily(() => ctx.SharedVariables);
-            A.CallTo(() => context.BusinessUnitId).ReturnsLazily(() => ctx.BusinessUnitId);
-            A.CallTo(() => context.CorrelationId).ReturnsLazily(() => ctx.CorrelationId);
-            A.CallTo(() => context.OperationCreatedOn).ReturnsLazily(() => ctx.OperationCreatedOn);
-            A.CallTo(() => context.IsolationMode).ReturnsLazily(() => ctx.IsolationMode);
-            A.CallTo(() => context.IsInTransaction).ReturnsLazily(() => ctx.IsInTransaction);
-            A.CallTo(() => context.PrimaryEntityId).ReturnsLazily(() => ctx.PrimaryEntityId);
-
-
+            A.CallTo(() => context.UserId).ReturnsLazily(() => ctx.UserId == Guid.Empty ? newUserId : ctx.UserId);
+            
             // Create message will pass an Entity as the target but this is not always true
             // For instance, a Delete request will receive an EntityReference
             if (ctx.InputParameters != null && ctx.InputParameters.ContainsKey("Target"))
