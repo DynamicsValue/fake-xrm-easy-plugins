@@ -145,6 +145,48 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         }
 
         [Theory]
+        [InlineData(MessageNameConstants.Delete, "*", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, "*", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_valid_registrations_for_delete_message_as_valid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+        }
+
+        [Theory]
+        [InlineData(MessageNameConstants.Delete, "*", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Delete, "*", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_invalid_for_invalid_registrations_for_delete_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+        }
+
+        [Theory]
+        [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_valid_registrations_for_any_other_message_by_default(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+        }
+
+        [Theory]
+        [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_invalid_registrations_for_any_other_message_by_default(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+        }
+
+        [Theory]
         [InlineData("*", "*", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
         [InlineData("*", "*", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
         [InlineData("*", "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]

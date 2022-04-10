@@ -174,6 +174,30 @@ namespace FakeXrmEasy.Plugins.PluginSteps
                         }
                     }
                 },
+                { "delete", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
+                    {
+                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                            {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 },
+                                        {  ProcessingStepMode.Asynchronous, 0 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 { "*", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()  //default entry
                     {
                         { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
@@ -206,6 +230,10 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         public bool IsValid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
             var messageNameToCheck = messageName.ToLower().Trim();
+            if (_combinations.ContainsKey("*") && !_combinations.ContainsKey(messageNameToCheck))
+            {
+                messageNameToCheck = "*";
+            }
 
             if (!_combinations.ContainsKey(messageNameToCheck))
                 return false;

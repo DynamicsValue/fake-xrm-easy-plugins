@@ -18,12 +18,18 @@ namespace FakeXrmEasy.Middleware.Pipeline
         public bool UsePluginStepAudit { get; set; }
 
         /// <summary>
+        /// Enables vaidation of the registration of unsupported plugin steps
+        /// </summary>
+        public bool UsePluginStepRegistrationValidation { get; set; }
+
+        /// <summary>
         /// Default constructor with Pipeline Simulation enabled by default
         /// </summary>
         public PipelineOptions()
         {
             UsePipelineSimulation = true;
             UsePluginStepAudit = false;
+            UsePluginStepRegistrationValidation = true;
         }
     }
 }

@@ -3,15 +3,14 @@
 namespace FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions
 {
     /// <summary>
-    /// Exception raised when an attemp to register a plugin step was made with an invalid primary entity name
+    /// Exception raised when an attemp to register a plugin step was made with an invalid combination of message, entity name, stage and mode
     /// </summary>
-    public class InvalidPrimaryEntityNameException : Exception
+    public class InvalidPluginStepRegistrationException : Exception
     {
         /// <summary>
-        /// Default constructor that requires the invalid primary entity name
+        /// Default constructor
         /// </summary>
-        /// <param name="entityLogicalName"></param>
-        public InvalidPrimaryEntityNameException(string entityLogicalName) : base($"Invalid Primary Entity Name specified '{entityLogicalName}'.")
+        public InvalidPluginStepRegistrationException() : base($"Invalid Plugin Step Registration.")
         {
 
         }

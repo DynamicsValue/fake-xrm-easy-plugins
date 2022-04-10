@@ -14,6 +14,7 @@ using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
+using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -39,9 +40,24 @@ namespace FakeXrmEasy.Pipeline
             where TEntity : Entity, new()
         {
             var entity = new TEntity();
+            var entityLogicalName = entity.LogicalName;
             var entityTypeCode = (int)entity.GetType().GetField("EntityTypeCode").GetValue(entity);
 
-            return context.RegisterPluginStep<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, registeredImages);
+            if (context.HasProperty<PipelineOptions>())
+            {
+                var pipelineOptions = context.GetProperty<PipelineOptions>();
+                if (pipelineOptions.UsePluginStepRegistrationValidation)
+                {
+                    var validator = context.GetProperty<IPluginStepValidator>();
+                    var isValid = validator.IsValid(message, entityLogicalName, stage, mode);
+                    if (!isValid)
+                    {
+                        throw new InvalidPluginStepRegistrationException();
+                    }
+                }
+            }
+
+            return context.RegisterPluginStepInternal<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, registeredImages);
         }
 
         /// <summary>
@@ -59,6 +75,29 @@ namespace FakeXrmEasy.Pipeline
         public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
         {
+            return RegisterPluginStepInternal<TPlugin>(context, message, stage, mode, rank: rank, filteringAttributes: filteringAttributes, primaryEntityTypeCode: primaryEntityTypeCode, registeredImages: registeredImages);
+        }
+
+        internal static Guid RegisterPluginStepInternal<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
+            where TPlugin : IPlugin
+
+        {
+            if(context.HasProperty<PipelineOptions>())
+            {
+                var pipelineOptions = context.GetProperty<PipelineOptions>();
+                if (pipelineOptions.UsePluginStepRegistrationValidation)
+                {
+                    var entityLogicalName = primaryEntityTypeCode == null ? "*" : "";
+
+                    var validator = context.GetProperty<IPluginStepValidator>();
+                    var isValid = validator.IsValid(message, entityLogicalName, stage, mode);
+                    if (!isValid)
+                    {
+                        throw new InvalidPluginStepRegistrationException();
+                    }
+                }
+            }
+
             // Message
             var sdkMessage = context.CreateQuery("sdkmessage").FirstOrDefault(sm => string.Equals(sm.GetAttributeValue<string>("name"), message));
             if (sdkMessage == null)
@@ -120,7 +159,7 @@ namespace FakeXrmEasy.Pipeline
             context.AddEntityWithDefaults(sdkMessageProcessingStep);
 
             //Images setup
-            if(registeredImages != null)
+            if (registeredImages != null)
             {
                 foreach (var pluginImage in registeredImages)
                 {

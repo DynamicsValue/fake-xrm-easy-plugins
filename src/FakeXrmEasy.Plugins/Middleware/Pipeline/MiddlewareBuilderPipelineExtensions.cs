@@ -8,6 +8,7 @@ using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Plugins.Audit;
+using FakeXrmEasy.Plugins.PluginSteps;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -40,6 +41,11 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 if(options.UsePluginStepAudit)
                 {
                     context.SetProperty<IPluginStepAudit>(new PluginStepAudit());
+                }
+
+                if(options.UsePluginStepRegistrationValidation)
+                {
+                    context.SetProperty<IPluginStepValidator>(new PluginStepValidator());
                 }
             });
 
