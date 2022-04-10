@@ -85,12 +85,10 @@ namespace FakeXrmEasy.Pipeline
             if(context.HasProperty<PipelineOptions>())
             {
                 var pipelineOptions = context.GetProperty<PipelineOptions>();
-                if (pipelineOptions.UsePluginStepRegistrationValidation)
+                if (pipelineOptions.UsePluginStepRegistrationValidation && primaryEntityTypeCode == null)
                 {
-                    var entityLogicalName = primaryEntityTypeCode == null ? "*" : "";
-
                     var validator = context.GetProperty<IPluginStepValidator>();
-                    var isValid = validator.IsValid(message, entityLogicalName, stage, mode);
+                    var isValid = validator.IsValid(message, "*", stage, mode);
                     if (!isValid)
                     {
                         throw new InvalidPluginStepRegistrationException();
