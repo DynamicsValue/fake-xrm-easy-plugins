@@ -1,4 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
 using System.Collections.Generic;
 
 namespace FakeXrmEasy.Plugins.PluginSteps
@@ -6,7 +7,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
     /// <summary>
     /// The plugin step validator is in charge of validating that a given combination of message, entity, stage, and mode is valid (that it can be registered in plugin registration tool)
     /// </summary>
-    public interface IPluginStepValidator
+    internal interface IPluginStepValidator
     {
         /// <summary>
         /// Returns true if the given combination is valid
@@ -15,14 +16,14 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         /// <param name="entityLogicalName"></param>
         /// <param name="stage"></param>
         /// <param name="mode"></param>
-        /// <returns></returns>
+        /// <returns>True if the combination can be registered, false otherwise</returns>
         bool IsValid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode);
     }
 
     /// <summary>
     /// Default implementation of IPluginStepValidator
     /// </summary>
-    public class PluginStepValidator: IPluginStepValidator
+    internal class PluginStepValidator: IPluginStepValidator
     {
         private readonly Dictionary<string, Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>> _combinations;
 
@@ -35,12 +36,16 @@ namespace FakeXrmEasy.Plugins.PluginSteps
             {
                 { "upsert", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
-                        { "appnotification", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                        { EntityLogicalNameContants.AppNotification, new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
                             {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
                                 { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
                                     {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
+                                        {  ProcessingStepMode.Synchronous, 0 }
                                     }
                                 },
                                 { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
@@ -51,12 +56,136 @@ namespace FakeXrmEasy.Plugins.PluginSteps
                                 }
                             }
                         },
-                        { "searchtelemetry", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                        { EntityLogicalNameContants.SearchTelemetry, new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
                             {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
                                 { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
                                     {
                                         {  ProcessingStepMode.Synchronous, 0 },
                                         {  ProcessingStepMode.Asynchronous, 0 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                { "create", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
+                    {
+                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                            {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 },
+                                        {  ProcessingStepMode.Asynchronous, 0 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                { "update", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
+                    {
+                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                            {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 },
+                                        {  ProcessingStepMode.Asynchronous, 0 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                { "retrieve", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
+                    {
+                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                            {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 },
+                                        {  ProcessingStepMode.Asynchronous, 0 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                { "retrievemultiple", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
+                    {
+                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                            {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 },
+                                        {  ProcessingStepMode.Asynchronous, 0 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                { "*", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()  //default entry
+                    {
+                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+                            {
+                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
+                                    }
+                                },
+                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                                    {
+                                        {  ProcessingStepMode.Synchronous, 0 }
                                     }
                                 },
                                 { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
@@ -73,19 +202,35 @@ namespace FakeXrmEasy.Plugins.PluginSteps
 
   
         }
+
         public bool IsValid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            if (!_combinations.ContainsKey(messageName.ToLower()))
+            var messageNameToCheck = messageName.ToLower().Trim();
+
+            if (!_combinations.ContainsKey(messageNameToCheck))
                 return false;
 
-            if (!_combinations[messageName].ContainsKey(entityLogicalName.ToLower()))
-                return false;
+            string entityLogicalNameToCheck = entityLogicalName;
+            if (_combinations[messageNameToCheck].ContainsKey("*") && !_combinations[messageNameToCheck].ContainsKey(entityLogicalName))
+            {
+                entityLogicalNameToCheck = "*";
+            }
 
-            if (!_combinations[messageName][entityLogicalName].ContainsKey(stage))
-                return false;
 
-            if (!_combinations[messageName][entityLogicalName][stage].ContainsKey(mode))
+            if(!_combinations[messageNameToCheck].ContainsKey(entityLogicalNameToCheck))
+            {
+                throw new InvalidPrimaryEntityNameException(entityLogicalName);
+            }
+
+            if (!_combinations[messageNameToCheck][entityLogicalNameToCheck].ContainsKey(stage))
+            {
                 return false;
+            }
+
+            if (!_combinations[messageNameToCheck][entityLogicalNameToCheck][stage].ContainsKey(mode))
+            {
+                return false;
+            }
 
             return true;
         }
