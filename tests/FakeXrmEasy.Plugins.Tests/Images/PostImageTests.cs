@@ -1,5 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
-using FakeXrmEasy.Plugins.Images;
+using FakeXrmEasy.Plugins.PluginImages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
