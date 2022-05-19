@@ -19,23 +19,23 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
-    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2013</DefineConstants>
+    <DefineConstants>TRACE;FAKE_XRM_EASY_2013</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
-    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2015</DefineConstants>
+    <DefineConstants>TRACE;FAKE_XRM_EASY_2015</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
-    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2016</DefineConstants>
+    <DefineConstants>TRACE;FAKE_XRM_EASY_2016</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
-    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_365</DefineConstants>
+    <DefineConstants>TRACE;FAKE_XRM_EASY_365</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
+    <DefineConstants>TRACE;FAKE_XRM_EASY_9</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
@@ -45,7 +45,7 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="6.0.0" />
-    <PackageReference Include="BenchmarkDotNet" Version="[0.10.3]" />
+    <PackageReference Include="BenchmarkDotNet" Version="[0.13.1]" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == ''">

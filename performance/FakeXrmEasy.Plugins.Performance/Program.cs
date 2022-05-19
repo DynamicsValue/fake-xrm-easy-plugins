@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Configs;
 
 namespace FakeXrmEasy.Plugins.Performance
 {
@@ -6,7 +7,8 @@ namespace FakeXrmEasy.Plugins.Performance
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run(typeof(PipelineBenchmarks));
+            var config = DefaultConfig.Instance.With(ConfigOptions.DisableOptimizationsValidator);
+            var summary = BenchmarkRunner.Run(typeof(PipelineBenchmarks), config);
         }
     }
 }

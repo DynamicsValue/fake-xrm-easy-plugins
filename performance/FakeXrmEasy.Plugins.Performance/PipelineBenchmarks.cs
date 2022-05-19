@@ -7,6 +7,7 @@ using FakeXrmEasy.Plugins.PluginImages;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
+using BenchmarkDotNet.Configs;
 
 namespace FakeXrmEasy.Plugins.Performance
 {
