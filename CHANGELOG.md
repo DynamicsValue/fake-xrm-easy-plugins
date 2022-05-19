@@ -1,3 +1,22 @@
+## [3.1.0]
+
+### Added
+
+New UsePluginStepRegistrationValidation that can be used to validate if a plugin step registration is valid - DynamicsValue/fake-xrm-easy#19 and DynamicsValue/fake-xrm-easy#33
+Improved performance of retrieval of Plugin steps, added benchmark tests DynamicsValue/fake-xrm-easy#14
+PluginStepAudit and new UsePluginStepAudit in PipelineOptions - DynamicsValue/fake-xrm-easy#19
+PreValidation execution in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
+PreImages and Postimages execution in Pipeline Simulation - DynamicsValue/fake-xrm-easy#19
+Triggering plugins in PipelineSimulation based on filtering attributes - DynamicsValue/fake-xrm-easy#19
+Support for ILogger and PluginTelemetry - DynamicsValue/fake-xrm-easy#24
+
+### Changed
+
+Upgraded Microsoft.CrmSdk.Coreassemblies dependency to 9.0.2.27 to support PluginTelemetry - DynamicsValue/fake-xrm-easy#24
+Marked several execute plugin methods as obsolete
+Populate OwningExtension in plugin execution context from default fake plugin context DynamicsValue/fake-xrm-easy#17
+Populate PrimaryEntityId in plugin execution context from default fake plugin context DynamicsValue/fake-xrm-easy#8
+
 ## [3.0.2]
 
 ### Changed 
@@ -6,5 +25,3 @@ Bump Dataverse dependency to 0.6.1 from 0.5.10 to solve DynamicsValue/fake-xrm-e
 Also replaced Microsoft.Dynamics.Sdk.Messages dependency, as it has also been deprecated by MSFT, to Microsoft.PowerPlatform.Dataverse.Client.Dynamics 0.6.1 DynamicsValue/fake-xrm-easy#20
 
 ## [3.0.1-rc1] - Initial release
-
-## [2.0.1-rc1] - Initial release
