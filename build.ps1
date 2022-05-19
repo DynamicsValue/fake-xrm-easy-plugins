@@ -4,6 +4,8 @@ param (
     [string]$packTests = ""
  )
 
+Write-Host "Building configuration '$($configuration)'..." -ForegroundColor Yellow
+
 $localPackagesFolder = '../local-packages'
 Write-Host "Checking if local packages folder '$($localPackagesFolder)' exists..."
 

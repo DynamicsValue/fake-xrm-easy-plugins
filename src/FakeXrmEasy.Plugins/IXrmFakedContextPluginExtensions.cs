@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace FakeXrmEasy.Plugins
 {
+    /// <summary>
+    /// Adds extension methods to an IXrmFakedContext useful for developing and testing plugins
+    /// </summary>
     public static class IXrmFakedContextPluginExtensions
     {
         /// <summary>
@@ -35,6 +38,11 @@ namespace FakeXrmEasy.Plugins
             };
         }
 
+        /// <summary>
+        /// Returns the default plugin context properties of this IXrmFakedContext
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static IXrmFakedPluginContextProperties GetPluginContextProperties(this IXrmFakedContext context) 
         {
             if(context.PluginContextProperties == null) 
@@ -107,6 +115,16 @@ namespace FakeXrmEasy.Plugins
             return fakedPlugin;
         }
 
+
+        /// <summary>
+        /// Executes a plugin with the unsecure and secure configurations specified
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="plugCtx"></param>
+        /// <param name="unsecureConfiguration"></param>
+        /// <param name="secureConfiguration"></param>
+        /// <returns></returns>
         public static IPlugin ExecutePluginWithConfigurations<T>(this IXrmFakedContext context, XrmFakedPluginExecutionContext plugCtx, string unsecureConfiguration, string secureConfiguration)
             where T : class, IPlugin
         {
@@ -150,6 +168,16 @@ namespace FakeXrmEasy.Plugins
             return fakedPlugin;
         }
 
+        /// <summary>
+        /// Executes a plugin with a given target
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        /// <param name="target"></param>
+        /// <param name="messageName"></param>
+        /// <param name="stage"></param>
+        /// <returns></returns>
         public static IPlugin ExecutePluginWithTarget<T>(this IXrmFakedContext context, XrmFakedPluginExecutionContext ctx, Entity target, string messageName = "Create", int stage = 40)
           where T : IPlugin, new()
         {
@@ -236,7 +264,7 @@ namespace FakeXrmEasy.Plugins
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        [Obsolete]
+        [Obsolete("Use ExecutePluginWith<T> instead")]
         public static IPlugin ExecutePluginWithTargetAndPreEntityImages<T>(this IXrmFakedContext context, object target, EntityImageCollection preEntityImages, string messageName = "Create", int stage = 40)
             where T : IPlugin, new()
         {
@@ -255,7 +283,7 @@ namespace FakeXrmEasy.Plugins
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        [Obsolete]
+        [Obsolete("Use ExecutePluginWith<T> instead")]
         public static IPlugin ExecutePluginWithTargetAndPostEntityImages<T>(this IXrmFakedContext context, object target, EntityImageCollection postEntityImages, string messageName = "Create", int stage = 40)
             where T : IPlugin, new()
         {
@@ -269,7 +297,7 @@ namespace FakeXrmEasy.Plugins
             return context.ExecutePluginWith<T>(ctx);
         }
 
-        [Obsolete]
+        [Obsolete("Use ExecutePluginWith<T> instead")]
         public static IPlugin ExecutePluginWithTargetAndInputParameters<T>(this IXrmFakedContext context, Entity target, ParameterCollection inputParameters, string messageName = "Create", int stage = 40)
             where T : IPlugin, new()
         {

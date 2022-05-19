@@ -8,7 +8,7 @@ Write-Host "Running with packageSource '$($packageSource)' ..."
 
 $dirSeparator = [IO.Path]::DirectorySeparatorChar
 
-$tempNupkgFolder = ".$($dirSeparator)nupkgs$($dirSeparator)*.nupkg"
+$tempNupkgFolder = "nupkgs$($dirSeparator)**$($dirSeparator)*.nupkg"
 
 $localPackagesFolder = '../' + $packageSource
 
