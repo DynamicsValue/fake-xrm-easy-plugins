@@ -15,6 +15,7 @@ using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
+using FakeXrmEasy.Plugins.Extensions;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -430,7 +431,7 @@ namespace FakeXrmEasy.Pipeline
                                    Stage = stage,
                                    Mode = mode,
                                    MessageName = requestName,
-                                   FilteringAttributes = !string.IsNullOrEmpty(step.GetAttributeValue<string>("filteringattributes")) ? step.GetAttributeValue<string>("filteringattributes").ToLowerInvariant().Split(',').ToList() : new List<string>(),
+                                   FilteringAttributes = step.GetPluginStepFilteringAttributes(),
                                    EntityTypeCode = messageFilter != null ? (int) messageFilter["primaryobjecttypecode"] : new int?(),
                                    AssemblyName = pluginAssembly.GetAttributeValue<string>("assemblyname"),
                                    PluginType = pluginAssembly.GetAttributeValue<string>("typename")
