@@ -92,7 +92,7 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
   pack-push:
-    needs:  [build-netcore, build-windows, sonar]
+    needs:  [build-windows, sonar]
     runs-on: windows-latest
 
     steps:

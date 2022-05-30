@@ -144,8 +144,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 id = targetEntityRef.Id;
             }
 
-            var preImage = context.GetEntityById(logicalName, id);
-            return preImage.Clone(preImage.GetType());  //Clone no longer needed after resolving https://github.com/DynamicsValue/fake-xrm-easy/issues/27
+            return context.GetEntityById(logicalName, id);
         }
 
         private static Entity GetPostImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
