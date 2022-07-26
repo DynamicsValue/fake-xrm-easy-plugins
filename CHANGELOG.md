@@ -1,3 +1,9 @@
+## [2.2.0]
+
+### Changed
+
+- Fix Sonar Quality Gate settings: DynamicsValue/fake-xrm-easy#28
+
 ## [2.1.1]
 
 ### Changed
