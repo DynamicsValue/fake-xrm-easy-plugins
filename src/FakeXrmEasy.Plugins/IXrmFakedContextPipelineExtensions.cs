@@ -375,8 +375,7 @@ namespace FakeXrmEasy.Pipeline
         {
             var query = new QueryExpression(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
             {
-                ColumnSet = new ColumnSet("configuration",
-                                        SdkMessageProcessingStepFieldNames.FilteringAttributes, 
+                ColumnSet = new ColumnSet(SdkMessageProcessingStepFieldNames.FilteringAttributes, 
                                         SdkMessageProcessingStepFieldNames.Stage,
                                         SdkMessageProcessingStepFieldNames.Mode,
                                         SdkMessageProcessingStepFieldNames.Rank),
@@ -515,26 +514,26 @@ namespace FakeXrmEasy.Pipeline
 
         internal static IEnumerable<Entity> GetPluginImageDefinitionsWithRetrieveMultiple(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
         {
-            var query = new QueryExpression("sdkmessageprocessingstepimage")
+            var query = new QueryExpression(PluginStepRegistrationEntityNames.SdkMessageProcessingStepImage)
             {
-                ColumnSet = new ColumnSet("name", "imagetype", "attributes"),
+                ColumnSet = new ColumnSet(SdkMessageProcessingStepImageFieldNames.Name, SdkMessageProcessingStepImageFieldNames.ImageType, SdkMessageProcessingStepImageFieldNames.Attributes),
                 Criteria =
                 {
                     Conditions =
                     {
-                        new ConditionExpression("sdkmessageprocessingstepid", ConditionOperator.Equal, stepId)
+                        new ConditionExpression(SdkMessageProcessingStepImageFieldNames.SdkMessageProcessingStepId, ConditionOperator.Equal, stepId)
                     }
                 }
             };
 
             FilterExpression filter = new FilterExpression(LogicalOperator.Or)
             {
-                Conditions = { new ConditionExpression("imagetype", ConditionOperator.Equal, (int)ProcessingStepImageType.Both) }
+                Conditions = { new ConditionExpression(SdkMessageProcessingStepImageFieldNames.ImageType, ConditionOperator.Equal, (int)ProcessingStepImageType.Both) }
             };
 
             if (imageType == ProcessingStepImageType.PreImage || imageType == ProcessingStepImageType.PostImage)
             {
-                filter.AddCondition(new ConditionExpression("imagetype", ConditionOperator.Equal, (int)imageType));
+                filter.AddCondition(new ConditionExpression(SdkMessageProcessingStepImageFieldNames.ImageType, ConditionOperator.Equal, (int)imageType));
             }
 
             query.Criteria.AddFilter(filter);
@@ -544,11 +543,11 @@ namespace FakeXrmEasy.Pipeline
 
         internal static IEnumerable<Entity> GetPluginImageDefinitionsWithQuery(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
         {
-            return (from pluginStepImage in context.CreateQuery("sdkmessageprocessingstepimage")
-                    where ((EntityReference)pluginStepImage["sdkmessageprocessingstepid"]).Id == stepId
-                    where ((OptionSetValue) pluginStepImage["imagetype"]).Value == (int)ProcessingStepImageType.Both 
+            return (from pluginStepImage in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStepImage)
+                    where ((EntityReference)pluginStepImage[SdkMessageProcessingStepImageFieldNames.SdkMessageProcessingStepId]).Id == stepId
+                    where ((OptionSetValue) pluginStepImage[SdkMessageProcessingStepImageFieldNames.ImageType]).Value == (int)ProcessingStepImageType.Both 
                             || ((imageType == ProcessingStepImageType.PreImage || imageType == ProcessingStepImageType.PostImage) &&
-                                    ((OptionSetValue)pluginStepImage["imagetype"]).Value == (int)imageType)
+                                    ((OptionSetValue)pluginStepImage[SdkMessageProcessingStepImageFieldNames.ImageType]).Value == (int)imageType)
                     select pluginStepImage).AsEnumerable();
         }
 
@@ -560,13 +559,13 @@ namespace FakeXrmEasy.Pipeline
             {
                 foreach (Entity imageDefinition in imageDefinitions)
                 {
-                    string name = imageDefinition.GetAttributeValue<string>("name");
+                    string name = imageDefinition.GetAttributeValue<string>(SdkMessageProcessingStepImageFieldNames.Name);
                     if (string.IsNullOrEmpty(name))
                     {
                         name = string.Empty;
                     }
 
-                    string attributes = imageDefinition.GetAttributeValue<string>("attributes");
+                    string attributes = imageDefinition.GetAttributeValue<string>(SdkMessageProcessingStepImageFieldNames.Attributes);
 
                     Entity preImage = values.Clone(values.GetType());
                     if (!string.IsNullOrEmpty(attributes))
