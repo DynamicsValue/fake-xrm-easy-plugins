@@ -25,6 +25,33 @@ namespace FakeXrmEasy.Pipeline
     public static class IXrmFakedContextPipelineExtensions
     {
         /// <summary>
+        /// Registers a plugin step using an entity logical name, ideal for late bound entities
+        /// </summary>
+        /// <typeparam name="TPlugin">The plugin assembly to register</typeparam>
+        /// <param name="context">The IXrmFakedContext where the registration will be stored </param>
+        /// <param name="entityLogicalName">The logical name of the entity</param>
+        /// <param name="message">The message that will trigger the plugin (i.e. request name)</param>
+        /// <param name="stage">The stage in which the plugin will trigger</param>
+        /// <param name="mode">The execution mode (async or sync)</param>
+        /// <param name="rank">If multiple plugins are registered for the same message, rank defines the order in which they'll be executed</param>
+        /// <param name="filteringAttributes">Any filtering attributes (optional)</param>
+        /// <param name="registeredImages">Any pre or post images (optional)</param>
+        /// <returns></returns>
+        public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context,
+                                                        string entityLogicalName,
+                                                        string message,
+                                                        ProcessingStepStage stage = ProcessingStepStage.Postoperation,
+                                                        ProcessingStepMode mode = ProcessingStepMode.Synchronous,
+                                                        int rank = 1,
+                                                        string[] filteringAttributes = null,
+                                                        IEnumerable<PluginImageDefinition> registeredImages = null) 
+            where TPlugin : IPlugin
+        {
+            return context.RegisterPluginStepInternal<TPlugin>(message, stage, mode, rank, filteringAttributes, null, entityLogicalName, registeredImages);
+        }
+
+
+        /// <summary>
         /// Registers the <typeparamref name="TPlugin"/> as a SDK Message Processing Step for the Entity <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TPlugin">The plugin to register the step for.</typeparam>
@@ -47,24 +74,21 @@ namespace FakeXrmEasy.Pipeline
             where TEntity : Entity, new()
         {
             var entity = new TEntity();
-            var entityLogicalName = entity.LogicalName;
-            var entityTypeCode = (int)entity.GetType().GetField("EntityTypeCode").GetValue(entity);
-
-            if (context.HasProperty<PipelineOptions>())
+            var entityType = entity.GetType();
+            if(entityType.IsSubclassOf(typeof(Entity)))
             {
-                var pipelineOptions = context.GetProperty<PipelineOptions>();
-                if (pipelineOptions.UsePluginStepRegistrationValidation)
+                var entityTypeCodeField = entityType.GetField("EntityTypeCode");
+                if(entityTypeCodeField == null)
                 {
-                    var validator = context.GetProperty<IPluginStepValidator>();
-                    var isValid = validator.IsValid(message, entityLogicalName, stage, mode);
-                    if (!isValid)
-                    {
-                        throw new InvalidPluginStepRegistrationException();
-                    }
+                    throw new EntityTypeCodeNotFoundException(entity.LogicalName);
                 }
+                var entityTypeCode = (int)entityTypeCodeField.GetValue(entity);
+                return context.RegisterPluginStepInternal<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, entity.LogicalName, registeredImages);
             }
-
-            return context.RegisterPluginStepInternal<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, entityLogicalName, registeredImages);
+            else
+            {
+                throw new InvalidRegistrationMethodForLateBoundException();
+            }
         }
 
         /// <summary>
@@ -111,10 +135,19 @@ namespace FakeXrmEasy.Pipeline
             if(context.HasProperty<PipelineOptions>())
             {
                 var pipelineOptions = context.GetProperty<PipelineOptions>();
-                if (pipelineOptions.UsePluginStepRegistrationValidation && primaryEntityTypeCode == null)
+                if (pipelineOptions.UsePluginStepRegistrationValidation)
                 {
                     var validator = context.GetProperty<IPluginStepValidator>();
-                    var isValid = validator.IsValid(message, "*", stage, mode);
+                    bool isValid = true;
+
+                    if(primaryEntityTypeCode == null && string.IsNullOrWhiteSpace(entityLogicalName))
+                    {
+                        isValid = validator.IsValid(message, "*", stage, mode);
+                    }
+                    else if(!string.IsNullOrWhiteSpace(entityLogicalName))
+                    {
+                        isValid = validator.IsValid(message, entityLogicalName, stage, mode);
+                    }
                     if (!isValid)
                     {
                         throw new InvalidPluginStepRegistrationException();

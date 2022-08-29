@@ -193,8 +193,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Throws<PluginStepAuditNotEnabledException>(() => _context.GetPluginStepAudit());
         }
 
-        /*
-            *  Will work once DynamicsValue/fake-xrm-easy#31 is implemented
+        /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation)]
