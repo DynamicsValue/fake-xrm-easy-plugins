@@ -30,7 +30,13 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         public ProcessingStepMode Mode { get; set; }
         
         /// <summary>
+        /// Entity Logical Name, the plugin will only execute for these entities. This property will take precedence over EntityTypeCode
+        /// </summary>
+        public string EntityLogicalName { get; set; }
+
+        /// <summary>
         /// If present, the plugin will only execute for entities whose EntityTypeCode matches this value, or any entity otherwise
+        /// EntityTypeCode will be ignored if EntityLogicalName is set
         /// </summary>
         public int? EntityTypeCode { get; set; }
 

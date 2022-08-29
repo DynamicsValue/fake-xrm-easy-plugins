@@ -15,6 +15,7 @@ using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
+using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -35,7 +36,13 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
-        public static Guid RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, IEnumerable<PluginImageDefinition> registeredImages = null)
+        public static Guid RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, 
+                                                                    string message, 
+                                                                    ProcessingStepStage stage = ProcessingStepStage.Postoperation, 
+                                                                    ProcessingStepMode mode = ProcessingStepMode.Synchronous, 
+                                                                    int rank = 1, 
+                                                                    string[] filteringAttributes = null, 
+                                                                    IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
             where TEntity : Entity, new()
         {
@@ -57,7 +64,7 @@ namespace FakeXrmEasy.Pipeline
                 }
             }
 
-            return context.RegisterPluginStepInternal<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, registeredImages);
+            return context.RegisterPluginStepInternal<TPlugin>(message, stage, mode, rank, filteringAttributes, entityTypeCode, entityLogicalName, registeredImages);
         }
 
         /// <summary>
@@ -72,13 +79,32 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="primaryEntityTypeCode">The entity type code to filter this step for.</param>
         /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
-        public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
+        public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context, 
+                                                        string message, 
+                                                        ProcessingStepStage stage = ProcessingStepStage.Postoperation, 
+                                                        ProcessingStepMode mode = ProcessingStepMode.Synchronous, 
+                                                        int rank = 1, 
+                                                        string[] filteringAttributes = null, 
+                                                        int? primaryEntityTypeCode = null, 
+                                                        IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
         {
-            return RegisterPluginStepInternal<TPlugin>(context, message, stage, mode, rank: rank, filteringAttributes: filteringAttributes, primaryEntityTypeCode: primaryEntityTypeCode, registeredImages: registeredImages);
+            return RegisterPluginStepInternal<TPlugin>(context, message, stage, mode, rank: rank, 
+                                                        filteringAttributes: filteringAttributes, 
+                                                        primaryEntityTypeCode: primaryEntityTypeCode, 
+                                                        null,
+                                                        registeredImages: registeredImages);
         }
 
-        internal static Guid RegisterPluginStepInternal<TPlugin>(this IXrmFakedContext context, string message, ProcessingStepStage stage = ProcessingStepStage.Postoperation, ProcessingStepMode mode = ProcessingStepMode.Synchronous, int rank = 1, string[] filteringAttributes = null, int? primaryEntityTypeCode = null, IEnumerable<PluginImageDefinition> registeredImages = null)
+        internal static Guid RegisterPluginStepInternal<TPlugin>(this IXrmFakedContext context, 
+                                                                string message, 
+                                                                ProcessingStepStage stage = ProcessingStepStage.Postoperation, 
+                                                                ProcessingStepMode mode = ProcessingStepMode.Synchronous, 
+                                                                int rank = 1, 
+                                                                string[] filteringAttributes = null, 
+                                                                int? primaryEntityTypeCode = null, 
+                                                                string entityLogicalName = null,
+                                                                IEnumerable<PluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
 
         {
@@ -97,13 +123,16 @@ namespace FakeXrmEasy.Pipeline
             }
 
             // Message
-            var sdkMessage = context.CreateQuery("sdkmessage").FirstOrDefault(sm => string.Equals(sm.GetAttributeValue<string>("name"), message));
+            var sdkMessage = context
+                                .CreateQuery(PluginStepRegistrationEntityNames.SdkMessage)
+                                .FirstOrDefault(sm => string.Equals(sm.GetAttributeValue<string>(SdkMessageFieldNames.Name), message));
+
             if (sdkMessage == null)
             {
-                sdkMessage = new Entity("sdkmessage")
+                sdkMessage = new Entity(PluginStepRegistrationEntityNames.SdkMessage)
                 {
                     Id = Guid.NewGuid(),
-                    ["name"] = message
+                    [SdkMessageFieldNames.Name] = message
                 };
                 context.AddEntityWithDefaults(sdkMessage);
             }
@@ -112,18 +141,21 @@ namespace FakeXrmEasy.Pipeline
             var type = typeof(TPlugin);
             var assemblyName = type.Assembly.GetName();
 
-            var pluginType = context.CreateQuery("plugintype").FirstOrDefault(pt => string.Equals(pt.GetAttributeValue<string>("typename"), type.FullName) && string.Equals(pt.GetAttributeValue<string>("asemblyname"), assemblyName.Name));
+            var pluginType = context
+                                .CreateQuery(PluginStepRegistrationEntityNames.PluginType)
+                                .FirstOrDefault(pt => string.Equals(pt.GetAttributeValue<string>(PluginTypeFieldNames.TypeName), type.FullName) 
+                                                    && string.Equals(pt.GetAttributeValue<string>(PluginTypeFieldNames.AssemblyName), assemblyName.Name));
             if (pluginType == null)
             {
-                pluginType = new Entity("plugintype")
+                pluginType = new Entity(PluginStepRegistrationEntityNames.PluginType)
                 {
                     Id = Guid.NewGuid(),
-                    ["name"] = type.FullName,
-                    ["typename"] = type.FullName,
-                    ["assemblyname"] = assemblyName.Name,
-                    ["major"] = assemblyName.Version.Major,
-                    ["minor"] = assemblyName.Version.Minor,
-                    ["version"] = assemblyName.Version.ToString(),
+                    [PluginTypeFieldNames.Name] = type.FullName,
+                    [PluginTypeFieldNames.TypeName] = type.FullName,
+                    [PluginTypeFieldNames.AssemblyName] = assemblyName.Name,
+                    [PluginTypeFieldNames.Major] = assemblyName.Version.Major,
+                    [PluginTypeFieldNames.Minor] = assemblyName.Version.Minor,
+                    [PluginTypeFieldNames.Version] = assemblyName.Version.ToString(),
                 };
                 context.AddEntityWithDefaults(pluginType);
             }
@@ -132,10 +164,11 @@ namespace FakeXrmEasy.Pipeline
             Entity sdkFilter = null;
             if (primaryEntityTypeCode.HasValue)
             {
-                sdkFilter = new Entity("sdkmessagefilter")
+                sdkFilter = new Entity(PluginStepRegistrationEntityNames.SdkMessageFilter)
                 {
                     Id = Guid.NewGuid(),
-                    ["primaryobjecttypecode"] = primaryEntityTypeCode
+                    [SdkMessageFilterFieldNames.EntityLogicalName] = entityLogicalName,
+                    [SdkMessageFilterFieldNames.PrimaryObjectTypeCode] = primaryEntityTypeCode
                 };
                 context.AddEntityWithDefaults(sdkFilter);
             }
@@ -143,16 +176,16 @@ namespace FakeXrmEasy.Pipeline
             // Message Step
             var sdkMessageProcessingStepId = Guid.NewGuid();
 
-            var sdkMessageProcessingStep = new Entity("sdkmessageprocessingstep")
+            var sdkMessageProcessingStep = new Entity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
             {
                 Id = sdkMessageProcessingStepId,
-                ["eventhandler"] = pluginType.ToEntityReference(),
-                ["sdkmessageid"] = sdkMessage.ToEntityReference(),
-                ["sdkmessagefilterid"] = sdkFilter?.ToEntityReference(),
-                ["filteringattributes"] = filteringAttributes != null ? string.Join(",", filteringAttributes) : null,
-                ["mode"] = new OptionSetValue((int)mode),
-                ["stage"] = new OptionSetValue((int)stage),
-                ["rank"] = rank
+                [SdkMessageProcessingStepFieldNames.EventHandler] = pluginType.ToEntityReference(),
+                [SdkMessageProcessingStepFieldNames.SdkMessageId] = sdkMessage.ToEntityReference(),
+                [SdkMessageProcessingStepFieldNames.SdkMessageFilterId] = sdkFilter?.ToEntityReference(),
+                [SdkMessageProcessingStepFieldNames.FilteringAttributes] = filteringAttributes != null ? string.Join(",", filteringAttributes) : null,
+                [SdkMessageProcessingStepFieldNames.Mode] = new OptionSetValue((int)mode),
+                [SdkMessageProcessingStepFieldNames.Stage] = new OptionSetValue((int)stage),
+                [SdkMessageProcessingStepFieldNames.Rank] = rank
             };
             context.AddEntityWithDefaults(sdkMessageProcessingStep);
 
@@ -161,13 +194,13 @@ namespace FakeXrmEasy.Pipeline
             {
                 foreach (var pluginImage in registeredImages)
                 {
-                    var sdkMessageProcessingStepImage = new Entity("sdkmessageprocessingstepimage")
+                    var sdkMessageProcessingStepImage = new Entity(PluginStepRegistrationEntityNames.SdkMessageProcessingStepImage)
                     {
                         Id = Guid.NewGuid(),
-                        ["name"] = pluginImage.Name,
-                        ["sdkmessageprocessingstepid"] = sdkMessageProcessingStep.ToEntityReference(),
-                        ["imagetype"] = new OptionSetValue((int)pluginImage.ImageType),
-                        ["attributes"] = pluginImage.Attributes != null ? string.Join(",", pluginImage.Attributes) : null,
+                        [SdkMessageProcessingStepImageFieldNames.Name] = pluginImage.Name,
+                        [SdkMessageProcessingStepImageFieldNames.SdkMessageProcessingStepId] = sdkMessageProcessingStep.ToEntityReference(),
+                        [SdkMessageProcessingStepImageFieldNames.ImageType] = new OptionSetValue((int)pluginImage.ImageType),
+                        [SdkMessageProcessingStepImageFieldNames.Attributes] = pluginImage.Attributes != null ? string.Join(",", pluginImage.Attributes) : null,
                     };
                     context.AddEntityWithDefaults(sdkMessageProcessingStepImage);
                 }
@@ -340,44 +373,60 @@ namespace FakeXrmEasy.Pipeline
 
         private static IEnumerable<PluginStepDefinition> GetStepsForStageWithRetrieveMultiple(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
         {
-            var query = new QueryExpression("sdkmessageprocessingstep")
+            var query = new QueryExpression(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
             {
-                ColumnSet = new ColumnSet("configuration", "filteringattributes", "stage", "mode", "rank"),
+                ColumnSet = new ColumnSet("configuration",
+                                        SdkMessageProcessingStepFieldNames.FilteringAttributes, 
+                                        SdkMessageProcessingStepFieldNames.Stage,
+                                        SdkMessageProcessingStepFieldNames.Mode,
+                                        SdkMessageProcessingStepFieldNames.Rank),
                 Criteria =
                 {
                     Conditions =
                     {
-                        new ConditionExpression("stage", ConditionOperator.Equal, (int)stage),
-                        new ConditionExpression("mode", ConditionOperator.Equal, (int)mode)
+                        new ConditionExpression(SdkMessageProcessingStepFieldNames.Stage, ConditionOperator.Equal, (int)stage),
+                        new ConditionExpression(SdkMessageProcessingStepFieldNames.Mode, ConditionOperator.Equal, (int)mode)
                     }
                 },
                 Orders =
                 {
-                    new OrderExpression("rank", OrderType.Ascending)
+                    new OrderExpression(SdkMessageProcessingStepFieldNames.Rank, OrderType.Ascending)
                 },
                 LinkEntities =
                 {
-                    new LinkEntity("sdkmessageprocessingstep", "sdkmessagefilter", "sdkmessagefilterid", "sdkmessagefilterid", JoinOperator.LeftOuter)
+                    new LinkEntity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep, 
+                                    PluginStepRegistrationEntityNames.SdkMessageFilter, 
+                                    SdkMessageProcessingStepFieldNames.SdkMessageFilterId, 
+                                    SdkMessageProcessingStepFieldNames.SdkMessageFilterId, 
+                                    JoinOperator.LeftOuter)
                     {
-                        EntityAlias = "sdkmessagefilter",
-                        Columns = new ColumnSet("primaryobjecttypecode")
+                        EntityAlias = PluginStepRegistrationEntityNames.SdkMessageFilter,
+                        Columns = new ColumnSet(SdkMessageFilterFieldNames.PrimaryObjectTypeCode)
                     },
-                    new LinkEntity("sdkmessageprocessingstep", "sdkmessage", "sdkmessageid", "sdkmessageid", JoinOperator.Inner)
+                    new LinkEntity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep, 
+                                    PluginStepRegistrationEntityNames.SdkMessage,
+                                    SdkMessageProcessingStepFieldNames.SdkMessageId, 
+                                    SdkMessageProcessingStepFieldNames.SdkMessageId, 
+                                    JoinOperator.Inner)
                     {
-                        EntityAlias = "sdkmessage",
-                        Columns = new ColumnSet("name"),
+                        EntityAlias = PluginStepRegistrationEntityNames.SdkMessage,
+                        Columns = new ColumnSet(SdkMessageFieldNames.Name),
                         LinkCriteria =
                         {
                             Conditions =
                             {
-                                new ConditionExpression("name", ConditionOperator.Equal, requestName)
+                                new ConditionExpression(SdkMessageFieldNames.Name, ConditionOperator.Equal, requestName)
                             }
                         }
                     },
-                    new LinkEntity("sdkmessageprocessingstep", "plugintype", "eventhandler", "plugintypeid", JoinOperator.Inner)
+                    new LinkEntity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep,
+                                    PluginStepRegistrationEntityNames.PluginType,
+                                    SdkMessageProcessingStepFieldNames.EventHandler, 
+                                    PluginTypeFieldNames.PluginTypeId, 
+                                    JoinOperator.Inner)
                     {
-                        EntityAlias = "plugintype",
-                        Columns = new ColumnSet("assemblyname", "typename")
+                        EntityAlias = PluginStepRegistrationEntityNames.PluginType,
+                        Columns = new ColumnSet(PluginTypeFieldNames.AssemblyName, PluginTypeFieldNames.TypeName)
                     }
                 }
             };
@@ -387,7 +436,7 @@ namespace FakeXrmEasy.Pipeline
             var pluginSteps = service.RetrieveMultiple(query).Entities.AsEnumerable();
             pluginSteps = pluginSteps.Where(p =>
             {
-                var primaryObjectTypeCode = p.GetAttributeValue<AliasedValue>("sdkmessagefilter.primaryobjecttypecode");
+                var primaryObjectTypeCode = p.GetAttributeValue<AliasedValue>($"{PluginStepRegistrationEntityNames.SdkMessageFilter}.{SdkMessageFilterFieldNames.PrimaryObjectTypeCode}");
 
                 return primaryObjectTypeCode == null || entityTypeCode.HasValue && (int)primaryObjectTypeCode.Value == entityTypeCode.Value;
             });
@@ -396,44 +445,60 @@ namespace FakeXrmEasy.Pipeline
                 .Select(ps => new PluginStepDefinition()
                 {
                     Id = ps.Id,
-                    FilteringAttributes = !string.IsNullOrEmpty(ps.GetAttributeValue<string>("filteringattributes")) ? ps.GetAttributeValue<string>("filteringattributes").ToLowerInvariant().Split(',').ToList() : new List<string>(),
+                    FilteringAttributes = !string.IsNullOrEmpty(ps.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.FilteringAttributes)) 
+                                                                ? ps.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.FilteringAttributes)
+                                                                        .ToLowerInvariant()
+                                                                        .Split(',')
+                                                                        .ToList() 
+                                                                : new List<string>(),
                     Stage = stage,
                     Mode = mode,
-                    Rank = (int)ps["rank"],
+                    Rank = (int)ps[SdkMessageProcessingStepFieldNames.Rank],
                     MessageName = requestName,
-                    EntityTypeCode = (int?)ps.GetAttributeValue<AliasedValue>("sdkmessagefilter.primaryobjecttypecode")?.Value,
-                    AssemblyName = (string)ps.GetAttributeValue<AliasedValue>("plugintype.assemblyname").Value,
-                    PluginType = (string)ps.GetAttributeValue<AliasedValue>("plugintype.typename")?.Value
+                    EntityTypeCode = (int?)ps.GetAttributeValue<AliasedValue>($"{PluginStepRegistrationEntityNames.SdkMessageFilter}.{SdkMessageFilterFieldNames.PrimaryObjectTypeCode}")?.Value,
+                    AssemblyName = (string)ps.GetAttributeValue<AliasedValue>($"{PluginStepRegistrationEntityNames.PluginType}.{PluginTypeFieldNames.AssemblyName}").Value,
+                    PluginType = (string)ps.GetAttributeValue<AliasedValue>($"{PluginStepRegistrationEntityNames.PluginType}.{PluginTypeFieldNames.TypeName}")?.Value
                 }).AsEnumerable();
 
             //Filter attributes
             return pluginStepDefinitions.Where(p => p.FilteringAttributes.Count == 0 || p.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr)));
         }
 
-        private static IEnumerable<PluginStepDefinition> GetStepsForStage(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)
+        private static IEnumerable<PluginStepDefinition> GetStepsForStage(this IXrmFakedContext context, 
+                                                                            string requestName, 
+                                                                            ProcessingStepStage stage, 
+                                                                            ProcessingStepMode mode, 
+                                                                            Entity entity)
         {
             var entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
 
-            var pluginSteps = (from step in context.CreateQuery("sdkmessageprocessingstep")
-                               join message in context.CreateQuery("sdkmessage") on (step["sdkmessageid"] as EntityReference).Id equals message.Id
-                               join pluginAssembly in context.CreateQuery("plugintype") on (step["eventhandler"] as EntityReference).Id equals pluginAssembly.Id
-                               join mFilter in context.CreateQuery("sdkmessagefilter") on (step["sdkmessagefilterid"] != null ? (step["sdkmessagefilterid"] as EntityReference).Id : Guid.Empty) equals mFilter.Id into mesFilter
+            var pluginSteps = (from step in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
+                               join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
+                               join pluginAssembly in context.CreateQuery(PluginStepRegistrationEntityNames.PluginType) on (step[SdkMessageProcessingStepFieldNames.EventHandler] as EntityReference).Id equals pluginAssembly.Id
+                               join mFilter in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageFilter) on (step[SdkMessageProcessingStepFieldNames.SdkMessageFilterId] != null ? (step[SdkMessageProcessingStepFieldNames.SdkMessageFilterId] as EntityReference).Id : Guid.Empty) equals mFilter.Id into mesFilter
                                from messageFilter in mesFilter.DefaultIfEmpty()
 
-                               where (step["stage"] as OptionSetValue).Value == (int)stage
-                               where (step["mode"] as OptionSetValue).Value == (int)mode
-                               where (message["name"] as string) == requestName
+                               where (step[SdkMessageProcessingStepFieldNames.Stage] as OptionSetValue).Value == (int)stage
+                               where (step[SdkMessageProcessingStepFieldNames.Mode] as OptionSetValue).Value == (int)mode
+                               where (message[SdkMessageFieldNames.Name] as string) == requestName
                                select new PluginStepDefinition
                                {
                                    Id = step.Id,
-                                   Rank = (int)step["rank"],
+                                   Rank = (int)step[SdkMessageProcessingStepFieldNames.Rank],
                                    Stage = stage,
                                    Mode = mode,
                                    MessageName = requestName,
-                                   FilteringAttributes = !string.IsNullOrEmpty(step.GetAttributeValue<string>("filteringattributes")) ? step.GetAttributeValue<string>("filteringattributes").ToLowerInvariant().Split(',').ToList() : new List<string>(),
-                                   EntityTypeCode = messageFilter != null ? (int) messageFilter["primaryobjecttypecode"] : new int?(),
-                                   AssemblyName = pluginAssembly.GetAttributeValue<string>("assemblyname"),
-                                   PluginType = pluginAssembly.GetAttributeValue<string>("typename")
+                                   FilteringAttributes = !string.IsNullOrEmpty(step.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.FilteringAttributes)) 
+                                                            ? step.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.FilteringAttributes)
+                                                                .ToLowerInvariant()
+                                                                .Split(',')
+                                                                .ToList() 
+                                                            : new List<string>(),
+                                   EntityTypeCode = messageFilter != null 
+                                                ? (int) messageFilter[SdkMessageFilterFieldNames.PrimaryObjectTypeCode] 
+                                                : new int?(),
+                                   AssemblyName = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.AssemblyName),
+                                   PluginType = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.TypeName)
                                }).OrderBy(ps => ps.Rank)
                                  .ToList();
 
