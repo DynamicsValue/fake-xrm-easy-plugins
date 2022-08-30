@@ -1,6 +1,6 @@
 ﻿namespace FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames
 {
-    internal class SdkMessageFieldNames
+    internal static class SdkMessageFieldNames
     {
         /// <summary>
         /// Property where the Name of the message will be stored
@@ -8,7 +8,7 @@
         internal const string Name = "name";
     }
 
-    internal class SdkMessageFilterFieldNames
+    internal static class SdkMessageFilterFieldNames
     {
         /// <summary>
         /// This property is a hack to support storing the logical name instead of the primary object type, it doesn't exist as an actual field in Dataverse
@@ -21,7 +21,7 @@
         internal const string PrimaryObjectTypeCode = "primaryobjecttypecode";
     }
 
-    internal class PluginTypeFieldNames
+    internal static class PluginTypeFieldNames
     {
         internal const string PluginTypeId = "plugintypeid";
         internal const string AssemblyName = "assemblyname";
@@ -32,7 +32,7 @@
         internal const string Version = "version";
     }
 
-    internal class SdkMessageProcessingStepFieldNames
+    internal static class SdkMessageProcessingStepFieldNames
     {
         /// <summary>
         /// Reference to the plugin assembly (PluginType)
@@ -70,7 +70,7 @@
         internal const string Rank = "rank";
     }
 
-    internal class SdkMessageProcessingStepImageFieldNames
+    internal static class SdkMessageProcessingStepImageFieldNames
     {
         /// <summary>
         /// Nam eof the image

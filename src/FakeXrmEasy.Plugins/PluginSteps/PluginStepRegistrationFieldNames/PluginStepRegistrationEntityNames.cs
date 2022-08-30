@@ -1,6 +1,6 @@
 ﻿namespace FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames
 {
-    internal class PluginStepRegistrationEntityNames
+    internal static class PluginStepRegistrationEntityNames
     {
         internal const string PluginType = "plugintype";
         internal const string SdkMessageFilter = "sdkmessagefilter";
