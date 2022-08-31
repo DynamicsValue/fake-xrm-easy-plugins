@@ -56,6 +56,7 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="filteringAttributes">Any filtering attributes (optional)</param>
         /// <param name="registeredImages">Any pre or post images (optional)</param>
         /// <returns></returns>
+        [Obsolete("This method is deprecated, please start using the new RegisterPluginStep method that takes an IPluginStepDefinition as a parameter")]
         public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context,
                                                         string entityLogicalName,
                                                         string message,
@@ -94,6 +95,7 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="rank">The order in which this plugin should be executed in comparison to other plugins registered with the same <paramref name="message"/> and <paramref name="stage"/>.</param>
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
+        [Obsolete("This method is deprecated, please start using the new RegisterPluginStep method that takes an IPluginStepDefinition as a parameter")]
         public static Guid RegisterPluginStep<TPlugin, TEntity>(this IXrmFakedContext context, 
                                                                     string message, 
                                                                     ProcessingStepStage stage = ProcessingStepStage.Postoperation, 
@@ -147,6 +149,7 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="filteringAttributes">When not one of these attributes is present in the execution context, the execution of the plugin is prevented.</param>
         /// <param name="primaryEntityTypeCode">The entity type code to filter this step for.</param>
         /// <param name="registeredImages">Optional, the any images to register against this plugin step</param>
+        [Obsolete("This method is deprecated, please start using the new RegisterPluginStep method that takes an IPluginStepDefinition as a parameter")]
         public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context, 
                                                         string message, 
                                                         ProcessingStepStage stage = ProcessingStepStage.Postoperation, 
