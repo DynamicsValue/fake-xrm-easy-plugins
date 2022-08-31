@@ -6,8 +6,10 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.PluginSteps;
+using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Tests.PluginsForTesting;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -36,9 +38,9 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
         [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
-        public void Should_register_plugin_step_with_plugin_definition_and_plugin_type_signature(string messageName, 
-                                                        string entityLogicalName, 
-                                                        ProcessingStepStage stage, 
+        public void Should_register_plugin_step_with_plugin_definition_and_plugin_type_signature(string messageName,
+                                                        string entityLogicalName,
+                                                        ProcessingStepStage stage,
                                                         ProcessingStepMode mode)
         {
             var pluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
@@ -65,7 +67,49 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
                                     .Where(messageFilter => messageFilter.Id == processingStep.SdkMessageFilterId.Id)
                                     .FirstOrDefault();
             Assert.NotNull(sdkMessageFilter);
-            Assert.Equal(entityLogicalName, (string) sdkMessageFilter[SdkMessageFilterFieldNames.EntityLogicalName]);
+            Assert.Equal(entityLogicalName, (string)sdkMessageFilter[SdkMessageFilterFieldNames.EntityLogicalName]);
+        }
+
+        [Fact]
+        public void Should_register_plugin_with_plugin_id_if_one_was_passed_into_it()
+        {
+            var pluginStepId = Guid.NewGuid();
+            var returnedPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                Id = pluginStepId,
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
+
+            Assert.Equal(pluginStepId, returnedPluginStepId);
+            var processingStep = _context.CreateQuery<SdkMessageProcessingStep>().FirstOrDefault();
+            Assert.NotNull(processingStep);
+            Assert.Equal(pluginStepId, processingStep.Id);
+        }
+
+        [Fact]
+        public void Should_return_error_if_a_plugin_with_the_same_id_was_previously_registered()
+        {
+            var pluginStepId = Guid.NewGuid();
+            var returnedPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                Id = pluginStepId,
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
+
+            Assert.Throws<PluginStepDefinitionAlreadyRegisteredException>(() => _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                Id = pluginStepId,
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous
+            }));
         }
     }
 }

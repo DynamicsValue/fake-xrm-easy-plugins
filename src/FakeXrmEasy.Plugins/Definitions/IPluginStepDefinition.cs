@@ -1,5 +1,4 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
-using FakeXrmEasy.Plugins.PluginImages;
 using System;
 using System.Collections.Generic;
 
