@@ -231,12 +231,10 @@ namespace FakeXrmEasy.Pipeline
                 }
             }
 
-            if(pluginStepDefinition.Id != Guid.Empty)
+            if(pluginStepDefinition.Id != Guid.Empty &&
+                context.ContainsEntity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep, pluginStepDefinition.Id))
             {
-                if(context.ContainsEntity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep, pluginStepDefinition.Id))
-                {
-                    throw new PluginStepDefinitionAlreadyRegisteredException(pluginStepDefinition.Id);
-                }
+                throw new PluginStepDefinitionAlreadyRegisteredException(pluginStepDefinition.Id);
             }
         }
 
@@ -588,7 +586,7 @@ namespace FakeXrmEasy.Pipeline
                 }).AsEnumerable();
 
             //Filter attributes
-            return pluginStepDefinitions.Where(p => p.FilteringAttributes.Count() == 0 || p.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr)));
+            return pluginStepDefinitions.Where(p => !p.FilteringAttributes.Any() || p.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr)));
         }
 
         private static IEnumerable<PluginStepDefinition> GetStepsForStage(this IXrmFakedContext context, 
@@ -628,7 +626,7 @@ namespace FakeXrmEasy.Pipeline
                         .Where(ps => ps.EntityLogicalName != null && ps.EntityLogicalName == entityLogicalName || //Matches logical name
                                         ps.EntityTypeCode != null && ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode || //Or matches entity type code
                                         ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none
-                        .Where(ps => ps.FilteringAttributes.Count() == 0 || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
+                        .Where(ps => !ps.FilteringAttributes.Any() || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
         }
 
         internal static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
