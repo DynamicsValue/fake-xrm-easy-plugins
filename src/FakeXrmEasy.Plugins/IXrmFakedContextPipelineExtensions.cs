@@ -17,6 +17,7 @@ using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Plugins.PluginSteps.Extensions;
+using FakeXrmEasy.Plugins.Definitions;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -25,6 +26,29 @@ namespace FakeXrmEasy.Pipeline
     /// </summary>
     public static class IXrmFakedContextPipelineExtensions
     {
+        /// <summary>
+        /// Registers a new plugin againts the specified plugin with the plugin step definition details provided
+        /// When using this method the plugin class specified in the method signature will be used instead of the assembly and plugin
+        /// types provided in the plugin step definition parameter.
+        /// 
+        /// All the other remaining settings in the plugin definition parameter will be used for registration.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="pluginStepDefinition">Info about the details of the plugin registration</param>
+        /// <returns></returns>
+        public static Guid RegisterPluginStep<TPlugin>(this IXrmFakedContext context, 
+                                            IPluginStepDefinition pluginStepDefinition)
+            where TPlugin : IPlugin
+        {
+            return context.RegisterPluginStepInternal<TPlugin>(pluginStepDefinition.MessageName,
+                                            pluginStepDefinition.Stage,
+                                            pluginStepDefinition.Mode,
+                                            pluginStepDefinition.Rank,
+                                            pluginStepDefinition.FilteringAttributes?.ToArray(),
+                                            pluginStepDefinition.EntityTypeCode,
+                                            pluginStepDefinition.EntityLogicalName);
+        }
+
         /// <summary>
         /// Registers a plugin step using an entity logical name, ideal for late bound entities
         /// </summary>
@@ -121,6 +145,30 @@ namespace FakeXrmEasy.Pipeline
                                                         registeredImages: registeredImages);
         }
 
+        internal static Entity AddPluginType(this IXrmFakedContext context, Type pluginType, AssemblyName assemblyName)
+        {
+            var pluginTypeRecord = context
+                                .CreateQuery(PluginStepRegistrationEntityNames.PluginType)
+                                .FirstOrDefault(pt => string.Equals(pt.GetAttributeValue<string>(PluginTypeFieldNames.TypeName), pluginType.FullName)
+                                                    && string.Equals(pt.GetAttributeValue<string>(PluginTypeFieldNames.AssemblyName), assemblyName.Name));
+            if (pluginTypeRecord == null)
+            {
+                pluginTypeRecord = new Entity(PluginStepRegistrationEntityNames.PluginType)
+                {
+                    Id = Guid.NewGuid(),
+                    [PluginTypeFieldNames.Name] = pluginType.FullName,
+                    [PluginTypeFieldNames.TypeName] = pluginType.FullName,
+                    [PluginTypeFieldNames.AssemblyName] = assemblyName.Name,
+                    [PluginTypeFieldNames.Major] = assemblyName.Version.Major,
+                    [PluginTypeFieldNames.Minor] = assemblyName.Version.Minor,
+                    [PluginTypeFieldNames.Version] = assemblyName.Version.ToString(),
+                };
+                context.AddEntityWithDefaults(pluginTypeRecord);
+            }
+
+            return pluginTypeRecord;
+        }
+
         internal static Guid RegisterPluginStepInternal<TPlugin>(this IXrmFakedContext context, 
                                                                 string message, 
                                                                 ProcessingStepStage stage = ProcessingStepStage.Postoperation, 
@@ -129,7 +177,7 @@ namespace FakeXrmEasy.Pipeline
                                                                 string[] filteringAttributes = null, 
                                                                 int? primaryEntityTypeCode = null, 
                                                                 string entityLogicalName = null,
-                                                                IEnumerable<PluginImageDefinition> registeredImages = null)
+                                                                IEnumerable<IPluginImageDefinition> registeredImages = null)
             where TPlugin : IPlugin
 
         {
@@ -171,28 +219,10 @@ namespace FakeXrmEasy.Pipeline
                 context.AddEntityWithDefaults(sdkMessage);
             }
 
-            // Plugin Type
+            // Store Plugin Type as a record
             var type = typeof(TPlugin);
             var assemblyName = type.Assembly.GetName();
-
-            var pluginType = context
-                                .CreateQuery(PluginStepRegistrationEntityNames.PluginType)
-                                .FirstOrDefault(pt => string.Equals(pt.GetAttributeValue<string>(PluginTypeFieldNames.TypeName), type.FullName) 
-                                                    && string.Equals(pt.GetAttributeValue<string>(PluginTypeFieldNames.AssemblyName), assemblyName.Name));
-            if (pluginType == null)
-            {
-                pluginType = new Entity(PluginStepRegistrationEntityNames.PluginType)
-                {
-                    Id = Guid.NewGuid(),
-                    [PluginTypeFieldNames.Name] = type.FullName,
-                    [PluginTypeFieldNames.TypeName] = type.FullName,
-                    [PluginTypeFieldNames.AssemblyName] = assemblyName.Name,
-                    [PluginTypeFieldNames.Major] = assemblyName.Version.Major,
-                    [PluginTypeFieldNames.Minor] = assemblyName.Version.Minor,
-                    [PluginTypeFieldNames.Version] = assemblyName.Version.ToString(),
-                };
-                context.AddEntityWithDefaults(pluginType);
-            }
+            var pluginTypeRecord = context.AddPluginType(type, assemblyName);
 
             // Filter
             Entity sdkFilter = null;
@@ -213,7 +243,7 @@ namespace FakeXrmEasy.Pipeline
             var sdkMessageProcessingStep = new Entity(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
             {
                 Id = sdkMessageProcessingStepId,
-                [SdkMessageProcessingStepFieldNames.EventHandler] = pluginType.ToEntityReference(),
+                [SdkMessageProcessingStepFieldNames.EventHandler] = pluginTypeRecord.ToEntityReference(),
                 [SdkMessageProcessingStepFieldNames.SdkMessageId] = sdkMessage.ToEntityReference(),
                 [SdkMessageProcessingStepFieldNames.SdkMessageFilterId] = sdkFilter?.ToEntityReference(),
                 [SdkMessageProcessingStepFieldNames.FilteringAttributes] = filteringAttributes != null ? string.Join(",", filteringAttributes) : null,
@@ -494,7 +524,7 @@ namespace FakeXrmEasy.Pipeline
                 }).AsEnumerable();
 
             //Filter attributes
-            return pluginStepDefinitions.Where(p => p.FilteringAttributes.Count == 0 || p.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr)));
+            return pluginStepDefinitions.Where(p => p.FilteringAttributes.Count() == 0 || p.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr)));
         }
 
         private static IEnumerable<PluginStepDefinition> GetStepsForStage(this IXrmFakedContext context, 
@@ -534,7 +564,7 @@ namespace FakeXrmEasy.Pipeline
                         .Where(ps => ps.EntityLogicalName != null && ps.EntityLogicalName == entityLogicalName || //Matches logical name
                                         ps.EntityTypeCode != null && ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode || //Or matches entity type code
                                         ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none
-                        .Where(ps => ps.FilteringAttributes.Count == 0 || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
+                        .Where(ps => ps.FilteringAttributes.Count() == 0 || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
         }
 
         internal static IEnumerable<Entity> GetPluginImageDefinitions(this IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)

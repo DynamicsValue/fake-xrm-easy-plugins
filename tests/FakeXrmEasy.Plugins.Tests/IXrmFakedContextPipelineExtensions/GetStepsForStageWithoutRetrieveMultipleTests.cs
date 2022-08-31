@@ -159,7 +159,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Equal(pluginType.FullName, pluginStep.PluginType);
 
             Assert.NotEmpty(pluginStep.FilteringAttributes);
-            Assert.Equal("name", pluginStep.FilteringAttributes[0]);
+            Assert.Equal("name", pluginStep.FilteringAttributes.First());
         }
 
         [Theory]
@@ -187,9 +187,10 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Equal(pluginType.Assembly.GetName().Name, pluginStep.AssemblyName);
             Assert.Equal(pluginType.FullName, pluginStep.PluginType);
 
-            Assert.NotEmpty(pluginStep.FilteringAttributes);
-            Assert.Equal("name", pluginStep.FilteringAttributes[0]);
-            Assert.Equal("accountcategorycode", pluginStep.FilteringAttributes[1]);
+            var attributes = pluginStep.FilteringAttributes.ToList();
+            Assert.NotEmpty(attributes);
+            Assert.Equal("name", attributes[0]);
+            Assert.Equal("accountcategorycode", attributes[1]);
         }
 
         [Theory]
