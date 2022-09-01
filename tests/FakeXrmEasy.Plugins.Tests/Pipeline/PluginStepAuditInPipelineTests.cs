@@ -9,6 +9,7 @@ using FakeXrmEasy.Middleware.Messages;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
+using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -92,7 +93,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _context = CreatePluginStepAuditEnabledContext();
             _service = _context.GetOrganizationService();
 
-            _context.RegisterPluginStep<AccountNumberPlugin>("Create", stage);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = stage
+            });
 
             var account = new Account() { Name = "Some name" };
 
@@ -119,8 +124,19 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _context = CreatePluginStepAuditEnabledContext();
             _service = _context.GetOrganizationService();
 
-            _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, primaryEntityTypeCode: Account.EntityTypeCode);
-            _context.RegisterPluginStep<FollowupPlugin>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, primaryEntityTypeCode: Account.EntityTypeCode);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Preoperation,
+                EntityTypeCode = Account.EntityTypeCode
+            });
+
+            _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Postoperation,
+                EntityTypeCode = Account.EntityTypeCode
+            });
 
             var account = new Account() { Name = "Some name" };
 
@@ -149,8 +165,21 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _context = CreatePluginStepAuditEnabledContext();
             _service = _context.GetOrganizationService();
 
-            _context.RegisterPluginStep<FollowupPlugin>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, rank: 2, primaryEntityTypeCode: Account.EntityTypeCode);
-            _context.RegisterPluginStep<FollowupPlugin2>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, rank: 1, primaryEntityTypeCode: Account.EntityTypeCode);
+            _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Postoperation,
+                EntityTypeCode = Account.EntityTypeCode,
+                Rank = 2
+            });
+
+            _context.RegisterPluginStep<FollowupPlugin2>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Postoperation,
+                EntityTypeCode = Account.EntityTypeCode,
+                Rank = 1
+            });
 
             var account = new Account() { Name = "Some name" };
 
@@ -179,7 +208,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _context = CreatePluginStepAuditDisabledContext();
             _service = _context.GetOrganizationService();
 
-            _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Preoperation
+            });
 
             var account = new Account() { Name = "Some name" };
 
@@ -187,7 +220,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             {
                 Target = account
             });
-
 
             Assert.Throws<TypeAccessException>(() => _context.GetProperty<IPluginStepAudit>());
             Assert.Throws<PluginStepAuditNotEnabledException>(() => _context.GetPluginStepAudit());
