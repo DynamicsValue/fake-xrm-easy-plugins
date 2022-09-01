@@ -9,7 +9,6 @@ using Microsoft.Xrm.Sdk.PluginTelemetry;
 #endif
 using System;
 
-
 namespace FakeXrmEasy.Plugins 
 {
     /// <summary>
@@ -31,6 +30,11 @@ namespace FakeXrmEasy.Plugins
         protected readonly IOrganizationServiceFactory _organizationServiceFactory;
         protected readonly IServiceEndpointNotificationService _serviceEndpointNotificationService;
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="tracingService"></param>
         public XrmFakedPluginContextProperties(IOrganizationService service, IXrmFakedTracingService tracingService) 
         {
             _service = service;

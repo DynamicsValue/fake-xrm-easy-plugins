@@ -73,7 +73,13 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         {
             // Arange
             _context.Initialize(_contact);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Delete",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation
+            });
 
             // Act
             _service.Delete(Contact.EntityLogicalName, _contact.Id);
@@ -95,8 +101,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         {
             // Arange
             _context.Initialize(_contact);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous);
 
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Delete",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation
+            });
+            
             // Act
             _service.Delete(Contact.EntityLogicalName, _contact.Id);
 
@@ -118,9 +130,15 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             // Arange
             _context.Initialize(_contact);
 
-            // Act
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Delete",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Asynchronous
+            });
 
+            // Act
             _service.Delete(Contact.EntityLogicalName, _contact.Id);
 
             // Assert
@@ -140,7 +158,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         {
             // Arange
             _context.Initialize(_contact);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             // Act
             var updatedEntity = new Contact
@@ -166,7 +191,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         {
             // Arange
             _context.Initialize(_contact);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous);
+
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             // Act
             var updatedEntity = new Contact
@@ -192,7 +224,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         {
             // Arange
             _context.Initialize(_contact);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous);
+
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Asynchronous
+            });
 
             // Act
             var updatedEntity = new Contact
@@ -217,7 +256,13 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_trigger_plugin_in_the_pre_operation_stage_sync_when_plugin_step_is_registered()
         {
             // Arange
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             // Act
             _service.Create(_contact);
@@ -237,8 +282,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_trigger_plugin_in_the_post_operation_stage_sync_when_plugin_step_is_registered()
         {
             // Arange
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous);
-
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
+            
             // Act
             _service.Create(_contact);
 
@@ -257,7 +308,13 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_trigger_plugin_in_the_post_operation_stage_async_when_plugin_step_is_registered()
         {
             // Arange
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Asynchronous
+            });
 
             // Act
             _service.Create(_contact);
@@ -279,7 +336,13 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         {
             // Arange
             _context.Initialize(_contact);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Update", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Prevalidation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             // Act
             var updatedEntity = new Contact
@@ -304,7 +367,13 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_trigger_plugin_registered_on_sync_create_prevalidation()
         {
             // Arange
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Contact.EntityLogicalName, "Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous);
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Prevalidation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             // Act
             _service.Create(_contact);
@@ -326,8 +395,15 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_trigger_plugin_for_filtered_attribute_if_a_registration_exists(string attributeName)
         {
             _context.Initialize(_account);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Account.EntityLogicalName, "Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, filteringAttributes: new string[] { attributeName });
-
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                FilteringAttributes = new string[] { attributeName }
+            });
+            
             // Act
             var target = new Account
             {
@@ -354,7 +430,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_trigger_plugin_for_filtered_attribute_if_a_registration_exists_with_multiple_attributes(string attributeName)
         {
             _context.Initialize(_account);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Account.EntityLogicalName, "Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, filteringAttributes: new string[] { attributeName, "name" });
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                FilteringAttributes = new string[] { attributeName, "name" }
+            });
 
             // Act
             var target = new Account
@@ -380,7 +463,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         public void Should_not_trigger_plugin_for_filtered_attribute_if_attribute_is_not_present()
         {
             _context.Initialize(_account);
-            _context.RegisterPluginStep<ValidatePipelinePlugin>(Account.EntityLogicalName, "Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, filteringAttributes: new string[] { "name" });
+            _context.RegisterPluginStep<ValidatePipelinePlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                FilteringAttributes = new string[] { "name" }
+            });
 
             // Act
             var target = new Account

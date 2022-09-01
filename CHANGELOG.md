@@ -2,8 +2,8 @@
 
 ### Added 
 
- - Plugin Step registration improvements: new general purpose method to register plugin steps: #53
- - Added possibility to register plugin steps with logical name, and therefore support for late bound registration #38
+ - Plugin Step registration improvements: new general purpose method to register plugin steps: DynamicsValue/fake-xrm-easy#53
+ - Added possibility to register plugin steps with logical name, and therefore support for late bound registration DynamicsValue/fake-xrm-easy#38
  
 ### Changed
 
