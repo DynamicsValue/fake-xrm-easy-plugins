@@ -8,6 +8,7 @@ using Xunit;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 
 using FakeXrmEasy.Pipeline;
+using FakeXrmEasy.Plugins.PluginSteps;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
@@ -37,7 +38,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void Should_trigger_registered_postoperation_plugin_step_but_not_persist_account_number_attribute_when_execute_plugin_with_is_called()
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(Account.EntityLogicalName, "Create");
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName,
+            });
 
             _context.ExecutePluginWith<CreateAccountPlugin>();
 
@@ -49,7 +54,12 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void Should_not_trigger_registered_preoperation_plugin_step_if_it_was_registered_against_another_entity()
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(Contact.EntityLogicalName, "Create", ProcessingStepStage.Preoperation);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Contact.EntityLogicalName,
+                Stage = ProcessingStepStage.Preoperation
+            });
 
             _context.ExecutePluginWith<CreateAccountPlugin>();
 

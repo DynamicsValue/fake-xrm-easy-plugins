@@ -17,7 +17,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Stage where this plugins runs.
+        /// Stage where this plugins runs. If null, PostOperation will be used by default
         /// </summary>
         public ProcessingStepStage Stage { get; set; }
 
@@ -27,7 +27,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         public string MessageName { get; set; }
 
         /// <summary>
-        /// Mode of this plugin step
+        /// Mode of this plugin step. If null, Synchronous will be used by default
         /// </summary>
         public ProcessingStepMode Mode { get; set; }
 
@@ -67,5 +67,14 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         /// Any plugin images to be registered for this plugin step, or null or empty
         /// </summary>
         public IEnumerable<IPluginImageDefinition> ImagesDefinitions { get; set; }
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public PluginStepDefinition()
+        {
+            Stage = ProcessingStepStage.Postoperation;
+            Mode = ProcessingStepMode.Synchronous;
+        }
     }
 }
