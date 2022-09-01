@@ -71,14 +71,12 @@ namespace FakeXrmEasy.Middleware.Pipeline
                         var preImagePostOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
                                             GetPreImageEntityForRequest(context, request) : null;
 
-
                         var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
 
                         ProcessPreValidation(context, request, target);
                         ProcessPreOperation(context, request, target, preImagePreOperation);
 
                         var response = next.Invoke(context, request);
-
 
                         var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
                                             GetPostImageEntityForRequest(context, request) : null;

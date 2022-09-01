@@ -1,6 +1,7 @@
 ﻿using Crm;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
+using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -40,7 +41,12 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(requestName, stage, mode);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode
+            });
 
             var steps = _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, _createRequest);
             Assert.Single(steps);
@@ -66,7 +72,13 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_and_entity_type_code_if_present(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(requestName, stage, mode, primaryEntityTypeCode: Account.EntityTypeCode);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                EntityTypeCode = Account.EntityTypeCode,
+                Stage = stage,
+                Mode = mode
+            });
 
             var steps = _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, _createRequest);
             Assert.Single(steps);
@@ -93,7 +105,12 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_not_return_registered_plugin_step_for_another_request_name(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>("Update", stage, mode);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                Stage = stage,
+                Mode = mode
+            });
 
             var steps = _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, _createRequest);
             Assert.Empty(steps);
@@ -108,8 +125,21 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_multiple_registered_plugin_steps_for_exact_request_name_stage_and_mode_ordered_by_rank(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<FollowupPlugin2>(requestName, stage, mode, rank: 2);
-            _context.RegisterPluginStep<FollowupPlugin>(requestName, stage, mode, rank: 1);
+            _context.RegisterPluginStep<FollowupPlugin2>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                Rank = 2
+            });
+
+            _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                Rank = 1
+            });
 
             var steps = _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, _createRequest).ToList();
             Assert.Equal(2, steps.Count);
@@ -142,7 +172,13 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_with_filtering_attributes(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(requestName, stage, mode, filteringAttributes: new string[] { "name" });
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                FilteringAttributes = new string[] { "name" }
+            });
 
             _target.Name = "Some name";
 
@@ -158,8 +194,9 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Equal(pluginType.Assembly.GetName().Name, pluginStep.AssemblyName);
             Assert.Equal(pluginType.FullName, pluginStep.PluginType);
 
-            Assert.NotEmpty(pluginStep.FilteringAttributes);
-            Assert.Equal("name", pluginStep.FilteringAttributes[0]);
+            var attributes = pluginStep.FilteringAttributes.ToList();
+            Assert.NotEmpty(attributes);
+            Assert.Equal("name", attributes[0]);
         }
 
         [Theory]
@@ -171,7 +208,13 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_with_multiple_filtering_attributes(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(requestName, stage, mode, filteringAttributes: new string[] { "name", "accountcategorycode" });
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                FilteringAttributes = new string[] { "name", "accountcategorycode" }
+            });
 
             _target.AccountCategoryCode = new OptionSetValue(0);
 
@@ -187,9 +230,10 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Equal(pluginType.Assembly.GetName().Name, pluginStep.AssemblyName);
             Assert.Equal(pluginType.FullName, pluginStep.PluginType);
 
-            Assert.NotEmpty(pluginStep.FilteringAttributes);
-            Assert.Equal("name", pluginStep.FilteringAttributes[0]);
-            Assert.Equal("accountcategorycode", pluginStep.FilteringAttributes[1]);
+            var attributes = pluginStep.FilteringAttributes.ToList();
+            Assert.NotEmpty(attributes);
+            Assert.Equal("name", attributes[0]);
+            Assert.Equal("accountcategorycode", attributes[1]);
         }
 
         [Theory]
@@ -201,7 +245,13 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_not_return_registered_plugin_step_with_filtering_attributes_if_request_does_not_contain_such_attribute(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.RegisterPluginStep<AccountNumberPlugin>(requestName, stage, mode, filteringAttributes: new string[] { "name" });
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                FilteringAttributes = new string[] { "name" }
+            });
 
             var steps = _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(requestName, stage, mode, _createRequest);
             Assert.Empty(steps);

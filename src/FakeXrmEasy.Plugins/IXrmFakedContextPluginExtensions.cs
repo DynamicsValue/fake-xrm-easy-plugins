@@ -55,8 +55,9 @@ namespace FakeXrmEasy.Plugins
         /// <summary>
         /// Executes a plugin passing a custom context. This is useful whenever we need to mock more complex plugin contexts (ex: passing MessageName, plugin Depth, InitiatingUserId etc...)
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="instance"></param>
+        /// <param name="context">The IXrmFakedContext instance where this plugin will be executed</param>
+        /// <param name="plugCtx">A plugin context with the minimum set of properties needed for the plugin execution</param>
+        /// <param name="instance">A specific plugin instance, where you might have already setup / injected other dependencies</param>
         /// <returns></returns>
         public static IPlugin ExecutePluginWith(this IXrmFakedContext context, XrmFakedPluginExecutionContext plugCtx, IPlugin instance)
         {
@@ -78,7 +79,8 @@ namespace FakeXrmEasy.Plugins
         /// Executes a plugin passing a custom context. This is useful whenever we need to mock more complex plugin contexts (ex: passing MessageName, plugin Depth, InitiatingUserId etc...)
         /// </summary>
         /// <typeparam name="T">Must be a plugin</typeparam>
-        /// <param name="ctx"></param>
+        /// <param name="context">The IXrmFakedContext instance where this plugin will be executed</param>
+        /// <param name="ctx">A plugin context with the minimum set of properties needed for the plugin execution</param>
         /// <returns></returns>
         public static IPlugin ExecutePluginWith<T>(this IXrmFakedContext context, XrmFakedPluginExecutionContext ctx = null)
             where T : IPlugin, new()
@@ -91,7 +93,16 @@ namespace FakeXrmEasy.Plugins
             return context.ExecutePluginWith(ctx, new T());
         }
 
-
+        /// <summary>
+        /// Method to execute a plugin that takes several plugin execution properties as parameters. Soon to be deprecated, use the ExecutePluginWith&lt;T&gt; that takes a plugin context instance instead
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="inputParameters"></param>
+        /// <param name="outputParameters"></param>
+        /// <param name="preEntityImages"></param>
+        /// <param name="postEntityImages"></param>
+        /// <returns></returns>
         public static IPlugin ExecutePluginWith<T>(this IXrmFakedContext context, ParameterCollection inputParameters, ParameterCollection outputParameters, EntityImageCollection preEntityImages, EntityImageCollection postEntityImages)
             where T : IPlugin, new()
         {
@@ -141,6 +152,16 @@ namespace FakeXrmEasy.Plugins
             return context.ExecutePluginWith(plugCtx, pluginInstance);
         }
 
+        /// <summary>
+        /// Method to execute a plugin with configurations that also takes a specific plugin instance where you might already injected other external dependencies
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="plugCtx"></param>
+        /// <param name="instance"></param>
+        /// <param name="unsecureConfiguration"></param>
+        /// <param name="secureConfiguration"></param>
+        /// <returns></returns>
         [Obsolete("Use ExecutePluginWith(XrmFakedPluginExecutionContext ctx, IPlugin instance).")]
         public static IPlugin ExecutePluginWithConfigurations<T>(this IXrmFakedContext context, XrmFakedPluginExecutionContext plugCtx, T instance, string unsecureConfiguration="", string secureConfiguration="")
             where T : class, IPlugin
@@ -193,6 +214,7 @@ namespace FakeXrmEasy.Plugins
         /// and returns the faked plugin
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
         /// <param name="target">The entity to execute the plug-in for.</param>
         /// <param name="messageName">Sets the message name.</param>
         /// <param name="stage">Sets the stage.</param>
@@ -207,6 +229,7 @@ namespace FakeXrmEasy.Plugins
         /// Executes the plugin of type T against the faked context for an entity target
         /// and returns the faked plugin
         /// </summary>
+        /// <param name="context"></param>
         /// <param name="instance"></param>
         /// <param name="target">The entity to execute the plug-in for.</param>
         /// <param name="messageName">Sets the message name.</param>
@@ -229,6 +252,7 @@ namespace FakeXrmEasy.Plugins
         /// and returns the faked plugin
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
         /// <param name="target">The entity reference to execute the plug-in for.</param>
         /// <param name="messageName">Sets the message name.</param>
         /// <param name="stage">Sets the stage.</param>
@@ -243,7 +267,8 @@ namespace FakeXrmEasy.Plugins
         /// Executes the plugin of type T against the faked context for an entity reference target
         /// and returns the faked plugin
         /// </summary>
-        /// <param name="instance"></param>
+        /// <param name="context">The IXrmFakedContext used to execute the plugin</param>
+        /// <param name="instance">A specific plugin instance</param>
         /// <param name="target">The entity reference to execute the plug-in for.</param>
         /// <param name="messageName">Sets the message name.</param>
         /// <param name="stage">Sets the stage.</param>
@@ -282,6 +307,11 @@ namespace FakeXrmEasy.Plugins
         /// Returns a faked plugin with a target and the specified post entity images
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="target"></param>
+        /// <param name="postEntityImages"></param>
+        /// <param name="messageName"></param>
+        /// <param name="stage"></param>
         /// <returns></returns>
         [Obsolete("Use ExecutePluginWith<T> instead")]
         public static IPlugin ExecutePluginWithTargetAndPostEntityImages<T>(this IXrmFakedContext context, object target, EntityImageCollection postEntityImages, string messageName = "Create", int stage = 40)
@@ -297,6 +327,16 @@ namespace FakeXrmEasy.Plugins
             return context.ExecutePluginWith<T>(ctx);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="target"></param>
+        /// <param name="inputParameters"></param>
+        /// <param name="messageName"></param>
+        /// <param name="stage"></param>
+        /// <returns></returns>
         [Obsolete("Use ExecutePluginWith<T> instead")]
         public static IPlugin ExecutePluginWithTargetAndInputParameters<T>(this IXrmFakedContext context, Entity target, ParameterCollection inputParameters, string messageName = "Create", int stage = 40)
             where T : IPlugin, new()
