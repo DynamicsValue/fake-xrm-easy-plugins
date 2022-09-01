@@ -107,7 +107,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         {
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
-                MessageName = requestName,
+                MessageName = "Update",
                 Stage = stage,
                 Mode = mode
             });
