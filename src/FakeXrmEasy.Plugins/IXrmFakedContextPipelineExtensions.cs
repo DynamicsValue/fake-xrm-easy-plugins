@@ -337,7 +337,7 @@ namespace FakeXrmEasy.Pipeline
 
         internal static void ExecutePipelineStage(this IXrmFakedContext context, 
             PipelineStageExecutionParameters parameters,
-            object target = null)
+            object target)
         {
             var plugins = context.GetPluginStepsForOrganizationRequest(parameters.RequestName, parameters.Stage, parameters.Mode, parameters.Request);
             if(plugins == null)
