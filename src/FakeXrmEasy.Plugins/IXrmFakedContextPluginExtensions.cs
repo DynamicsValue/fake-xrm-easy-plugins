@@ -47,7 +47,7 @@ namespace FakeXrmEasy.Plugins
         {
             if(context.PluginContextProperties == null) 
             {
-                context.PluginContextProperties = new XrmFakedPluginContextProperties(context.GetOrganizationService(), context.GetTracingService());
+                context.PluginContextProperties = new XrmFakedPluginContextProperties(context, context.GetOrganizationService(), context.GetTracingService());
             }
             return context.PluginContextProperties;
         }

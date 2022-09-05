@@ -16,7 +16,19 @@ namespace FakeXrmEasy.Plugins
     /// </summary>
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {
+        /// <summary>
+        /// Reference to the IXrmFakedContext that created this instance
+        /// </summary>
+        protected readonly IXrmFakedContext _context;
+
+        /// <summary>
+        /// A fake organization service
+        /// </summary>
         protected readonly IOrganizationService _service;
+
+        /// <summary>
+        /// A fake tracing service
+        /// </summary>
         protected readonly IXrmFakedTracingService _tracingService;
 
 #if FAKE_XRM_EASY_9
@@ -33,10 +45,12 @@ namespace FakeXrmEasy.Plugins
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="tracingService"></param>
-        public XrmFakedPluginContextProperties(IOrganizationService service, IXrmFakedTracingService tracingService) 
+        /// <param name="context">The IXrmFakedContext from which this instance is created</param>
+        /// <param name="service">The fake organization service to use by this plugin context properties instance</param>
+        /// <param name="tracingService">The fake tracing service to use by this plugin context properties instance</param>
+        public XrmFakedPluginContextProperties(IXrmFakedContext context, IOrganizationService service, IXrmFakedTracingService tracingService) 
         {
+            _context = context;
             _service = service;
             _tracingService = tracingService;
 
@@ -76,6 +90,11 @@ namespace FakeXrmEasy.Plugins
         public ILogger Logger { get => _loggerService; set => _loggerService = value; }
 #endif
 
+        /// <summary>
+        /// Gets a fake service provider interface based on the current fake plugin execution context
+        /// </summary>
+        /// <param name="plugCtx"></param>
+        /// <returns></returns>
         public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
         {
             var fakedServiceProvider = A.Fake<IServiceProvider>();
@@ -124,7 +143,7 @@ namespace FakeXrmEasy.Plugins
                        return _entityDataSourceRetrieverService;
                    }
 #endif
-                   throw new PullRequestException("The specified service type is not supported");
+                   throw UnsupportedExceptionFactory.New(_context.LicenseContext.Value, "The specified service type is not supported");
                });
 
             return fakedServiceProvider;
