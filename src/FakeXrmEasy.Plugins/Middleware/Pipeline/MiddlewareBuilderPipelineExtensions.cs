@@ -107,7 +107,17 @@ namespace FakeXrmEasy.Middleware.Pipeline
                                 Entity preEntity = null, 
                                 Entity postEntity = null)
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, request, null, target, preEntity, postEntity);
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                RequestName = request.RequestName,
+                Request = request,
+                Stage = ProcessingStepStage.Prevalidation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preEntity,
+                PostEntitySnapshot = postEntity
+            };
+
+            context.ExecutePipelineStage(pipelineParameters, target);
         }
 
         private static void ProcessPreOperation(IXrmFakedContext context, 
@@ -116,14 +126,17 @@ namespace FakeXrmEasy.Middleware.Pipeline
                                         Entity preEntity = null, 
                                         Entity postEntity = null) 
         {
-            context.ExecutePipelineStage(request.RequestName, 
-                        ProcessingStepStage.Preoperation, 
-                        ProcessingStepMode.Synchronous, 
-                        request, 
-                        null, 
-                        target, 
-                        preEntity, 
-                        postEntity);
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                RequestName = request.RequestName,
+                Request = request,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preEntity,
+                PostEntitySnapshot = postEntity
+            };
+
+            context.ExecutePipelineStage(pipelineParameters, target);
         }
 
         private static void ProcessPostOperation(IXrmFakedContext context, 
@@ -133,8 +146,20 @@ namespace FakeXrmEasy.Middleware.Pipeline
                                                     Entity preEntity = null, 
                                                     Entity postEntity = null) 
         {
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, request, response, target, preEntity, postEntity);
-            context.ExecutePipelineStage(request.RequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, request, response, target, preEntity, postEntity);
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                RequestName = request.RequestName,
+                Request = request,
+                Response = response,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preEntity,
+                PostEntitySnapshot = postEntity
+            };
+            context.ExecutePipelineStage(pipelineParameters, target);
+
+            pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
+            context.ExecutePipelineStage(pipelineParameters, target);
         }
 
         private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)

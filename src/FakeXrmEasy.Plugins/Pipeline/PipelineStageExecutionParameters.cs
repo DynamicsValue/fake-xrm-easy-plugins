@@ -28,7 +28,15 @@ namespace FakeXrmEasy.Pipeline
         /// EntityReference is defined if an EntityReference came in the Target of the original request
         /// </summary>
         internal EntityReference EntityReference { get; set; }
-        internal Entity PreviousValues { get; set; }
-        internal Entity ResultingAttributes { get; set; }
+
+        /// <summary>
+        /// Snapshot of the entity values before the execution of the request
+        /// </summary>
+        internal Entity PreEntitySnapshot { get; set; }
+
+        /// <summary>
+        /// Snapshot of the entity values after the execution of the request
+        /// </summary>
+        internal Entity PostEntitySnapshot { get; set; }
     }
 }
