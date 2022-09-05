@@ -16,8 +16,19 @@ namespace FakeXrmEasy.Plugins
     /// </summary>
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {
+        /// <summary>
+        /// Reference to the IXrmFakedContext that created this instance
+        /// </summary>
         protected readonly IXrmFakedContext _context;
+
+        /// <summary>
+        /// A fake organization service
+        /// </summary>
         protected readonly IOrganizationService _service;
+
+        /// <summary>
+        /// A fake tracing service
+        /// </summary>
         protected readonly IXrmFakedTracingService _tracingService;
 
 #if FAKE_XRM_EASY_9
@@ -34,8 +45,9 @@ namespace FakeXrmEasy.Plugins
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="tracingService"></param>
+        /// <param name="context">The IXrmFakedContext from which this instance is created</param>
+        /// <param name="service">The fake organization service to use by this plugin context properties instance</param>
+        /// <param name="tracingService">The fake tracing service to use by this plugin context properties instance</param>
         public XrmFakedPluginContextProperties(IXrmFakedContext context, IOrganizationService service, IXrmFakedTracingService tracingService) 
         {
             _context = context;
