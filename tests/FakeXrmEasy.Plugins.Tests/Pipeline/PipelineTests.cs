@@ -8,6 +8,7 @@ using Xunit;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 
 using FakeXrmEasy.Pipeline;
+using FakeXrmEasy.Plugins.PluginSteps;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
@@ -416,6 +417,29 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             var traces = _context.GetTracingService().DumpTrace().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Empty(traces);
+        }
+
+        [Fact]
+        public void Should_populate_output_parameters_in_post_operation_and_pass_it_through_the_pipeline()
+        {
+            _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName
+            });
+
+            // Act
+            var target = new Account
+            {
+                Name = "Test Account"
+            };
+
+            var accountId = _service.Create(target);
+
+            // Assert
+            var task = _context.CreateQuery<Task>().FirstOrDefault();
+            Assert.NotNull(task.RegardingObjectId);
+            Assert.Equal(accountId, task.RegardingObjectId.Id); 
         }
 
 

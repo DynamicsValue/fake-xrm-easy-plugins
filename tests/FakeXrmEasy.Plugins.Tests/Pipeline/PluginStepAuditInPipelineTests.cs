@@ -225,7 +225,37 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Throws<PluginStepAuditNotEnabledException>(() => _context.GetPluginStepAudit());
         }
 
-        /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented
+        [Fact]
+        public void Should_populate_output_parameters_in_plugin_step_audit()
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName
+            });
+
+            // Act
+            var target = new Account
+            {
+                Name = "Test Account"
+            };
+
+            var accountId = _service.Create(target);
+
+            // Assert
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            Assert.Single(stepsAudit[0].OutputParameters);
+            Assert.Equal(accountId, stepsAudit[0].OutputParameters["id"]);
+        }
+
+        /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented 
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation)]
