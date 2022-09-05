@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Plugins.Tests.Services
         [Fact]
         public void Should_use_overriden_logger_implementation_when_set()
         {
-            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context.GetOrganizationService(), _context.GetTracingService());
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
             var defaultLogger = _context.PluginContextProperties.Logger;
 
             var myLogger = A.Fake<ILogger>();
