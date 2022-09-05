@@ -441,8 +441,5 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.NotNull(task.RegardingObjectId);
             Assert.Equal(accountId, task.RegardingObjectId.Id); 
         }
-
-
-
     }
 }
