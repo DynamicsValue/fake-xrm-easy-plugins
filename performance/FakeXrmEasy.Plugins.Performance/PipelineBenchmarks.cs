@@ -4,6 +4,7 @@ using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Performance.PluginsForTesting;
 using FakeXrmEasy.Plugins.PluginImages;
+using FakeXrmEasy.Plugins.PluginSteps;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
@@ -30,7 +31,14 @@ namespace FakeXrmEasy.Plugins.Performance
 
             for (var i = 0; i < 1000; i++)
             {
-                _lastPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, rank: i + 1, registeredImages: new PluginImageDefinition[] { preImageDefinition });
+                _lastPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+                {
+                    MessageName = "Create",
+                    Stage = ProcessingStepStage.Postoperation,
+                    Mode = ProcessingStepMode.Synchronous,
+                    Rank = i + 1,
+                    ImagesDefinitions = new PluginImageDefinition[] { preImageDefinition }
+                });
             }
         }
 
