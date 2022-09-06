@@ -15,7 +15,6 @@ using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
-using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Plugins.PluginSteps.Extensions;
 using FakeXrmEasy.Plugins.Definitions;
