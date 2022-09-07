@@ -2,6 +2,7 @@
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.PluginImages;
+using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
@@ -33,8 +34,20 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             string registeredPreImageName = "PreImage";
             PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, registrationType);
 
-            var pluginStepIdWithImages = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, registeredImages: new PluginImageDefinition[] { preImageDefinition });
-            var otherPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+            var pluginStepIdWithImages = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                ImagesDefinitions = new PluginImageDefinition[] { preImageDefinition }
+            });
+            
+            var otherPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             var pluginImagesFirstPluginStep = _context.GetPluginImageDefinitions(pluginStepIdWithImages, queryType).ToList();
             var pluginImagesSecondPluginStep = _context.GetPluginImageDefinitions(otherPluginStepId, queryType).ToList();
@@ -64,8 +77,20 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             string registeredPreImageName = "PreImage";
             PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, registrationType, new string[] { "name" });
 
-            var pluginStepIdWithImages = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, registeredImages: new PluginImageDefinition[] { preImageDefinition });
-            var otherPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
+            var pluginStepIdWithImages = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                ImagesDefinitions = new PluginImageDefinition[] { preImageDefinition }
+            });
+
+            var otherPluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
 
             var pluginImagesFirstPluginStep = _context.GetPluginImageDefinitions(pluginStepIdWithImages, queryType).ToList();
             var pluginImagesSecondPluginStep = _context.GetPluginImageDefinitions(otherPluginStepId, queryType).ToList();

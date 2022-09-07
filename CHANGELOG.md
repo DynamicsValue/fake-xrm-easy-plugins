@@ -1,3 +1,15 @@
+## [2.2.0]
+
+### Added 
+
+ - OutputParameters is now populated in PipelineSimulation: DynamicsValue/fake-xrm-easy#39 
+ - Plugin Step registration improvements: new general purpose method to register plugin steps: DynamicsValue/fake-xrm-easy#53
+ - Added possibility to register plugin steps with logical name, and therefore support for late bound registration DynamicsValue/fake-xrm-easy#38
+ 
+### Changed
+
+- Fix Sonar Quality Gate settings: DynamicsValue/fake-xrm-easy#28
+
 ## [2.1.1]
 
 ### Changed

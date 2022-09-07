@@ -43,5 +43,15 @@ namespace FakeXrmEasy.Plugins.Audit
         /// Type of the plugin assembly that was triggered in this execution
         /// </summary>
         public Type PluginAssemblyType { get; set; }
+
+        /// <summary>
+        /// InputParameters that were part of the plugin execution
+        /// </summary>
+        public ParameterCollection InputParameters { get; set; }
+
+        /// <summary>
+        /// OutputParameters that were part of the plugin execution
+        /// </summary>
+        public ParameterCollection OutputParameters { get; set; }
     }
 }
