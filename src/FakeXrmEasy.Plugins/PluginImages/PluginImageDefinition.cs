@@ -1,4 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Plugins.Definitions;
 using System.Collections.Generic;
 
 namespace FakeXrmEasy.Plugins.PluginImages
@@ -8,22 +9,22 @@ namespace FakeXrmEasy.Plugins.PluginImages
     /// 
     /// 
     /// </summary>
-    public class PluginImageDefinition
+    public class PluginImageDefinition : IPluginImageDefinition
     {
         /// <summary>
         /// Name of the plugin image definition
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Type of Image: PreImage, PostImage, or Both
         /// </summary>
-        public ProcessingStepImageType ImageType { get; private set; }
+        public ProcessingStepImageType ImageType { get; set; }
 
         /// <summary>
         /// Attributes that this plugin image contains
         /// </summary>
-        public IEnumerable<string> Attributes { get; private set; }
+        public IEnumerable<string> Attributes { get; set; }
 
         /// <summary>
         /// Default constructor
