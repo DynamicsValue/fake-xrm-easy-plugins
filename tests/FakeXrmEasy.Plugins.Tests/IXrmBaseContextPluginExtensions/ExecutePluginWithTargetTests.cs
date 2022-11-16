@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
+namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
 {
     public class ExecutePluginWithTargetTests: FakeXrmEasyTestsBase
     {

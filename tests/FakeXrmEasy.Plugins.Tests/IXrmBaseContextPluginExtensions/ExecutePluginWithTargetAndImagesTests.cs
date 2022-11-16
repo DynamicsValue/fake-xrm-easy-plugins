@@ -3,7 +3,7 @@ using Microsoft.Xrm.Sdk;
 using System;
 using Xunit;
 
-namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
+namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
 {
     public class ExecutePluginWithTargetAndImagesTests : FakeXrmEasyTestsBase
     {

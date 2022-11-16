@@ -10,7 +10,7 @@ using Xunit;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Plugins.Tests.PluginsForTesting;
 
-namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPluginExtensions
+namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
 {
     public class ExecutePluginWithTests: FakeXrmEasyTestsBase
     {
