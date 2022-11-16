@@ -17,9 +17,9 @@ namespace FakeXrmEasy.Plugins
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {
         /// <summary>
-        /// Reference to the IXrmFakedContext that created this instance
+        /// Reference to the IXrmBaseContext that created this instance
         /// </summary>
-        protected readonly IXrmFakedContext _context;
+        protected readonly IXrmBaseContext _context;
 
         /// <summary>
         /// A fake organization service
@@ -45,10 +45,10 @@ namespace FakeXrmEasy.Plugins
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="context">The IXrmFakedContext from which this instance is created</param>
+        /// <param name="context">The IXrmBaseContext from which this instance is created</param>
         /// <param name="service">The fake organization service to use by this plugin context properties instance</param>
         /// <param name="tracingService">The fake tracing service to use by this plugin context properties instance</param>
-        public XrmFakedPluginContextProperties(IXrmFakedContext context, IOrganizationService service, IXrmFakedTracingService tracingService) 
+        public XrmFakedPluginContextProperties(IXrmBaseContext context, IOrganizationService service, IXrmFakedTracingService tracingService) 
         {
             _context = context;
             _service = service;
@@ -95,7 +95,7 @@ namespace FakeXrmEasy.Plugins
         /// </summary>
         /// <param name="plugCtx"></param>
         /// <returns></returns>
-        public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
+        public IServiceProvider GetServiceProvider(IPluginExecutionContext plugCtx) 
         {
             var fakedServiceProvider = A.Fake<IServiceProvider>();
 
@@ -114,12 +114,12 @@ namespace FakeXrmEasy.Plugins
 
                    if (t == typeof(IPluginExecutionContext))
                    {
-                       return GetFakedPluginContext(plugCtx);
+                       return GetFakedPluginContext((XrmFakedPluginExecutionContext) plugCtx);
                    }
 
                    if (t == typeof(IExecutionContext))
                    {
-                       return GetFakedExecutionContext(plugCtx);
+                       return GetFakedExecutionContext((XrmFakedPluginExecutionContext) plugCtx);
                    }
 
                    if (t == typeof(IOrganizationServiceFactory))

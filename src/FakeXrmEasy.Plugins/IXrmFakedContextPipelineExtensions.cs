@@ -512,7 +512,7 @@ namespace FakeXrmEasy.Pipeline
             var assembly = AppDomain.CurrentDomain.Load(pluginStepDefinition.AssemblyName);
             var pluginType = assembly.GetType(pluginStepDefinition.PluginType);
 
-            var methodInfo = typeof(IXrmFakedContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
+            var methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
             var pluginMethod = methodInfo.MakeGenericMethod(pluginType);
 
             return pluginMethod;
