@@ -1,5 +1,4 @@
 ﻿using Crm;
-using FakeItEasy;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -7,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xunit;
-using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Plugins.Tests.PluginsForTesting;
 
 namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
