@@ -1,5 +1,8 @@
 
 
+using System.Collections.Generic;
+using System.Reflection;
+
 namespace FakeXrmEasy.Middleware.Pipeline
 {
     /// <summary>
@@ -23,6 +26,16 @@ namespace FakeXrmEasy.Middleware.Pipeline
         public bool UsePluginStepRegistrationValidation { get; set; }
 
         /// <summary>
+        /// Enables automatic discovery and registration of plugin steps
+        /// </summary>
+        public bool UseAutomaticPluginStepRegistration { get; set; }
+
+        /// <summary>
+        /// When UseAutomaticPluginStepRegistration is enabled: the assemblies where to look for plugin steps
+        /// </summary>
+        public IEnumerable<Assembly> PluginAssemblies { get; set; }
+
+        /// <summary>
         /// Default constructor with Pipeline Simulation enabled by default
         /// </summary>
         public PipelineOptions()
@@ -30,6 +43,8 @@ namespace FakeXrmEasy.Middleware.Pipeline
             UsePipelineSimulation = true;
             UsePluginStepAudit = false;
             UsePluginStepRegistrationValidation = true;
+            UseAutomaticPluginStepRegistration = false;
+            PluginAssemblies = null;
         }
     }
 }

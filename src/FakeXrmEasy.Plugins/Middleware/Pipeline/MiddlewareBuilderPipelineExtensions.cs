@@ -9,6 +9,8 @@ using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
+using System.Linq;
+using FakeXrmEasy.Abstractions.Plugins.Registration;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -47,9 +49,43 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 {
                     context.SetProperty<IPluginStepValidator>(new PluginStepValidator());
                 }
+
+                if(options.UseAutomaticPluginStepRegistration)
+                {
+                    DiscoverAndRegisterPluginSteps(context, options);
+                }
             });
 
             return builder;
+        }
+
+        private static void DiscoverAndRegisterPluginSteps(IXrmFakedContext context, PipelineOptions options)
+        {
+            foreach(var assembly in options.PluginAssemblies)
+            {
+                var pluginsWithRegistration = from t in assembly.GetTypes()
+                                              let attributes = t.GetCustomAttributes(typeof(PluginStepRegistrationAttribute), true)
+                                              where attributes != null && attributes.Length > 0
+                                              select new { PluginType = t, RegistrationSteps = attributes.Cast<PluginStepRegistrationAttribute>() };
+
+                foreach(var pluginRegistration in pluginsWithRegistration)
+                {
+                    foreach(var step in pluginRegistration.RegistrationSteps)
+                    {
+                        context.RegisterPluginStepInternal(pluginRegistration.PluginType, 
+                            new PluginStepDefinition()
+                            {
+                                EntityLogicalName = step.EntityLogicalName,
+                                MessageName = step.MessageName,
+                                Stage = step.Stage,
+                                Mode = step.Mode,
+                                Id = !string.IsNullOrWhiteSpace(step.Id) ? new Guid(step.Id) : Guid.Empty,
+                                FilteringAttributes = step.FilteringAttributes,
+                                Rank = step.Rank
+                            });
+                    }
+                }
+            }
         }
 
         /// <summary>
