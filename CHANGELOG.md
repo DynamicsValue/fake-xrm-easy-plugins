@@ -1,3 +1,9 @@
+## [2.3.0]
+
+### Changed
+
+- IXrmFakedContextPluginExtensions is now IXrmBaseContextPluginExtensions. All extensions methods were changed to use the IXrmBaseContext interface as opposed to the IXrmFakedContext interface only so they could be used by both XrmFakedContext and XrmRealContext classes. - https://github.com/DynamicsValue/fake-xrm-easy/issues/35
+
 ## [2.2.0]
 
 ### Added 
