@@ -26,6 +26,21 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
         }
 
         [Fact]
+        public void When_a_plugin_with_target_is_executed_with_a_plugin_context_the_inherent_plugin_was_also_executed_without_exceptions()
+        {
+            var guid1 = Guid.NewGuid();
+            var target = new Entity("contact") { Id = guid1 };
+            var pluginCtx = _context.GetDefaultPluginContext();
+
+            //Execute our plugin against the selected target
+            var fakedPlugin = _context.ExecutePluginWithTarget<RetrieveServicesPlugin>(pluginCtx, target);
+
+            //Assert that the plugin was executed
+            A.CallTo(() => fakedPlugin.Execute(A<IServiceProvider>._))
+                .MustHaveHappened();
+        }
+
+        [Fact]
         public void When_the_account_number_plugin_is_executed_it_adds_a_random_number_to_an_account_entity()
         {
             var guid1 = Guid.NewGuid();

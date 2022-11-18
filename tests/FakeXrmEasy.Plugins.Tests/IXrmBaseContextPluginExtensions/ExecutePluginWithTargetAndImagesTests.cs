@@ -29,7 +29,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             EntityImageCollection preImagesReturned = target["PreEntityImages"] as EntityImageCollection;
 
             Assert.Equal(1, preImagesReturned?.Count);
-            Assert.IsType(typeof(Entity), preImagesReturned["PreImage"]);
+            Assert.IsType<Entity>(preImagesReturned["PreImage"]);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             EntityImageCollection postImagesReturned = target["PostEntityImages"] as EntityImageCollection;
 
             Assert.Equal(1, postImagesReturned?.Count);
-            Assert.IsType(typeof(Entity), postImagesReturned["PostImage"]);
+            Assert.IsType<Entity>(postImagesReturned["PostImage"]);
         }
     }
 }

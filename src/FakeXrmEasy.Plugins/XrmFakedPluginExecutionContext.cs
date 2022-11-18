@@ -229,7 +229,7 @@ namespace FakeXrmEasy.Plugins
                             .Where(x => x.Name.LocalName.Equals("Context"))
                             .FirstOrDefault();
 
-                        var pluginContextString = contextElement.Value;
+                        var pluginContextString = contextElement?.Value;
 
                         XrmFakedPluginExecutionContext pluginContext = null;
                         using (var reader = new MemoryStream(Encoding.UTF8.GetBytes(pluginContextString)))
