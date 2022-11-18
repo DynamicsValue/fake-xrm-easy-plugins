@@ -303,6 +303,14 @@ namespace FakeXrmEasy.Pipeline
             where TPlugin : IPlugin
 
         {
+            return context.RegisterPluginStepInternal(typeof(TPlugin), pluginStepDefinition);
+        }
+
+        internal static Guid RegisterPluginStepInternal(this IXrmFakedContext context,
+                                                                Type pluginType,
+                                                                IPluginStepDefinition pluginStepDefinition)
+
+        {
             ValidatePluginStep(context, pluginStepDefinition);
 
             // Message and MessageFilter
@@ -310,9 +318,8 @@ namespace FakeXrmEasy.Pipeline
             var sdkMessageFilter = AddSdkMessageFilter(context, pluginStepDefinition);
 
             // Store Plugin Type as a record
-            var type = typeof(TPlugin);
-            var assemblyName = type.Assembly.GetName();
-            var pluginTypeRecord = context.AddPluginType(type, assemblyName);
+            var assemblyName = pluginType.Assembly.GetName();
+            var pluginTypeRecord = context.AddPluginType(pluginType, assemblyName);
 
             // Message Step
             var sdkMessageProcessingStepId = pluginStepDefinition.Id == Guid.Empty ? Guid.NewGuid() : pluginStepDefinition.Id;
