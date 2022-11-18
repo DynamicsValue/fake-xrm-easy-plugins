@@ -1,4 +1,5 @@
-﻿using FakeXrmEasy.Tests.PluginsForTesting;
+﻿using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
         public XrmRealContextTests(): base()
         {
             _realContext = new XrmRealContext(_service);
+            _realContext.LicenseContext = FakeXrmEasyLicense.RPL_1_5;
         }
 
         [Fact]
