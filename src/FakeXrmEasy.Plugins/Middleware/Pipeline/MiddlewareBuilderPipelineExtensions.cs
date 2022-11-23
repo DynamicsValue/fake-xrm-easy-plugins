@@ -11,6 +11,7 @@ using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using System.Linq;
 using FakeXrmEasy.Abstractions.Plugins.Registration;
+using FakeXrmEasy.Plugins.Middleware.Pipeline.Exceptions;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -61,18 +62,30 @@ namespace FakeXrmEasy.Middleware.Pipeline
 
         private static void DiscoverAndRegisterPluginSteps(IXrmFakedContext context, PipelineOptions options)
         {
-            foreach(var assembly in options.PluginAssemblies)
+            if(options.CustomPluginStepDiscoveryFunction != null)
+            {
+                DiscoverAndRegisterCustomPluginSteps(context, options);
+            }
+            else
+            {
+                DiscoverAndRegisterDefaultPluginSteps(context, options);
+            }
+        }
+
+        private static void DiscoverAndRegisterDefaultPluginSteps(IXrmFakedContext context, PipelineOptions options)
+        {
+            foreach (var assembly in options.PluginAssemblies)
             {
                 var pluginsWithRegistration = from t in assembly.GetTypes()
                                               let attributes = t.GetCustomAttributes(typeof(PluginStepRegistrationAttribute), true)
                                               where attributes != null && attributes.Length > 0
                                               select new { PluginType = t, RegistrationSteps = attributes.Cast<PluginStepRegistrationAttribute>() };
 
-                foreach(var pluginRegistration in pluginsWithRegistration)
+                foreach (var pluginRegistration in pluginsWithRegistration)
                 {
-                    foreach(var step in pluginRegistration.RegistrationSteps)
+                    foreach (var step in pluginRegistration.RegistrationSteps)
                     {
-                        context.RegisterPluginStepInternal(pluginRegistration.PluginType, 
+                        context.RegisterPluginStepInternal(pluginRegistration.PluginType,
                             new PluginStepDefinition()
                             {
                                 EntityLogicalName = step.EntityLogicalName,
@@ -84,6 +97,22 @@ namespace FakeXrmEasy.Middleware.Pipeline
                                 Rank = step.Rank
                             });
                     }
+                }
+            }
+        }
+        private static void DiscoverAndRegisterCustomPluginSteps(IXrmFakedContext context, PipelineOptions options)
+        {
+            foreach (var assembly in options.PluginAssemblies)
+            {
+                var pluginStepDefinitions = options.CustomPluginStepDiscoveryFunction.Invoke(assembly);
+                foreach (var stepDefinition in pluginStepDefinitions)
+                {
+                    if(string.IsNullOrWhiteSpace(stepDefinition.PluginType))
+                    {
+                        throw new MissingPluginTypeInPluginStepDefinitionException();
+                    }
+                    var pluginType = assembly.GetType(stepDefinition.PluginType);
+                    context.RegisterPluginStepInternal(pluginType, stepDefinition);
                 }
             }
         }

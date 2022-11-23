@@ -2,6 +2,7 @@
 
 ### Added
 
+- Added custom function to support registration of plugin steps via a custom reflection function (CustomPluginStepDiscoveryFunction) - https://github.com/DynamicsValue/fake-xrm-easy/issues/11
 - First implementation (preview) of automatic registration of plugin steps via reflection - https://github.com/DynamicsValue/fake-xrm-easy/issues/11
 
 
