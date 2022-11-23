@@ -8,7 +8,7 @@ using System.ServiceModel;
 namespace FakeXrmEasy.Tests.PluginsForTesting
 {
     [PluginStepRegistration(
-        EntityLogicalName=Account.EntityLogicalName,
+        EntityLogicalName = Account.EntityLogicalName,
         MessageName = "Create",
         Mode = ProcessingStepMode.Synchronous,
         Stage = ProcessingStepStage.Postoperation

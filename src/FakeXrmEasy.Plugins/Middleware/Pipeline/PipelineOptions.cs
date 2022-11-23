@@ -1,5 +1,7 @@
 
 
+using FakeXrmEasy.Plugins.PluginSteps;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -36,6 +38,13 @@ namespace FakeXrmEasy.Middleware.Pipeline
         public IEnumerable<Assembly> PluginAssemblies { get; set; }
 
         /// <summary>
+        /// When UseAutomaticPluginStepRegistration is enabled: Custom function that will be invoked for each assembly 
+        /// in PluginAssemblies to find any plugin step definitions via a custom discovery function 
+        /// (i.e. one that reads from an externally generated CrmPluginRegistrationAttribute class...)
+        /// </summary>
+        public Func<Assembly, IEnumerable<PluginStepDefinition>> CustomPluginStepDiscoveryFunction { get; set; }
+
+        /// <summary>
         /// Default constructor with Pipeline Simulation enabled by default
         /// </summary>
         public PipelineOptions()
@@ -45,6 +54,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
             UsePluginStepRegistrationValidation = true;
             UseAutomaticPluginStepRegistration = false;
             PluginAssemblies = null;
+            CustomPluginStepDiscoveryFunction = null;
         }
     }
 }
