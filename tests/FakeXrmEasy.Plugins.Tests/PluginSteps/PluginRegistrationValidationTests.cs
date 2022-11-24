@@ -73,13 +73,12 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
                     Stage = ProcessingStepStage.Preoperation
                 })
             );
-            
-            //A.CallTo(() => _invalidValidator.IsValid(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)).MustHaveHappened();
-            //A.CallTo(() => _invalidValidator.IsValid(MessageNameConstants.Create, "*", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)).MustNotHaveHappened();
+
+            A.CallTo(() => _invalidValidator.IsValid(A<IPluginStepDefinition>.Ignored)).MustHaveHappened();
         }
 
         [Fact]
-        public void Should_not_return_error_when_registering_an_valid_plugin_step_against_any_entity_if_validation_is_enabled()
+        public void Should_not_return_error_when_registering_a_valid_plugin_step_against_any_entity_if_validation_is_enabled()
         {
             _context = MiddlewareBuilder
                         .New()
@@ -95,7 +94,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
                 Mode = ProcessingStepMode.Synchronous
             });
 
-            //A.CallTo(() => _validValidator.IsValid(MessageNameConstants.Create, "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)).MustHaveHappened();
+            A.CallTo(() => _validValidator.IsValid(A<IPluginStepDefinition>.Ignored)).MustHaveHappened();
         }
 
         [Fact]
@@ -116,8 +115,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
                 Mode = ProcessingStepMode.Synchronous
             });
 
-            //A.CallTo(() => _validValidator.IsValid(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)).MustHaveHappened();
-            //A.CallTo(() => _validValidator.IsValid(MessageNameConstants.Create, "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)).MustNotHaveHappened();
+            A.CallTo(() => _validValidator.IsValid(A<IPluginStepDefinition>.Ignored)).MustHaveHappened();
         }
 
         [Fact]
@@ -137,7 +135,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
                 Mode = ProcessingStepMode.Asynchronous
             });
 
-            //A.CallTo(() => _invalidValidator.IsValid(MessageNameConstants.Create, "*", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)).MustNotHaveHappened();
+            A.CallTo(() => _invalidValidator.IsValid(A<IPluginStepDefinition>.Ignored)).MustNotHaveHappened();
         }
 
 
