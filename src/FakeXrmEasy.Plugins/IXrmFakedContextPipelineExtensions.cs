@@ -208,22 +208,7 @@ namespace FakeXrmEasy.Pipeline
                 if (pipelineOptions.UsePluginStepRegistrationValidation)
                 {
                     var validator = context.GetProperty<IPluginStepValidator>();
-                    bool isValid = true;
-
-                    if (pluginStepDefinition.EntityTypeCode == null && string.IsNullOrWhiteSpace(pluginStepDefinition.EntityLogicalName))
-                    {
-                        isValid = validator.IsValid(pluginStepDefinition.MessageName,
-                                                    "*",
-                                                    pluginStepDefinition.Stage,
-                                                    pluginStepDefinition.Mode);
-                    }
-                    else if (!string.IsNullOrWhiteSpace(pluginStepDefinition.EntityLogicalName))
-                    {
-                        isValid = validator.IsValid(pluginStepDefinition.MessageName,
-                                                    pluginStepDefinition.EntityLogicalName,
-                                                    pluginStepDefinition.Stage,
-                                                    pluginStepDefinition.Mode);
-                    }
+                    bool isValid = validator.IsValid(pluginStepDefinition);
                     if (!isValid)
                     {
                         throw new InvalidPluginStepRegistrationException();
