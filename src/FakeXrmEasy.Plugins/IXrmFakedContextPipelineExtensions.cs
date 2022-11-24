@@ -703,18 +703,18 @@ namespace FakeXrmEasy.Pipeline
 
                     string attributes = imageDefinition.GetAttributeValue<string>(SdkMessageProcessingStepImageFieldNames.Attributes);
 
-                    Entity preImage = values.Clone(values.GetType());
+                    Entity image = values.Clone(values.GetType());
                     if (!string.IsNullOrEmpty(attributes))
                     {
                         string[] specifiedAttributes = attributes.Split(',');
 
                         foreach (KeyValuePair<string, object> attr in values.Attributes.Where(x => !specifiedAttributes.Contains(x.Key)))
                         {
-                            preImage.Attributes.Remove(attr.Key);
+                            image.Attributes.Remove(attr.Key);
                         }
                     }
 
-                    collection.Add(name, preImage);
+                    collection.Add(name, image);
                 }
             }
 

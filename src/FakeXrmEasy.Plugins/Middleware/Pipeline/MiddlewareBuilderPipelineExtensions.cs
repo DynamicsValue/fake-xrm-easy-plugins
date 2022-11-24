@@ -130,6 +130,9 @@ namespace FakeXrmEasy.Middleware.Pipeline
                     
                     if(CanHandleRequest(context, request)) 
                     {
+                        var preImagePreValidation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Prevalidation) ?
+                                            GetPreImageEntityForRequest(context, request) : null;
+
                         var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation) ?
                                             GetPreImageEntityForRequest(context, request) : null;
 
@@ -138,7 +141,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
 
                         var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
 
-                        ProcessPreValidation(context, request, target);
+                        ProcessPreValidation(context, request, target, preImagePreValidation);
                         ProcessPreOperation(context, request, target, preImagePreOperation);
 
                         var response = next.Invoke(context, request);

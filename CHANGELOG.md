@@ -1,5 +1,9 @@
 ## [2.3.0]
 
+### Changed
+
+- Allow execution of PreImages in prevalidation : https://github.com/DynamicsValue/fake-xrm-easy/issues/71
+ 
 ### Added
 
 - Added validation of preimages and postimages during plugin step registration - https://github.com/DynamicsValue/fake-xrm-easy/issues/33

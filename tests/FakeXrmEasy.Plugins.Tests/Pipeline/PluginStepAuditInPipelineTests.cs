@@ -266,7 +266,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _context = CreatePluginStepAuditEnabledContext();
             _service = _context.GetOrganizationService();
 
-            _context.RegisterPluginStep<AccountNumberPlugin>("Create", stage);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = stage
+            });
 
             var account = new Account() { Name = "Some name" };
 
