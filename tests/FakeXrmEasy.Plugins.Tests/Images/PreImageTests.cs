@@ -23,6 +23,7 @@ namespace FakeXrmEasy.Plugins.Tests.Images
         ///      
         [Theory]
         [InlineData(typeof(OrganizationRequest), ProcessingStepStage.MainOperation, false)]
+        [InlineData(typeof(OrganizationRequest), ProcessingStepStage.Prevalidation, false)]
         [InlineData(typeof(CreateRequest), ProcessingStepStage.Preoperation, false)]
         [InlineData(typeof(UpdateRequest), ProcessingStepStage.Preoperation, true)]
         [InlineData(typeof(DeleteRequest), ProcessingStepStage.Preoperation, true)]
