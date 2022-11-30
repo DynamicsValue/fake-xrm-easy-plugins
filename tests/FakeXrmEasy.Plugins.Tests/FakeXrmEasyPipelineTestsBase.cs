@@ -21,6 +21,8 @@ namespace FakeXrmEasy.Plugins.Tests
                         // Add* -> Middleware configuration
                         .AddCrud()   
                         .AddFakeMessageExecutors()
+                        .AddGenericFakeMessageExecutors()
+
                         .AddPipelineSimulation()
 
                         // Use* -> Defines pipeline sequence

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using Crm;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
@@ -13,7 +12,6 @@ using FakeXrmEasy.Middleware.Messages;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
-using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
