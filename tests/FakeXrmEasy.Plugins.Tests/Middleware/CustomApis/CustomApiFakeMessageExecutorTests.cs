@@ -2,17 +2,19 @@
 using FakeXrmEasy.Plugins.Middleware.CustomApis;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
 {
-    public class CustomApiFakeMessageExecutorTests
+    public class CustomApiFakeMessageExecutorTests : FakeXrmEasyTestsBase
     {
         private class MyFakePlugin : IPlugin
         {
             public void Execute(IServiceProvider serviceProvider)
             {
-                //Do nothing...
+                var pluginContext = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
+                pluginContext.OutputParameters.Add(new KeyValuePair<string, object>("DummyKey", "DummyValue"));
             }
         }
 
@@ -51,6 +53,18 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
         }
 
         [Fact]
+        public void Should_execute_plugin_for_early_bound_custom_apis()
+        {
+            var customApi = new CustomApiFakeMessageExecutor<MyFakePlugin, MyCustomApiRequest>();
+            var response = customApi.Execute(new MyCustomApiRequest(), _context);
+            var outputParameters = response.Results;
+            Assert.NotEmpty(outputParameters);
+
+            var responseValue = outputParameters["DummyKey"] as string;
+            Assert.Equal("DummyValue", responseValue);
+        }
+
+        [Fact]
         public void Should_set_message_name_properties_for_generic_custom_apis()
         {
             var customApi = new MyGenericCustomApiWithPluginExecutor();
@@ -69,6 +83,29 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
 
             Assert.True(customApi.CanExecute(new OrganizationRequest() { RequestName = MyCustomApiRequest.MessageName }));
             Assert.False(customApi.CanExecute(new OrganizationRequest() { RequestName = "Other" }));
+        }
+
+        [Fact]
+        public void Should_execute_plugin_for_generic_custom_apis()
+        {
+            var customApi = new MyGenericCustomApiWithPluginExecutor();
+            var response = customApi.Execute(new OrganizationRequest() { RequestName = MyCustomApiRequest.MessageName }, _context);
+            var outputParameters = response.Results;
+            Assert.NotEmpty(outputParameters);
+
+            var responseValue = outputParameters["DummyKey"] as string;
+            Assert.Equal("DummyValue", responseValue);
+        }
+
+        [Fact]
+        public void Should_throw_exception_when_using_default_implementation_without_setting_a_message_name()
+        {
+            var customApi = new CustomApiFakeMessageExecutor<MyFakePlugin>();
+
+            Assert.NotNull(customApi.PluginType);
+
+            Assert.IsType<MyFakePlugin>(customApi.PluginType);
+            Assert.Throws<NotImplementedException>(() => customApi.MessageName);
         }
     }
 }
