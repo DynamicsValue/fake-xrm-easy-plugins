@@ -1,4 +1,5 @@
-﻿using FakeXrmEasy.Plugins.Middleware.CustomApis;
+﻿using FakeXrmEasy.Abstractions.Enums.CustomApis;
+using FakeXrmEasy.Plugins.Middleware.CustomApis;
 using Microsoft.Xrm.Sdk;
 using System;
 using Xunit;
@@ -39,6 +40,10 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
             Assert.IsType<MyFakePlugin>(customApi.PluginType);
             Assert.Equal(MyCustomApiRequest.MessageName, customApi.MessageName);
 
+            Assert.Equal(CustomProcessingStepType.None, customApi.CustomProcessingType);
+            Assert.Equal(BindingType.Global, customApi.BindingType);
+            Assert.Null(customApi.EntityLogicalName);
+
             Assert.Equal(typeof(MyCustomApiRequest), customApi.GetResponsibleRequestType());
 
             Assert.True(customApi.CanExecute(new MyCustomApiRequest()));
@@ -54,6 +59,10 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
 
             Assert.IsType<MyFakePlugin>(customApi.PluginType);
             Assert.Equal(MyCustomApiRequest.MessageName, customApi.MessageName);
+
+            Assert.Equal(CustomProcessingStepType.None, customApi.CustomProcessingType);
+            Assert.Equal(BindingType.Global, customApi.BindingType);
+            Assert.Null(customApi.EntityLogicalName);
 
             var type = customApi.GetResponsibleRequestType();
             Assert.Equal(typeof(OrganizationRequest), type);

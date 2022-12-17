@@ -84,8 +84,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         /// <returns></returns>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
-            if (_pluginType == null) return new OrganizationResponse();
-
             var pluginContext = ctx.GetDefaultPluginContext();
             pluginContext.Stage = (int)ProcessingStepStage.MainOperation;
 
@@ -177,8 +175,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         /// <returns></returns>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
-            if (_pluginType == null) return new OrganizationResponse();
-
             var pluginContext = ctx.GetDefaultPluginContext();
             pluginContext.Stage = (int)ProcessingStepStage.MainOperation;
 
