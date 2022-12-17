@@ -38,6 +38,11 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
 
             Assert.IsType<MyFakePlugin>(customApi.PluginType);
             Assert.Equal(MyCustomApiRequest.MessageName, customApi.MessageName);
+
+            Assert.Equal(typeof(MyCustomApiRequest), customApi.GetResponsibleRequestType());
+
+            Assert.True(customApi.CanExecute(new MyCustomApiRequest()));
+            Assert.False(customApi.CanExecute(new OrganizationRequest()));
         }
 
         [Fact]
@@ -49,6 +54,12 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
 
             Assert.IsType<MyFakePlugin>(customApi.PluginType);
             Assert.Equal(MyCustomApiRequest.MessageName, customApi.MessageName);
+
+            var type = customApi.GetResponsibleRequestType();
+            Assert.Equal(typeof(OrganizationRequest), type);
+
+            Assert.True(customApi.CanExecute(new OrganizationRequest() { RequestName = MyCustomApiRequest.MessageName }));
+            Assert.False(customApi.CanExecute(new OrganizationRequest() { RequestName = "Other" }));
         }
     }
 }

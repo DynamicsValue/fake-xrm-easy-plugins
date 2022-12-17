@@ -73,14 +73,13 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
             var pluginContext = ctx.GetDefaultPluginContext();
             pluginContext.Stage = (int)ProcessingStepStage.MainOperation;
 
-            //TO DO: Should clone these....
             pluginContext.MessageName = MessageName;
             pluginContext.InputParameters = request.Parameters;
             ctx.ExecutePluginWith(pluginContext, _pluginType);
 
             return new OrganizationResponse()
             {
-                Results = pluginContext.OutputParameters // TO DO: Should also clone these....
+                Results = pluginContext.OutputParameters
             };
         }
     }
@@ -136,7 +135,7 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         /// <returns></returns>
         public virtual bool CanExecute(OrganizationRequest request)
         {
-            throw new NotImplementedException();
+            return request.RequestName.Equals(MessageName);
         }
 
         /// <summary>
@@ -152,14 +151,13 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
             var pluginContext = ctx.GetDefaultPluginContext();
             pluginContext.Stage = (int)ProcessingStepStage.MainOperation;
 
-            //TO DO: Should clone these....
             pluginContext.MessageName = MessageName;
             pluginContext.InputParameters = request.Parameters;
             ctx.ExecutePluginWith(pluginContext, _pluginType);
 
             return new OrganizationResponse()
             {
-                Results = pluginContext.OutputParameters // TO DO: Should also clone these....
+                Results = pluginContext.OutputParameters
             };
         }
     }
