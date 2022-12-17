@@ -139,17 +139,15 @@ namespace FakeXrmEasy.Middleware.Pipeline
                         var preImagePostOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
                                             GetPreImageEntityForRequest(context, request) : null;
 
-                        var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
-
-                        ProcessPreValidation(context, request, target, preImagePreValidation);
-                        ProcessPreOperation(context, request, target, preImagePreOperation);
+                        ProcessPreValidation(context, request, preImagePreValidation);
+                        ProcessPreOperation(context, request, preImagePreOperation);
 
                         var response = next.Invoke(context, request);
 
                         var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation) ?
                                             GetPostImageEntityForRequest(context, request) : null;
 
-                        ProcessPostOperation(context, request, response, target, preImagePostOperation, postImagePostOperation);
+                        ProcessPostOperation(context, request, response, preImagePostOperation, postImagePostOperation);
                         return response;
                     }
                     else 
@@ -171,7 +169,6 @@ namespace FakeXrmEasy.Middleware.Pipeline
 
         private static void ProcessPreValidation(IXrmFakedContext context, 
                                 OrganizationRequest request, 
-                                object target, 
                                 Entity preEntity = null, 
                                 Entity postEntity = null)
         {
@@ -185,12 +182,11 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 PostEntitySnapshot = postEntity
             };
 
-            context.ExecutePipelineStage(pipelineParameters, target);
+            context.ExecutePipelineStage(pipelineParameters);
         }
 
         private static void ProcessPreOperation(IXrmFakedContext context, 
                                         OrganizationRequest request, 
-                                        object target, 
                                         Entity preEntity = null, 
                                         Entity postEntity = null) 
         {
@@ -204,13 +200,12 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 PostEntitySnapshot = postEntity
             };
 
-            context.ExecutePipelineStage(pipelineParameters, target);
+            context.ExecutePipelineStage(pipelineParameters);
         }
 
         private static void ProcessPostOperation(IXrmFakedContext context, 
                                                     OrganizationRequest request, 
                                                     OrganizationResponse response,
-                                                    object target, 
                                                     Entity preEntity = null, 
                                                     Entity postEntity = null) 
         {
@@ -224,10 +219,10 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 PreEntitySnapshot = preEntity,
                 PostEntitySnapshot = postEntity
             };
-            context.ExecutePipelineStage(pipelineParameters, target);
+            context.ExecutePipelineStage(pipelineParameters);
 
             pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
-            context.ExecutePipelineStage(pipelineParameters, target);
+            context.ExecutePipelineStage(pipelineParameters);
         }
 
         private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
