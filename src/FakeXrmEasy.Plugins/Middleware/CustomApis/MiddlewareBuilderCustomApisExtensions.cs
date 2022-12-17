@@ -23,7 +23,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         {
             builder.Add(context => {
                 if (assembly == null) assembly = Assembly.GetExecutingAssembly();
-                var service = context.GetOrganizationService();
 
                 var fakeCustomApiExecutorsDictionary =
                     assembly
