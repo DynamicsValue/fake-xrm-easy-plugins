@@ -1,4 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums.CustomApis;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk;
@@ -40,6 +41,21 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         {
             get { return _request.RequestName; }
         }
+
+        /// <summary>
+        /// Custom Processing Type of this CustomApiFakeMessageExecutor
+        /// </summary>
+        public virtual CustomProcessingStepType CustomProcessingType => CustomProcessingStepType.None;
+
+        /// <summary>
+        /// Binding type for this CustomApiFakeMessageExecutor
+        /// </summary>
+        public virtual BindingType BindingType => BindingType.Global;
+
+        /// <summary>
+        /// If BindingType is Entity, this is the name of the Entity to bind this custom api to 
+        /// </summary>
+        public virtual string EntityLogicalName => null;
 
         /// <summary>
         /// Returns the organization request type associated with this custom api
@@ -118,6 +134,21 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         {
             get { throw new NotImplementedException(); }
         }
+
+        /// <summary>
+        /// Custom Processing Type of this CustomApiFakeMessageExecutor
+        /// </summary>
+        public virtual CustomProcessingStepType CustomProcessingType => CustomProcessingStepType.None;
+
+        /// <summary>
+        /// Binding type for this CustomApiFakeMessageExecutor
+        /// </summary>
+        public virtual BindingType BindingType => BindingType.Global;
+
+        /// <summary>
+        /// If BindingType is Entity, this is the name of the Entity to bind this custom api to 
+        /// </summary>
+        public virtual string EntityLogicalName => null;
 
         /// <summary>
         /// Returns the organization request type associated with this custom api
