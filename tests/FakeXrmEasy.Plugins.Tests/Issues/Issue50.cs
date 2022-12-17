@@ -88,8 +88,10 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             var request = new OrganizationRequest(FakeApiPlugin.Message)
             {
                 Parameters = new ParameterCollection()
+                {
+                    { "name", initialName }
+                }
             };
-            request.Parameters.AddOrUpdateIfNotNull("name",initialName );
 
             // act
             var result = _service.Execute(request);
@@ -129,8 +131,10 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             var request = new OrganizationRequest(FakeApiPlugin.Message)
             {
                 Parameters = new ParameterCollection()
+                {
+                    { "name", initialName }
+                }
             };
-            request.Parameters.AddOrUpdateIfNotNull("name", initialName);
 
             // act
             _service.Execute(request);
@@ -207,7 +211,11 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
 
             svc.Create(account);
 
+#if FAKE_XRM_EASY_9
             pluginContext.OutputParameters.AddOrUpdateIfNotNull("accountId", account.Id);
+#else
+            pluginContext.OutputParameters["accountId"] = account.Id;
+#endif
         }
     }
 
