@@ -171,11 +171,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
     /// </summary>
     public class CustomApiRequestExecutor : CustomApiFakeMessageExecutor<FakeApiPlugin>, ICustomApiFakeMessageExecutor
     {
-        public override string MessageName 
-        { 
-            get => FakeApiPlugin.Message; 
-            set => base.MessageName = value; 
-        }
+        public override string MessageName { get => FakeApiPlugin.Message; }
     }
 
 

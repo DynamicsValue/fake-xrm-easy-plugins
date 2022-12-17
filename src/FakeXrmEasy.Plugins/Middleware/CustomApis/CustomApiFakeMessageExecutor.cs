@@ -31,7 +31,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         public IPlugin PluginType 
         {
             get { return _pluginType; }
-            set { ; }
         }
 
         /// <summary>
@@ -40,7 +39,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         public string MessageName
         {
             get { return _request.RequestName; }
-            set { ; }
         }
 
         /// <summary>
@@ -112,7 +110,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         public IPlugin PluginType
         {
             get { return _pluginType; }
-            set {; }
         }
 
         /// <summary>
@@ -121,7 +118,6 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         public virtual string MessageName
         {
             get { throw new NotImplementedException(); }
-            set {; }
         }
 
         /// <summary>

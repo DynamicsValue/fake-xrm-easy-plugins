@@ -12,7 +12,6 @@ namespace FakeXrmEasy.Plugins.Tests.CustomApisForTesting
         public override string MessageName
         {
             get { return "sample_CustomAPIExample"; }
-            set { ; }
         }
     }
 }
