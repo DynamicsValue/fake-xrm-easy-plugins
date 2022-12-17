@@ -1,33 +1,18 @@
 ﻿using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
-using Microsoft.Xrm.Sdk;
-using System;
+using FakeXrmEasy.Plugins.Middleware.CustomApis;
 
 namespace FakeXrmEasy.Plugins.Tests.CustomApisForTesting
 {
     /// <summary>
-    /// Generic Fake Message Executor
+    /// Generic Custom Api
     /// </summary>
-    public class ReverseCustomApiFakeMessageExecutor : IGenericFakeMessageExecutor
+    public class ReverseCustomApiFakeMessageExecutor : CustomApiFakeMessageExecutor<ReverseCustomApiPlugin>, ICustomApiFakeMessageExecutor
     {
-        public bool CanExecute(OrganizationRequest request)
+        public override string MessageName
         {
-            return request.RequestName == GetRequestName();
-        }
-
-        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-        {
-            return new OrganizationResponse();
-        }
-
-        public string GetRequestName()
-        {
-            return "sample_CustomAPIExample";
-        }
-
-        public Type GetResponsibleRequestType()
-        {
-            return typeof(OrganizationRequest); //late bound
+            get { return "sample_CustomAPIExample"; }
+            set { ; }
         }
     }
 }

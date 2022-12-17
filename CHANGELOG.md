@@ -6,6 +6,7 @@
  
 ### Added
 
+- Added execution of fake custom api's
 - Added validation of preimages and postimages during plugin step registration - https://github.com/DynamicsValue/fake-xrm-easy/issues/33
 - Added custom function to support registration of plugin steps via a custom reflection function (CustomPluginStepDiscoveryFunction) - https://github.com/DynamicsValue/fake-xrm-easy/issues/11
 - First implementation (preview) of automatic registration of plugin steps via reflection - https://github.com/DynamicsValue/fake-xrm-easy/issues/11

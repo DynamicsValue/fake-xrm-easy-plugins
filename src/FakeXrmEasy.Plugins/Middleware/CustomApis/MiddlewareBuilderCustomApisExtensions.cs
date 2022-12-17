@@ -30,11 +30,11 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
                     .GetTypes()
                     .Where(t => t.GetInterfaces().Contains(typeof(ICustomApiFakeMessageExecutor)))
                     .Select(t => Activator.CreateInstance(t) as ICustomApiFakeMessageExecutor)
-                    .ToDictionary(t => t.GetResponsibleRequestType(), t => (IFakeMessageExecutor) t);
+                    .ToDictionary(t => t.MessageName, t => (IFakeMessageExecutor) t);
 
-                var messageExecutors = new MessageExecutors(fakeCustomApiExecutorsDictionary);
+                var messageExecutors = new GenericMessageExecutors(fakeCustomApiExecutorsDictionary);
 
-                if (!context.HasProperty<MessageExecutors>())
+                if (!context.HasProperty<GenericMessageExecutors>())
                     context.SetProperty(messageExecutors);
                 else
                 {

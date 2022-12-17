@@ -12,6 +12,8 @@ using FakeXrmEasy.Middleware.Messages;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
+using FakeXrmEasy.Plugins.Middleware.CustomApis;
+using FakeXrmEasy.Plugins.PluginSteps;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
@@ -31,7 +33,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
                 // Add* -> Middleware configuration
                 .AddCrud()
                 .AddFakeMessageExecutors()
-                .AddGenericFakeMessageExecutors(Assembly.GetAssembly(typeof(CustomApiRequestExecutor)))
+                .AddCustomApiFakeMessageExecutors(Assembly.GetAssembly(typeof(CustomApiRequestExecutor)))
                 .AddPipelineSimulation(new PipelineOptions() { UsePluginStepAudit = true })
 
                 // Use* -> Defines pipeline sequence
@@ -62,11 +64,9 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             pluginCtx.OutputParameters = new ParameterCollection();
 
             // act
-
             _context.ExecutePluginWith<FakeApiPlugin>(pluginCtx);
 
             // assert
-
             var account = _context.CreateQuery<Account>().FirstOrDefault();
 
             Assert.NotNull(account);
@@ -78,7 +78,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
         }
 
         [Fact]
-        public void api_plugin_should_work_standalone_via_IGenericFakeMessageExecutor()
+        public void api_plugin_should_work_standalone_via_ICustomApiFakeMessageExecutor()
         {
             // arrange
 
@@ -100,8 +100,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
 
             Assert.NotNull(account);
             Assert.True(account.Attributes.ContainsKey("name"));
-            Assert.True(account.Name == expectedName);
-            
+            Assert.Equal(expectedName, account.Name);
         }
 
         /*
@@ -120,7 +119,12 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             var initialName = "Initial Name";
             var expectedName = "Updated Name";
 
-            _context.RegisterPluginStep<FakeApiPostOperationPlugin>(FakeApiPlugin.Message, ProcessingStepStage.Postoperation, followingPluginMode);
+            _context.RegisterPluginStep<FakeApiPostOperationPlugin>(new PluginStepDefinition()
+            {
+                MessageName = FakeApiPlugin.Message,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = followingPluginMode
+            });
 
             var request = new OrganizationRequest(FakeApiPlugin.Message)
             {
@@ -129,7 +133,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             request.Parameters.AddOrUpdateIfNotNull("name", initialName);
 
             // act
-            var result = _service.Execute(request);
+            _service.Execute(request);
 
             // assert
 
@@ -153,13 +157,24 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
         }
     }
 
-    /*
-     *   Plugin classes for test
-     */
 
+
+    /*
+     * Fake message executor
+     */
     /// <summary>
-    /// This would be configured in make.powerapps.com as the plugin for the custom API
+    /// This fakes mapping of custom message to a call 
     /// </summary>
+    public class CustomApiRequestExecutor : CustomApiFakeMessageExecutor<FakeApiPlugin>, ICustomApiFakeMessageExecutor
+    {
+        public override string MessageName 
+        { 
+            get => FakeApiPlugin.Message; 
+            set => base.MessageName = value; 
+        }
+    }
+
+
     public class FakeApiPlugin : IPlugin
     {
         public static string Message = "FakeApiMessage";
@@ -171,7 +186,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
 
             var serviceFactory =
                 (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-            
+
             var svc = serviceFactory.CreateOrganizationService(pluginContext.UserId);
 
             if (pluginContext.MessageName != Message)
@@ -187,14 +202,13 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             var account = new Account()
             {
                 Id = Guid.NewGuid(),
-                Name = (string) accountName
+                Name = (string)accountName
             };
 
             svc.Create(account);
 
-            pluginContext.OutputParameters.AddOrUpdateIfNotNull("accountId", account.Id);}
-
-        
+            pluginContext.OutputParameters.AddOrUpdateIfNotNull("accountId", account.Id);
+        }
     }
 
     /// <summary>
@@ -228,7 +242,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
                 throw new InvalidPluginExecutionException($"{nameof(FakeApiPostOperationPlugin)} cannot find parameter 'accountId' in output from upstream");
             };
 
-            var account = svc.Retrieve("account", (Guid) accountId, new ColumnSet(true))?.ToEntity<Account>();
+            var account = svc.Retrieve("account", (Guid)accountId, new ColumnSet(true))?.ToEntity<Account>();
 
             if (account == null)
             {
@@ -242,58 +256,6 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
             };
 
             svc.Update(toUpdate);
-        }
-    }
-
-
-    /*
-     * Fake message executor
-     */
-    /// <summary>
-    /// This fakes mapping of custom message to a call 
-    /// </summary>
-    public class CustomApiRequestExecutor : IGenericFakeMessageExecutor
-    {
-
-        public static readonly string RequestName = FakeApiPlugin.Message;
-        public bool CanExecute(OrganizationRequest request)
-        {
-            return request.RequestName.Equals(RequestName);
-        }
-
-        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
-        {
-
-            var response = new OrganizationResponse()
-            {
-                // Response name should be equal with Request name to check if the response is correct.
-                ResponseName = RequestName,
-                Results = new ParameterCollection()
-            };
-
-            var pluginCtx = ctx.GetDefaultPluginContext();
-            pluginCtx.MessageName = request.RequestName;
-            pluginCtx.Stage = 30;
-            pluginCtx.InputParameters = new ParameterCollection();
-            pluginCtx.InputParameters.AddOrUpdateIfNotNull("name", request.Parameters["name"]);
-
-            ctx.ExecutePluginWith<FakeApiPlugin>(pluginCtx);
-
-            var outputAccountId = pluginCtx.OutputParameters["accountId"];
-
-            response.Results.AddOrUpdateIfNotNull("accountId", outputAccountId);
-
-            return response;
-        }
-
-        public Type GetResponsibleRequestType()
-        {
-            return typeof(OrganizationRequest);
-        }
-
-        public string GetRequestName()
-        {
-            return RequestName;
         }
     }
 }

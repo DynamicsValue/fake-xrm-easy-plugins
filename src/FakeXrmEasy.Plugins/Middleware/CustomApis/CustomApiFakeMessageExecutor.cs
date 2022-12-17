@@ -11,7 +11,7 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="R"></typeparam>
-    public class CustomApiFakeMessageExecutor<T, R>: ICustomApiFakeMessageExecutor where T: IPlugin, new() where R: OrganizationRequest, new()
+    public class CustomApiFakeMessageExecutor<T, R> : ICustomApiFakeMessageExecutor where T : IPlugin, new() where R : OrganizationRequest, new()
     {
         private readonly T _pluginType;
         private readonly R _request;
@@ -31,6 +31,15 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         public IPlugin PluginType 
         {
             get { return _pluginType; }
+            set { ; }
+        }
+
+        /// <summary>
+        /// The name of the request that will trigger this custom api
+        /// </summary>
+        public string MessageName
+        {
+            get { return _request.RequestName; }
             set { ; }
         }
 
@@ -67,6 +76,88 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
             pluginContext.Stage = (int)ProcessingStepStage.MainOperation;
 
             //TO DO: Should clone these....
+            pluginContext.MessageName = MessageName;
+            pluginContext.InputParameters = request.Parameters;
+            ctx.ExecutePluginWith(pluginContext, _pluginType);
+
+            return new OrganizationResponse()
+            {
+                Results = pluginContext.OutputParameters // TO DO: Should also clone these....
+            };
+        }
+    }
+
+    /// <summary>
+    /// Default custom api executor that associates a late bound organization request with a plugin type that will implement it
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class CustomApiFakeMessageExecutor<T> : ICustomApiFakeMessageExecutor where T : IPlugin, new()
+    {
+        /// <summary>
+        /// The plugin assembly to execute by this message
+        /// </summary>
+        protected readonly T _pluginType;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CustomApiFakeMessageExecutor()
+        {
+            _pluginType = new T();
+        }
+
+        /// <summary>
+        /// Returns the plugin instance that will execute this custom api
+        /// </summary>
+        public IPlugin PluginType
+        {
+            get { return _pluginType; }
+            set {; }
+        }
+
+        /// <summary>
+        /// The name of the request that will trigger this custom api
+        /// </summary>
+        public virtual string MessageName
+        {
+            get { throw new NotImplementedException(); }
+            set {; }
+        }
+
+        /// <summary>
+        /// Returns the organization request type associated with this custom api
+        /// </summary>
+        /// <returns></returns>
+        public virtual Type GetResponsibleRequestType()
+        {
+            return typeof(OrganizationRequest);
+        }
+
+        /// <summary>
+        /// Returns true if the custom api executor can execute the specified request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public virtual bool CanExecute(OrganizationRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes the custom api
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
+        {
+            if (_pluginType == null) return new OrganizationResponse();
+
+            var pluginContext = ctx.GetDefaultPluginContext();
+            pluginContext.Stage = (int)ProcessingStepStage.MainOperation;
+
+            //TO DO: Should clone these....
+            pluginContext.MessageName = MessageName;
             pluginContext.InputParameters = request.Parameters;
             ctx.ExecutePluginWith(pluginContext, _pluginType);
 
