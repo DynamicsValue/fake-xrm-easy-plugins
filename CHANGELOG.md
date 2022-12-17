@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Implement execution of custom apis, as well as registration of extra plugin steps against these apis - https://github.com/DynamicsValue/fake-xrm-easy/issues/50
 - Allow execution of PreImages in prevalidation : https://github.com/DynamicsValue/fake-xrm-easy/issues/71
  
 ### Added
