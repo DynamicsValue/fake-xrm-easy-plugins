@@ -8,14 +8,19 @@ using System;
 namespace FakeXrmEasy.Plugins.Middleware.CustomApis
 {
     /// <summary>
-    /// Default custom api executor that associates an early bound organization request with a plugin type that will implement it
+    /// Default custom api executor that associates an early bound custom api request and response with a plugin type that will implement it
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <typeparam name="Q"></typeparam>
     /// <typeparam name="R"></typeparam>
-    public class CustomApiFakeMessageExecutor<T, R> : ICustomApiFakeMessageExecutor where T : IPlugin, new() where R : OrganizationRequest, new()
+    public class CustomApiFakeMessageExecutor<T, Q, R> : 
+        ICustomApiFakeMessageExecutor 
+            where T : IPlugin, new() 
+            where Q : OrganizationRequest, new()
+            where R : OrganizationResponse, new()
     {
         private readonly T _pluginType;
-        private readonly R _request;
+        private readonly Q _request;
 
         /// <summary>
         /// Default constructor
@@ -23,7 +28,7 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
         public CustomApiFakeMessageExecutor()
         {
             _pluginType = new T();
-            _request = new R();
+            _request = new Q();
         }
 
         /// <summary>
@@ -91,7 +96,7 @@ namespace FakeXrmEasy.Plugins.Middleware.CustomApis
             pluginContext.InputParameters = request.Parameters;
             ctx.ExecutePluginWith(pluginContext, _pluginType);
 
-            return new OrganizationResponse()
+            return new R()
             {
                 Results = pluginContext.OutputParameters
             };
