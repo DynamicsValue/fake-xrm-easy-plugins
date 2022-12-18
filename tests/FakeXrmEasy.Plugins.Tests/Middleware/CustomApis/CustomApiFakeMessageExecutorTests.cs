@@ -27,6 +27,14 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
             }
         }
 
+        private class MyCustomApiResponse : OrganizationResponse
+        {
+            public MyCustomApiResponse()
+            {
+
+            }
+        }
+
         private class MyGenericCustomApiWithPluginExecutor: CustomApiFakeMessageExecutor<MyFakePlugin>
         {
             public override string MessageName => MyCustomApiRequest.MessageName;
@@ -35,7 +43,7 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
         [Fact]
         public void Should_set_plugin_type_and_message_name_properties_for_early_bound_custom_apis()
         {
-            var customApi = new CustomApiFakeMessageExecutor<MyFakePlugin, MyCustomApiRequest>();
+            var customApi = new CustomApiFakeMessageExecutor<MyFakePlugin, MyCustomApiRequest, MyCustomApiResponse>();
 
             Assert.NotNull(customApi.PluginType);
 
@@ -55,7 +63,7 @@ namespace FakeXrmEasy.Plugins.Tests.Middleware.CustomApis
         [Fact]
         public void Should_execute_plugin_for_early_bound_custom_apis()
         {
-            var customApi = new CustomApiFakeMessageExecutor<MyFakePlugin, MyCustomApiRequest>();
+            var customApi = new CustomApiFakeMessageExecutor<MyFakePlugin, MyCustomApiRequest, MyCustomApiResponse>();
             var response = customApi.Execute(new MyCustomApiRequest(), _context);
             var outputParameters = response.Results;
             Assert.NotEmpty(outputParameters);
