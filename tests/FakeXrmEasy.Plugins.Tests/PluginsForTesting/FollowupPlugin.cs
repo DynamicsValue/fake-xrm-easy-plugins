@@ -1,18 +1,9 @@
-﻿using Crm;
-using FakeXrmEasy.Abstractions.Plugins.Enums;
-using FakeXrmEasy.Abstractions.Plugins.Registration;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.ServiceModel;
 
 namespace FakeXrmEasy.Tests.PluginsForTesting
 {
-    [PluginStepRegistration(
-        EntityLogicalName = Account.EntityLogicalName,
-        MessageName = "Create",
-        Mode = ProcessingStepMode.Synchronous,
-        Stage = ProcessingStepStage.Postoperation
-    )]
     public class FollowupPlugin : IPlugin
     {
         /// <summary>
