@@ -53,18 +53,12 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void Should_register_with_default_plugin_registration_attributes_if_custom_func_is_null()
+        public void Should_throw_exception_with_automatic_registration_if_custom_func_is_null()
         {
-            var context = CreateContextWithCustomFunction(new List<Assembly>()
+            Assert.Throws<CustomDiscoveryFunctionMissingException>(() => CreateContextWithCustomFunction(new List<Assembly>()
             {
                 _testPluginAssembly
-            }, null);
-
-            var followupPluginType = context.CreateQuery(PluginStepRegistrationEntityNames.PluginType)
-                            .Where(pluginType => pluginType[PluginTypeFieldNames.TypeName].Equals(typeof(FollowupPlugin).FullName))
-                            .FirstOrDefault();
-
-            Assert.NotNull(followupPluginType);
+            }, null));
         }
 
         [Fact]
