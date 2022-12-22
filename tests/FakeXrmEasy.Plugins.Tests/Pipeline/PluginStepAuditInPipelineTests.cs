@@ -128,14 +128,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             {
                 MessageName = "Create",
                 Stage = ProcessingStepStage.Preoperation,
-                EntityTypeCode = Account.EntityTypeCode
+                EntityLogicalName = Account.EntityLogicalName
             });
 
             _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
             {
                 MessageName = "Create",
                 Stage = ProcessingStepStage.Postoperation,
-                EntityTypeCode = Account.EntityTypeCode
+                EntityLogicalName = Account.EntityLogicalName
             });
 
             var account = new Account() { Name = "Some name" };
@@ -169,7 +169,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             {
                 MessageName = "Create",
                 Stage = ProcessingStepStage.Postoperation,
-                EntityTypeCode = Account.EntityTypeCode,
+                EntityLogicalName = Account.EntityLogicalName,
                 Rank = 2
             });
 
@@ -177,7 +177,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             {
                 MessageName = "Create",
                 Stage = ProcessingStepStage.Postoperation,
-                EntityTypeCode = Account.EntityTypeCode,
+                EntityLogicalName = Account.EntityLogicalName,
                 Rank = 1
             });
 
@@ -266,7 +266,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _context = CreatePluginStepAuditEnabledContext();
             _service = _context.GetOrganizationService();
 
-            _context.RegisterPluginStep<AccountNumberPlugin>("Create", stage);
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                Stage = stage
+            });
 
             var account = new Account() { Name = "Some name" };
 

@@ -2,6 +2,7 @@
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.PluginImages;
+using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -68,7 +69,54 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             string registeredPreImageName = "PreImage";
             PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, ProcessingStepImageType.PreImage);
 
-            _context.RegisterPluginStep<EntityImagesInPluginPipeline>("Update", registeredImages: new PluginImageDefinition[] { preImageDefinition });
+            _context.RegisterPluginStep<EntityImagesInPluginPipeline>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                ImagesDefinitions = new List<PluginImageDefinition>()
+                {
+                    preImageDefinition
+                }
+            });
+
+            //Act
+            _service.Update(_target);
+
+            //Assert
+            var allAccounts = _context.CreateQuery<Account>().ToList();
+
+            var updatedAccount = allAccounts.Where(a => a.Id == _account.Id);
+            Assert.NotNull(updatedAccount);
+
+            var preImages = allAccounts.Where(a => a.Contains(preImageStoredAttributeName)).ToList();
+            var postImages = allAccounts.Where(a => a.Contains(postImageStoredAttributeName)).ToList();
+
+            Assert.Single(preImages);
+            Assert.Empty(postImages);
+
+            var preImage = preImages.First();
+            Assert.Equal(registeredPreImageName, preImage.GetAttributeValue<string>("preimagename"));
+        }
+
+        [Fact]
+        public void Should_pass_preimage_when_there_is_a_registered_preimage_in_prevalidation()
+        {
+            _context.Initialize(new List<Entity>()
+            {
+                _newContact, _previousContact, _account
+            });
+
+            string registeredPreImageName = "PreImage";
+            PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, ProcessingStepImageType.PreImage);
+
+            _context.RegisterPluginStep<EntityImagesInPluginPipeline>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                Stage = ProcessingStepStage.Prevalidation,
+                ImagesDefinitions = new List<PluginImageDefinition>()
+                {
+                    preImageDefinition
+                }
+            });
 
             //Act
             _service.Update(_target);
@@ -103,7 +151,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             string registeredPreImageName2 = "PreImage2";
             PluginImageDefinition preImageDefinition2 = new PluginImageDefinition(registeredPreImageName2, ProcessingStepImageType.PreImage);
 
-            _context.RegisterPluginStep<EntityImagesInPluginPipeline>("Update", registeredImages: new PluginImageDefinition[] { preImageDefinition1, preImageDefinition2 });
+            _context.RegisterPluginStep<EntityImagesInPluginPipeline>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                ImagesDefinitions = new List<PluginImageDefinition>()
+                {
+                    preImageDefinition1, preImageDefinition2
+                }
+            });
 
             //Act
             _service.Update(_target);

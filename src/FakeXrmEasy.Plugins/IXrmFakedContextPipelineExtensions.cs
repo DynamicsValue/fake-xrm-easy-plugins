@@ -208,22 +208,7 @@ namespace FakeXrmEasy.Pipeline
                 if (pipelineOptions.UsePluginStepRegistrationValidation)
                 {
                     var validator = context.GetProperty<IPluginStepValidator>();
-                    bool isValid = true;
-
-                    if (pluginStepDefinition.EntityTypeCode == null && string.IsNullOrWhiteSpace(pluginStepDefinition.EntityLogicalName))
-                    {
-                        isValid = validator.IsValid(pluginStepDefinition.MessageName,
-                                                    "*",
-                                                    pluginStepDefinition.Stage,
-                                                    pluginStepDefinition.Mode);
-                    }
-                    else if (!string.IsNullOrWhiteSpace(pluginStepDefinition.EntityLogicalName))
-                    {
-                        isValid = validator.IsValid(pluginStepDefinition.MessageName,
-                                                    pluginStepDefinition.EntityLogicalName,
-                                                    pluginStepDefinition.Stage,
-                                                    pluginStepDefinition.Mode);
-                    }
+                    bool isValid = validator.IsValid(pluginStepDefinition);
                     if (!isValid)
                     {
                         throw new InvalidPluginStepRegistrationException();
@@ -303,6 +288,14 @@ namespace FakeXrmEasy.Pipeline
             where TPlugin : IPlugin
 
         {
+            return context.RegisterPluginStepInternal(typeof(TPlugin), pluginStepDefinition);
+        }
+
+        internal static Guid RegisterPluginStepInternal(this IXrmFakedContext context,
+                                                                Type pluginType,
+                                                                IPluginStepDefinition pluginStepDefinition)
+
+        {
             ValidatePluginStep(context, pluginStepDefinition);
 
             // Message and MessageFilter
@@ -310,9 +303,8 @@ namespace FakeXrmEasy.Pipeline
             var sdkMessageFilter = AddSdkMessageFilter(context, pluginStepDefinition);
 
             // Store Plugin Type as a record
-            var type = typeof(TPlugin);
-            var assemblyName = type.Assembly.GetName();
-            var pluginTypeRecord = context.AddPluginType(type, assemblyName);
+            var assemblyName = pluginType.Assembly.GetName();
+            var pluginTypeRecord = context.AddPluginType(pluginType, assemblyName);
 
             // Message Step
             var sdkMessageProcessingStepId = pluginStepDefinition.Id == Guid.Empty ? Guid.NewGuid() : pluginStepDefinition.Id;
@@ -333,31 +325,6 @@ namespace FakeXrmEasy.Pipeline
             AddSdkMessageProcessingStepImages(context, pluginStepDefinition, sdkMessageProcessingStep);
 
             return sdkMessageProcessingStepId;
-        }
-
-        internal static void ExecutePipelineStage(this IXrmFakedContext context, 
-            PipelineStageExecutionParameters parameters,
-            object target)
-        {
-            var plugins = context.GetPluginStepsForOrganizationRequest(parameters.RequestName, parameters.Stage, parameters.Mode, parameters.Request);
-            if(plugins == null)
-                return;
-
-            if (target == null)
-            {
-                target = GetTargetForRequest(parameters.Request);
-            }
-
-            if (target is Entity)
-            {
-                parameters.Entity = target as Entity;
-            }
-            else if (target is EntityReference)
-            {
-                parameters.EntityReference = target as EntityReference;
-            }
-
-            context.ExecutePipelineStage(parameters);
         }
 
         internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequestWithRetrieveMultiple(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
@@ -400,28 +367,44 @@ namespace FakeXrmEasy.Pipeline
 
                 return context.GetStepsForStage(requestName, stage, mode, (Entity)Activator.CreateInstance(entityType));
             }
-
-            return null;
+            else
+            {
+                //Possibly a custom api execution
+                return context.GetStepsForStage(requestName, stage, mode, null);
+            }
         }
 
-        private static void ExecutePipelineStage(this IXrmFakedContext context, PipelineStageExecutionParameters parameters)
+        internal static void ExecutePipelineStage(this IXrmFakedContext context, PipelineStageExecutionParameters parameters)
         {
-            if(parameters.Entity != null)
+            var plugins = context.GetPluginStepsForOrganizationRequest(parameters.RequestName, parameters.Stage, parameters.Mode, parameters.Request);
+            if (plugins == null)
+                return;
+
+            var target = GetTargetForRequest(parameters.Request);
+
+            if (target != null)
             {
-                var plugins = context.GetStepsForStage(parameters.RequestName, parameters.Stage, parameters.Mode, parameters.Entity);
-                context.ExecutePipelinePlugins(plugins, parameters.Entity, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
-            }
-            else if(parameters.EntityReference != null)
-            {
-                var entityType = context.FindReflectedType(parameters.EntityReference.LogicalName);
-                if (entityType == null)
+                var entityTarget = target as Entity;
+                if (entityTarget != null)
                 {
-                    return;
+                    context.ExecutePipelinePlugins(plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
                 }
 
-                var plugins = context.GetStepsForStage(parameters.RequestName, parameters.Stage, parameters.Mode, (Entity)Activator.CreateInstance(entityType));
-                context.ExecutePipelinePlugins(plugins, parameters.EntityReference, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
-            }           
+                var entityReferenceTarget = target as EntityReference;
+                if (entityReferenceTarget != null)
+                {
+                    var entityType = context.FindReflectedType(entityReferenceTarget.LogicalName);
+                    if (entityType == null)
+                    {
+                        return;
+                    }
+                    context.ExecutePipelinePlugins(plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
+                }
+            }
+            else
+            {
+                context.ExecutePipelinePlugins(plugins, parameters.Request, null, null, parameters.Response);
+            }
         }
 
         /// <summary>
@@ -429,13 +412,13 @@ namespace FakeXrmEasy.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <param name="pluginSteps"></param>
-        /// <param name="target"></param>
+        /// <param name="organizationRequest"></param>
         /// <param name="previousValues"></param>
         /// <param name="resultingAttributes"></param>
         /// <param name="organizationResponse">The organization response that triggered this plugin execution</param>
         private static void ExecutePipelinePlugins(this IXrmFakedContext context, 
                                                     IEnumerable<PluginStepDefinition> pluginSteps, 
-                                                    object target, 
+                                                    OrganizationRequest organizationRequest,
                                                     Entity previousValues, 
                                                     Entity resultingAttributes,
                                                     OrganizationResponse organizationResponse)
@@ -462,10 +445,7 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.Mode = (int) pluginStep.Mode;
                 pluginContext.Stage = (int) pluginStep.Stage;
                 pluginContext.MessageName = pluginStep.MessageName;
-                pluginContext.InputParameters = new ParameterCollection
-                {
-                    { "Target", target }
-                };
+                pluginContext.InputParameters = organizationRequest.Parameters;
                 pluginContext.OutputParameters = organizationResponse != null ? organizationResponse.Results : new ParameterCollection();
                 pluginContext.PreEntityImages = GetEntityImageCollection(preImageDefinitions, previousValues);
                 pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, resultingAttributes);
@@ -474,7 +454,7 @@ namespace FakeXrmEasy.Pipeline
 
                 if(isAuditEnabled)
                 {
-                    context.AddPluginStepAuditDetails(pluginMethod, pluginContext, pluginStep, target);
+                    context.AddPluginStepAuditDetails(pluginMethod, pluginContext, pluginStep);
                 }
             }
         }
@@ -482,8 +462,7 @@ namespace FakeXrmEasy.Pipeline
         private static void AddPluginStepAuditDetails(this IXrmFakedContext context, 
                                 MethodInfo pluginMethod, 
                                 XrmFakedPluginExecutionContext pluginContext, 
-                                PluginStepDefinition pluginStep, 
-                                object target)
+                                PluginStepDefinition pluginStep)
         {
             var pluginType = pluginMethod.GetGenericArguments()[0];
             var pluginStepAuditDetails = new PluginStepAuditDetails()
@@ -496,11 +475,16 @@ namespace FakeXrmEasy.Pipeline
                 OutputParameters = pluginContext.OutputParameters
             };
             
-            if (target is Entity) 
-                pluginStepAuditDetails.TargetEntity = (Entity) target;
+            if(pluginContext.InputParameters.ContainsKey("Target"))
+            {
+                var target = pluginContext.InputParameters["Target"];
+                if (target is Entity)
+                    pluginStepAuditDetails.TargetEntity = (Entity)target;
+
+                if (target is EntityReference)
+                    pluginStepAuditDetails.TargetEntityReference = (EntityReference)target;
+            }
             
-            if (target is EntityReference)
-                pluginStepAuditDetails.TargetEntityReference = (EntityReference)target;
 
 
             var pluginStepAudit = context.GetProperty<IPluginStepAudit>() as PluginStepAudit;
@@ -512,7 +496,7 @@ namespace FakeXrmEasy.Pipeline
             var assembly = AppDomain.CurrentDomain.Load(pluginStepDefinition.AssemblyName);
             var pluginType = assembly.GetType(pluginStepDefinition.PluginType);
 
-            var methodInfo = typeof(IXrmFakedContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
+            var methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
             var pluginMethod = methodInfo.MakeGenericMethod(pluginType);
 
             return pluginMethod;
@@ -616,8 +600,14 @@ namespace FakeXrmEasy.Pipeline
                                                                             ProcessingStepMode mode, 
                                                                             Entity entity)
         {
-            var entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
-            var entityLogicalName = entity.LogicalName;
+            int? entityTypeCode = null; 
+            string entityLogicalName = null;
+            
+            if(entity != null)
+            {
+                entityTypeCode = (int?) entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
+                entityLogicalName = entity.LogicalName;
+            }
 
             var pluginSteps = (from step in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
                                join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
@@ -646,7 +636,7 @@ namespace FakeXrmEasy.Pipeline
             return pluginSteps
                         .Where(ps => ps.EntityLogicalName != null && ps.EntityLogicalName == entityLogicalName || //Matches logical name
                                         ps.EntityTypeCode != null && ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode || //Or matches entity type code
-                                        ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none
+                                        ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none (Custom Apis)
                         .Where(ps => !ps.FilteringAttributes.Any() || ps.FilteringAttributes.Any(attr => entity.Attributes.ContainsKey(attr))).AsEnumerable();
         }
 
@@ -711,18 +701,18 @@ namespace FakeXrmEasy.Pipeline
 
                     string attributes = imageDefinition.GetAttributeValue<string>(SdkMessageProcessingStepImageFieldNames.Attributes);
 
-                    Entity preImage = values.Clone(values.GetType());
+                    Entity image = values.Clone(values.GetType());
                     if (!string.IsNullOrEmpty(attributes))
                     {
                         string[] specifiedAttributes = attributes.Split(',');
 
                         foreach (KeyValuePair<string, object> attr in values.Attributes.Where(x => !specifiedAttributes.Contains(x.Key)))
                         {
-                            preImage.Attributes.Remove(attr.Key);
+                            image.Attributes.Remove(attr.Key);
                         }
                     }
 
-                    collection.Add(name, preImage);
+                    collection.Add(name, image);
                 }
             }
 
