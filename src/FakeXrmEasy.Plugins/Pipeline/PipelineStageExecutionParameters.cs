@@ -20,16 +20,6 @@ namespace FakeXrmEasy.Pipeline
         internal OrganizationResponse Response { get; set; }
 
         /// <summary>
-        /// Entity is defined if an Entity came in the Target of the original request
-        /// </summary>
-        internal Entity Entity { get; set; }
-
-        /// <summary>
-        /// EntityReference is defined if an EntityReference came in the Target of the original request
-        /// </summary>
-        internal EntityReference EntityReference { get; set; }
-
-        /// <summary>
         /// Snapshot of the entity values before the execution of the request
         /// </summary>
         internal Entity PreEntitySnapshot { get; set; }
