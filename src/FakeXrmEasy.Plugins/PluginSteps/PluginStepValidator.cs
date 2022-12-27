@@ -1,23 +1,24 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Plugins.Definitions;
+using FakeXrmEasy.Plugins.PluginImages;
+using FakeXrmEasy.Plugins.PluginSteps.Extensions;
 using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FakeXrmEasy.Plugins.PluginSteps
 {
     /// <summary>
-    /// The plugin step validator is in charge of validating that a given combination of message, entity, stage, and mode is valid (that it can be registered in plugin registration tool)
+    /// The plugin step validator is in charge of validating if a given plugin step definition is valid (that it can be registered in plugin registration tool)
     /// </summary>
     internal interface IPluginStepValidator
     {
         /// <summary>
         /// Returns true if the given combination is valid
         /// </summary>
-        /// <param name="messageName"></param>
-        /// <param name="entityLogicalName"></param>
-        /// <param name="stage"></param>
-        /// <param name="mode"></param>
+        /// <param name="stepDefinition">The plugin step definition to validate</param>
         /// <returns>True if the combination can be registered, false otherwise</returns>
-        bool IsValid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode);
+        bool IsValid(IPluginStepDefinition stepDefinition);
     }
 
     /// <summary>
@@ -227,9 +228,9 @@ namespace FakeXrmEasy.Plugins.PluginSteps
   
         }
 
-        public bool IsValid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
+        public bool IsValid(IPluginStepDefinition stepDefinition)
         {
-            var messageNameToCheck = messageName.ToLower().Trim();
+            var messageNameToCheck = stepDefinition.MessageName.ToLower().Trim();
             if (_combinations.ContainsKey("*") && !_combinations.ContainsKey(messageNameToCheck))
             {
                 messageNameToCheck = "*";
@@ -238,8 +239,13 @@ namespace FakeXrmEasy.Plugins.PluginSteps
             if (!_combinations.ContainsKey(messageNameToCheck))
                 return false;
 
-            string entityLogicalNameToCheck = entityLogicalName;
-            if (_combinations[messageNameToCheck].ContainsKey("*") && !_combinations[messageNameToCheck].ContainsKey(entityLogicalName))
+            string entityLogicalNameToCheck = stepDefinition.EntityLogicalName;
+            if (stepDefinition.EntityTypeCode == null && string.IsNullOrWhiteSpace(stepDefinition.EntityLogicalName))
+            {
+                entityLogicalNameToCheck = "*";
+            }
+            
+            if (_combinations[messageNameToCheck].ContainsKey("*") && !_combinations[messageNameToCheck].ContainsKey(entityLogicalNameToCheck))
             {
                 entityLogicalNameToCheck = "*";
             }
@@ -247,17 +253,45 @@ namespace FakeXrmEasy.Plugins.PluginSteps
 
             if(!_combinations[messageNameToCheck].ContainsKey(entityLogicalNameToCheck))
             {
-                throw new InvalidPrimaryEntityNameException(entityLogicalName);
+                throw new InvalidPrimaryEntityNameException(stepDefinition.EntityLogicalName);
             }
 
-            if (!_combinations[messageNameToCheck][entityLogicalNameToCheck].ContainsKey(stage))
+            if (!_combinations[messageNameToCheck][entityLogicalNameToCheck].ContainsKey(stepDefinition.Stage))
             {
                 return false;
             }
 
-            if (!_combinations[messageNameToCheck][entityLogicalNameToCheck][stage].ContainsKey(mode))
+            if (!_combinations[messageNameToCheck][entityLogicalNameToCheck][stepDefinition.Stage].ContainsKey(stepDefinition.Mode))
             {
                 return false;
+            }
+
+            return AreImagesValid(stepDefinition);
+        }
+
+        private bool AreImagesValid(IPluginStepDefinition stepDefinition)
+        {
+            if (stepDefinition.ImagesDefinitions == null)
+                return true;
+
+            var images = stepDefinition.ImagesDefinitions.ToList();
+            var preImages = images.Where(image => image.ImageType == ProcessingStepImageType.PreImage || image.ImageType == ProcessingStepImageType.Both);
+            var postImages = images.Where(image => image.ImageType == ProcessingStepImageType.PostImage || image.ImageType == ProcessingStepImageType.Both);
+
+            foreach(var preImage in preImages)
+            {
+                if (!PreImage.IsAvailableFor(stepDefinition.MessageName.ToOrganizationCrudRequestType(), stepDefinition.Stage))
+                {
+                    throw new PreImageNotAvailableException(preImage.Name);
+                }
+            }
+
+            foreach (var postImage in postImages)
+            {
+                if (!PostImage.IsAvailableFor(stepDefinition.MessageName.ToOrganizationCrudRequestType(), stepDefinition.Stage))
+                {
+                    throw new PostImageNotAvailableException(postImage.Name);
+                }
             }
 
             return true;

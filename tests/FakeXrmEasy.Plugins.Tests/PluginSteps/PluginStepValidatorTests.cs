@@ -25,7 +25,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Upsert, EntityLogicalNameContants.SearchTelemetry, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registration_for_valid_combinations(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -35,7 +42,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Upsert, EntityLogicalNameContants.SearchTelemetry, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_upsert_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -45,7 +59,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Upsert, "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_primary_entity_name_for_upsert(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.Throws<InvalidPrimaryEntityNameException>(() => _validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.Throws<InvalidPrimaryEntityNameException>(() => _validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -59,7 +80,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_create_message_as_valid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -69,7 +97,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_create_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -83,7 +118,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_update_message_as_valid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -93,7 +135,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_update_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -107,7 +156,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_retrieve_message_as_valid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -117,7 +173,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_retrieve_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -131,7 +194,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.RetrieveMultiple, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_retrieve_multiple_message_as_valid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -141,7 +211,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.RetrieveMultiple, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_retrieve_multiple_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -155,7 +232,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_delete_message_as_valid(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -165,7 +249,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_delete_message(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -175,7 +266,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_any_other_message_by_default(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -183,7 +281,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Assign, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_registrations_for_any_other_message_by_default(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -193,7 +298,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData("*", "*", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_valid_registrations_for_custom_actions_or_apis_by_default(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.True(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.True(_validator.IsValid(pluginStepDefinition));
         }
 
         [Theory]
@@ -201,7 +313,14 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData("*", "*", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_invalid_for_invalid_registrations_for_custom_actions_or_apis_by_default(string messageName, string entityLogicalName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            Assert.False(_validator.IsValid(messageName, entityLogicalName, stage, mode));
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode
+            };
+            Assert.False(_validator.IsValid(pluginStepDefinition));
         }
     }
 }
