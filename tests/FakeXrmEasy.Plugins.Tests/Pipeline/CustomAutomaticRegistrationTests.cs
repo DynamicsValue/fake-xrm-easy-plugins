@@ -68,7 +68,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                 new List<Assembly>()
                 {
                     _testPluginAssembly
-                }, 
+                },
                 (Assembly assembly) => new List<PluginStepDefinition>()
            );
 
@@ -86,7 +86,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                 {
                     _testPluginAssembly
                 },
-                (Assembly assembly) => new List<PluginStepDefinition>() { 
+                (Assembly assembly) => new List<PluginStepDefinition>() {
                     new PluginStepDefinition()
                     {
                         PluginType = "",
@@ -134,7 +134,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.NotNull(sdkMessageFilter);
 
             Assert.Equal(typeof(FollowupPlugin).FullName, pluginType[PluginTypeFieldNames.TypeName]);
-            
+
             Assert.Equal(Contact.EntityLogicalName, sdkMessageFilter[SdkMessageFilterFieldNames.EntityLogicalName]);
             Assert.Equal("Update", sdkMessage.Name);
 
@@ -145,6 +145,39 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(pluginType.Id, ((EntityReference)step["eventhandler"]).Id);
             Assert.Equal(sdkMessage.Id, ((EntityReference)step["sdkmessageid"]).Id);
             Assert.Equal(sdkMessageFilter.Id, ((EntityReference)step["sdkmessagefilterid"]).Id);
+        }
+
+        // This test fails - because the plugin is invoked through pipeline simulation, not directly
+        [Fact]
+        public void When_A_Resource_Request_Is_Created_Without_A_Team_An_Exception_Will_Get_Thrown()
+        {
+            var context = CreateContextWithCustomFunction(
+             new List<Assembly>()
+             {
+                    _testPluginAssembly
+             },
+             (Assembly assembly) => new List<PluginStepDefinition>() {
+                    new PluginStepDefinition()
+                    {
+                        PluginType = typeof(ExceptionLoverPlugin).FullName,
+                        EntityLogicalName = Contact.EntityLogicalName,
+                        Stage = ProcessingStepStage.Preoperation,
+                        Mode = ProcessingStepMode.Synchronous,
+                        MessageName = "Create",
+                        Rank = 2
+                    }
+             }
+        );
+
+
+
+            // Arrange
+            Contact contact = new Contact() { Id = Guid.NewGuid() };
+            // Act
+            Action act = () => context.GetOrganizationService().Create(contact);
+            //assert
+            InvalidPluginExecutionException exception = Assert.Throws<InvalidPluginExecutionException>(act);
+            Assert.Equal(ExceptionLoverPlugin.PluginExceptionMessage, exception.Message);
         }
     }
 }
