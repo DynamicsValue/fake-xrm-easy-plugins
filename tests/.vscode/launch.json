@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/FakeXrmEasy.Plugins.Tests/bin/Debug/netcoreapp3.1/FakeXrmEasy.Plugins.Tests.dll",
+            "program": "${workspaceFolder}/FakeXrmEasy.Plugins.Tests/bin/Debug/net6.0/FakeXrmEasy.Plugins.Tests.dll",
             "args": [],
             "cwd": "${workspaceFolder}/FakeXrmEasy.Plugins.Tests",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
