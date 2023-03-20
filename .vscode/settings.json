@@ -1,4 +1,4 @@
 {
     "dotnet-test-explorer.testProjectPath": "tests/FakeXrmEasy.Plugins.Tests",
-    "dotnet-test-explorer.testArguments": "--framework 'netcoreapp3.1' --configuration 'Debug'"
+    "dotnet-test-explorer.testArguments": "--framework 'net6.0' --configuration 'Debug'"
 }
