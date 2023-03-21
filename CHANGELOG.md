@@ -1,3 +1,9 @@
+## [3.3.1]
+
+### Changed
+
+- Bump DataverseClient dependency to target net6 - https://github.com/DynamicsValue/fake-xrm-easy/issues/90
+
 ## [3.3.0]
 
 ### Changed
