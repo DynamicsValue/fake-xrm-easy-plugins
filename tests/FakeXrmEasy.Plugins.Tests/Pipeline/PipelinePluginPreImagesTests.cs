@@ -12,7 +12,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
 {
-    public class PipelinePluginImagesTests: FakeXrmEasyPipelineTestsBase
+    public class PipelinePluginPreImagesTests: FakeXrmEasyPipelineTestsBase
     {
         private readonly Contact _previousContact;
         private readonly Contact _newContact;
@@ -22,7 +22,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         private const string preImageStoredAttributeName = "preimagename";
         private const string postImageStoredAttributeName = "postimagename";
 
-        public PipelinePluginImagesTests()
+        public PipelinePluginPreImagesTests()
         {
             _previousContact = new Contact()
             {
