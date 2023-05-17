@@ -28,7 +28,10 @@ namespace DataverseEntitiesPartial
 			}
 			return null;
 		}
-		
+
+
+#if FAKE_XRM_EASY_9
+
 		public static System.Collections.Generic.IEnumerable<T> GetMultiEnum<T>(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName)
 		
 		{
@@ -41,7 +44,8 @@ namespace DataverseEntitiesPartial
 			list.AddRange(System.Linq.Enumerable.Select(value, v => (T)(object)v.Value));
 			return list;
 		}
-		
+
+
 		public static Microsoft.Xrm.Sdk.OptionSetValueCollection GetMultiEnum<T>(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName, System.Collections.Generic.IEnumerable<T> values)
 		
 		{
@@ -53,6 +57,7 @@ namespace DataverseEntitiesPartial
 			collection.AddRange(System.Linq.Enumerable.Select(values, v => new Microsoft.Xrm.Sdk.OptionSetValue((int)(object)v)));
 			return collection;
 		}
+#endif
 	}
 }
 #pragma warning restore CS1591
