@@ -28,7 +28,8 @@ namespace DataverseEntities
 			}
 			return null;
 		}
-		
+
+#if FAKE_XRM_EASY_9
 		public static System.Collections.Generic.IEnumerable<T> GetMultiEnum<T>(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName)
 		
 		{
@@ -53,6 +54,7 @@ namespace DataverseEntities
 			collection.AddRange(System.Linq.Enumerable.Select(values, v => new Microsoft.Xrm.Sdk.OptionSetValue((int)(object)v)));
 			return collection;
 		}
+#endif
 	}
 }
 #pragma warning restore CS1591
