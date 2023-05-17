@@ -28,14 +28,12 @@ else
 }
 
 Write-Host " -> Cleaning..." -ForegroundColor Yellow
-if($targetFrameworks -eq "all")
-{
-    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests
-}
-else {
-    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks
-}
-
+./clean.ps1 -folderPath "./src/FakeXrmEasy.Plugins/bin"
+./clean.ps1 -folderPath "./src/FakeXrmEasy.Plugins/obj"
+./clean.ps1 -folderPath "./tests/FakeXrmEasy.Plugins.Tests/bin"
+./clean.ps1 -folderPath "./tests/FakeXrmEasy.Plugins.Tests/obj"
+./clean.ps1 -folderPath "./performance/FakeXrmEasy.Plugins.Performance/bin"
+./clean.ps1 -folderPath "./performance/FakeXrmEasy.Plugins.Performance/obj"
 
 if($targetFrameworks -eq "all")
 {

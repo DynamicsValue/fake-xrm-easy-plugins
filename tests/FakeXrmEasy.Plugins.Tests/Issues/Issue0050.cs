@@ -20,12 +20,12 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Issues
 {
-    public class Issue50 
+    public class Issue0050 
     {
         private readonly IXrmFakedContext _context;
         private readonly IOrganizationService _service;
 
-        public Issue50()
+        public Issue0050()
         {
             _context = MiddlewareBuilder
                 .New()
