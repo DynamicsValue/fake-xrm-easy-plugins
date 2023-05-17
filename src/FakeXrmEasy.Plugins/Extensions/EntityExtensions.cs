@@ -2,6 +2,7 @@
 
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
+using System.Linq;
 
 namespace FakeXrmEasy.Plugins.Extensions
 {
@@ -20,12 +21,12 @@ namespace FakeXrmEasy.Plugins.Extensions
         {
             var clone = entity1.Clone();
 
-            foreach(var key in entity1.Attributes.Keys)
+            var intersectKeys = entity1.Attributes.Keys
+                                        .Where(k => entity2.Attributes.ContainsKey(k));
+
+            foreach (var key in intersectKeys)
             {
-                if(entity2.Attributes.ContainsKey(key))
-                {
-                    clone[key] = entity2[key];
-                }
+                clone[key] = entity2[key];
             }
 
             return clone;
