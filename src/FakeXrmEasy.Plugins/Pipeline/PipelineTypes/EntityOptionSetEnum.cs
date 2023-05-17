@@ -42,6 +42,7 @@ namespace DataverseEntities
 			list.AddRange(System.Linq.Enumerable.Select(value, v => (T)(object)v.Value));
 			return list;
 		}
+
 		
 		public static Microsoft.Xrm.Sdk.OptionSetValueCollection GetMultiEnum<T>(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName, System.Collections.Generic.IEnumerable<T> values)
 		
