@@ -41,8 +41,8 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
-  <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY</DefineConstants>
-</PropertyGroup>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY</DefineConstants>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2013</DefineConstants>
@@ -113,6 +113,11 @@
       <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
       <PackageReference Include="xunit.runner.console" Version="2.4.1" />
       <PackageReference Include="coverlet.collector" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" />
+    <ProjectReference Include="..\DataverseEntitiesWithPartialPipelineTypes\DataverseEntitiesWithPartialPipelineTypes.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == ''">

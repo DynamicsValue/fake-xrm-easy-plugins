@@ -18,6 +18,7 @@ using FakeXrmEasy.Plugins.PluginSteps.InvalidRegistrationExceptions;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Plugins.PluginSteps.Extensions;
 using FakeXrmEasy.Plugins.Definitions;
+using FakeXrmEasy.Plugins.Pipeline.PipelineTypes;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -223,6 +224,44 @@ namespace FakeXrmEasy.Pipeline
             }
         }
 
+        internal static void AddPipelineTypes(IXrmFakedContext context)
+        {
+            if(context.ProxyTypesAssemblies.Count() > 0)
+            {
+                var hasSdkMessage = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessage) != null;
+                var hasSdkMessageFilter = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessageFilter) != null;
+                var hasSdkMessageProcessingStep = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessageProcessingStep) != null;
+                var hasPluginType = context.FindReflectedType(PluginStepRegistrationEntityNames.PluginType) != null;
+
+                var hasAllPipelineTypes =
+                    hasSdkMessage &&
+                    hasSdkMessageFilter &&
+                    hasSdkMessageProcessingStep &&
+                    hasPluginType;
+
+                var hasSomePipelineTypes =
+                    hasSdkMessage ||
+                    hasSdkMessageFilter ||
+                    hasSdkMessageProcessingStep ||
+                    hasPluginType;
+
+                if(hasAllPipelineTypes)
+                {
+                    return;
+                }
+
+                if(hasSomePipelineTypes)
+                {
+                    throw new MissingPipelineTypesException();
+                }
+
+                if(!hasSomePipelineTypes)
+                {
+                    context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+                }
+            }
+        }
+
         internal static Entity AddOrUseSdkMessage(IXrmFakedContext context,
                                                 IPluginStepDefinition pluginStepDefinition)
         {
@@ -297,6 +336,8 @@ namespace FakeXrmEasy.Pipeline
 
         {
             ValidatePluginStep(context, pluginStepDefinition);
+
+            AddPipelineTypes(context);
 
             // Message and MessageFilter
             var sdkMessage = AddOrUseSdkMessage(context, pluginStepDefinition);
