@@ -255,10 +255,7 @@ namespace FakeXrmEasy.Pipeline
                     throw new MissingPipelineTypesException();
                 }
 
-                if(!hasSomePipelineTypes)
-                {
-                    context.EnableProxyTypes(Assembly.GetExecutingAssembly());
-                }
+                context.EnableProxyTypes(Assembly.GetExecutingAssembly());
             }
         }
 

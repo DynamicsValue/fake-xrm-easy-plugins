@@ -6,6 +6,7 @@ using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Issues
@@ -22,6 +23,9 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
                 MessageName = FakeApiPlugin.Message,
                 Stage = ProcessingStepStage.Postoperation
             });
+
+            var sdkMessages = _context.CreateQuery<SdkMessage>().ToList();
+            Assert.Single(sdkMessages);
         }
 
         [Fact]
