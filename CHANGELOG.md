@@ -1,3 +1,11 @@
+## [2.3.2]
+ 
+### Changed
+
+ - Resolves an issue when using early bound types without pipeline types being generated caused plugin step registration to fail - https://github.com/DynamicsValue/fake-xrm-easy/issues/85
+ - Resolves an issue where the exception raised by a plugin was hidden because of reflection. 
+ - Resolves an issue with PostImages: where attributes defined in a PluginStepDefintion of a PostImage event where not returned  - https://github.com/DynamicsValue/fake-xrm-easy/issues/102
+
 ## [2.3.0]
 
 ### Changed

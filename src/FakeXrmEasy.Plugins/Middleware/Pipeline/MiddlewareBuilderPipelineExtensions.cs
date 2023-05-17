@@ -11,6 +11,7 @@ using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using System.Linq;
 using FakeXrmEasy.Plugins.Middleware.Pipeline.Exceptions;
+using FakeXrmEasy.Plugins.Extensions;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -230,18 +231,35 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 return null;
             }
 
+            string logicalName = "";
+            Guid id = Guid.Empty;
+
             if (target is Entity)
             {
                 var targetEntity = target as Entity;
-                return targetEntity;
+                logicalName = targetEntity.LogicalName;
+                id = targetEntity.Id;
+
+                if (id == Guid.Empty)
+                {
+                    return targetEntity;
+                }
             }
 
             else if (target is EntityReference)
             {
-                return null;
+                var targetEntityRef = target as EntityReference;
+                logicalName = targetEntityRef.LogicalName;
+                id = targetEntityRef.Id;
             }
 
-            return null;
+            var postImage = context.GetEntityById(logicalName, id);
+            if (target is Entity)
+            {
+                postImage = postImage.ReplaceAttributesWith(target as Entity);
+            }
+
+            return postImage;
         }
     }
 }
