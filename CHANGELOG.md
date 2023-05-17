@@ -1,3 +1,7 @@
+## [2.3.2]
+
+ - Resolves an issue with PostImages: where attributes defined in a PluginStepDefintion of a PostImage event where not returned  - 
+
 ## [2.3.0]
 
 ### Changed
