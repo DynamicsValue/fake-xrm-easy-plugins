@@ -296,6 +296,26 @@ namespace FakeXrmEasy.Pipeline
             }
             return sdkFilter;
         }
+        
+        internal static Entity AddSdkMessageProcessingStepSecureConfig(IXrmFakedContext context,
+            IPluginStepDefinition pluginStepDefinition)
+        {
+            Entity sdkMessageProcessingStepSecureConfig = null;
+            if (pluginStepDefinition.Configurations != null)
+            {
+                var sdkMessageProcessingSecureConfigId = pluginStepDefinition.Configurations.SecureConfigId;
+                sdkMessageProcessingStepSecureConfig = new Entity(PluginStepRegistrationEntityNames.SdkMessageProcessingStepSecureConfig)
+                {
+                    Id = sdkMessageProcessingSecureConfigId,
+                    [SdkMessageProcessingStepSecureConfigFieldNames.SecureConfig] =
+                        pluginStepDefinition.Configurations.SecureConfig
+                };
+                
+                context.AddEntityWithDefaults(sdkMessageProcessingStepSecureConfig);
+            }
+
+            return sdkMessageProcessingStepSecureConfig;
+        }
 
         internal static void AddSdkMessageProcessingStepImages(IXrmFakedContext context,
                                                 IPluginStepDefinition pluginStepDefinition,
@@ -344,6 +364,10 @@ namespace FakeXrmEasy.Pipeline
             var assemblyName = pluginType.Assembly.GetName();
             var pluginTypeRecord = context.AddPluginType(pluginType, assemblyName);
 
+            // Secure config
+            var sdkMessageProcessingStepSecureConfig =
+                AddSdkMessageProcessingStepSecureConfig(context, pluginStepDefinition);
+            
             // Message Step
             var sdkMessageProcessingStepId = pluginStepDefinition.Id == Guid.Empty ? Guid.NewGuid() : pluginStepDefinition.Id;
 
@@ -356,7 +380,9 @@ namespace FakeXrmEasy.Pipeline
                 [SdkMessageProcessingStepFieldNames.FilteringAttributes] = pluginStepDefinition.FilteringAttributes != null ? string.Join(",", pluginStepDefinition.FilteringAttributes) : null,
                 [SdkMessageProcessingStepFieldNames.Stage] = new OptionSetValue((int)pluginStepDefinition.Stage),
                 [SdkMessageProcessingStepFieldNames.Mode] = new OptionSetValue((int)pluginStepDefinition.Mode),
-                [SdkMessageProcessingStepFieldNames.Rank] = pluginStepDefinition.Rank
+                [SdkMessageProcessingStepFieldNames.Rank] = pluginStepDefinition.Rank,
+                [SdkMessageProcessingStepFieldNames.Configuration] = pluginStepDefinition.Configurations?.UnsecureConfig,
+                [SdkMessageProcessingStepFieldNames.SdkMessageProcessingStepSecureConfigId] = sdkMessageProcessingStepSecureConfig?.ToEntityReference()
             };
             context.AddEntityWithDefaults(sdkMessageProcessingStep);
 
@@ -365,6 +391,7 @@ namespace FakeXrmEasy.Pipeline
             return sdkMessageProcessingStepId;
         }
 
+        [Obsolete("This method is obsolete, should no longer be used as it has been replaced by a more efficient method 'GetPluginStepsForOrganizationRequest' that instead directly queries the FakeXrmEasy internal in-memory database")]
         internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequestWithRetrieveMultiple(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
         {
             var target = GetTargetForRequest(request);
@@ -658,8 +685,11 @@ namespace FakeXrmEasy.Pipeline
                                join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
                                join pluginAssembly in context.CreateQuery(PluginStepRegistrationEntityNames.PluginType) on (step[SdkMessageProcessingStepFieldNames.EventHandler] as EntityReference).Id equals pluginAssembly.Id
                                join mFilter in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageFilter) on (step[SdkMessageProcessingStepFieldNames.SdkMessageFilterId] != null ? (step[SdkMessageProcessingStepFieldNames.SdkMessageFilterId] as EntityReference).Id : Guid.Empty) equals mFilter.Id into mesFilter
-                               from messageFilter in mesFilter.DefaultIfEmpty()
+                               join stepSecConfig in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStepSecureConfig) on (step[SdkMessageProcessingStepFieldNames.SdkMessageProcessingStepSecureConfigId] != null ? (step[SdkMessageProcessingStepFieldNames.SdkMessageProcessingStepSecureConfigId] as EntityReference).Id : Guid.Empty) equals stepSecConfig.Id into secureConfig
 
+                               from messageFilter in mesFilter.DefaultIfEmpty()
+                               from secureConfiguration in secureConfig.DefaultIfEmpty()
+                               
                                where (step[SdkMessageProcessingStepFieldNames.Stage] as OptionSetValue).Value == (int)stage
                                where (step[SdkMessageProcessingStepFieldNames.Mode] as OptionSetValue).Value == (int)mode
                                where (message[SdkMessageFieldNames.Name] as string) == requestName
@@ -674,7 +704,13 @@ namespace FakeXrmEasy.Pipeline
                                    EntityTypeCode = messageFilter.GetMessageFilterPrimaryObjectCode(),
                                    EntityLogicalName = messageFilter.GetMessageFilterEntityLogicalName(),
                                    AssemblyName = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.AssemblyName),
-                                   PluginType = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.TypeName)
+                                   PluginType = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.TypeName),
+                                   Configurations = secureConfiguration != null ? new PluginStepConfigurations()
+                                   {
+                                       SecureConfigId = secureConfiguration.Id,
+                                       SecureConfig = secureConfiguration.GetAttributeValue<string>(SdkMessageProcessingStepSecureConfigFieldNames.SecureConfig),
+                                       UnsecureConfig = step.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.Configuration)
+                                   } : null
                                }).OrderBy(ps => ps.Rank)
                                  .ToList();
 

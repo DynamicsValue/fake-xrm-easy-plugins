@@ -69,6 +69,45 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
             Assert.NotNull(sdkMessageFilter);
             Assert.Equal(entityLogicalName, (string)sdkMessageFilter[SdkMessageFilterFieldNames.EntityLogicalName]);
         }
+        
+        [Theory]
+        [InlineData(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous,  "secure", "unsecure")]
+        public void Should_register_plugin_step_with_plugin_definition_and_secure_configurations(string messageName,
+                                                        string entityLogicalName,
+                                                        ProcessingStepStage stage,
+                                                        ProcessingStepMode mode,
+                                                        string secureConfig,
+                                                        string unsecureConfig)
+        {
+            var pluginStepId = _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = messageName,
+                EntityLogicalName = entityLogicalName,
+                Stage = stage,
+                Mode = mode,
+                Configurations = new PluginStepConfigurations()
+                {
+                    SecureConfig = secureConfig,
+                    UnsecureConfig = unsecureConfig
+                }
+            });
+
+            var processingStep = _context.CreateQuery<SdkMessageProcessingStep>().FirstOrDefault();
+            Assert.NotNull(processingStep);
+            Assert.Equal(pluginStepId, processingStep.Id);
+            Assert.Equal((int)stage, processingStep.Stage.Value);
+            Assert.Equal((int)mode, processingStep.Mode.Value);
+            Assert.Equal(unsecureConfig, processingStep.Configuration);
+
+            var processingStepSecureConfig = _context.CreateQuery<SdkMessageProcessingStepSecureConfig>().FirstOrDefault();
+            Assert.NotNull(processingStepSecureConfig);
+            Assert.Equal(secureConfig, processingStepSecureConfig.SecureConfig);
+        }
 
         [Fact]
         public void Should_register_plugin_with_plugin_id_if_one_was_passed_into_it()

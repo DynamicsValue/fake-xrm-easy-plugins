@@ -68,6 +68,24 @@
         /// Rank: sequence of execution
         /// </summary>
         internal const string Rank = "rank";
+        
+        /// <summary>
+        /// Configuration: the unsecure configuration of this plugin step
+        /// </summary>
+        internal const string Configuration = "configuration";
+        
+        /// <summary>
+        /// SecureConfigId: id of the associated pluginstepsecureconfig id
+        /// </summary>
+        internal const string SdkMessageProcessingStepSecureConfigId = "sdkmessageprocessingstepsecureconfigid";
+    }
+
+    internal static class SdkMessageProcessingStepSecureConfigFieldNames
+    {
+        /// <summary>
+        /// SecureConfig: string that stores the secure configuration
+        /// </summary>
+        internal const string SecureConfig = "secureconfig";
     }
 
     internal static class SdkMessageProcessingStepImageFieldNames

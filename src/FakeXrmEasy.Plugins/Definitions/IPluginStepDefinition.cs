@@ -1,6 +1,7 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Plugins.Definitions
 {
@@ -66,5 +67,15 @@ namespace FakeXrmEasy.Plugins.Definitions
         /// Any plugin images to be registered for this plugin step, or null or empty
         /// </summary>
         IEnumerable<IPluginImageDefinition> ImagesDefinitions { get; set; }
+        
+        /// <summary>
+        /// Stores information about the secure and unsecure configurations of this plugin step
+        /// </summary>
+        IPluginStepConfigurations Configurations { get; set; }
+        
+        /// <summary>
+        /// Optional. Specific plugin instance that will executed instead of the plugin parameterless constructor or configurations constructor
+        /// </summary>
+        IPlugin PluginInstance { get; set; }
     }
 }

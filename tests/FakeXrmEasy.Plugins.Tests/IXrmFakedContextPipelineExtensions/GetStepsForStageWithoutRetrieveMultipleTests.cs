@@ -1,4 +1,5 @@
-﻿using Crm;
+﻿using System;
+using Crm;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.PluginSteps;
@@ -256,6 +257,43 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Empty(steps);
         }
 
+        [Theory]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, "secure", "unsecure")]
+        public void Should_return_registered_plugin_step_with_secure_and_unsecure_configurations(
+            string requestName, 
+            ProcessingStepStage stage,
+            ProcessingStepMode mode,
+            string secureConfig,
+            string unsecureConfig)
+        {
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                Configurations = new PluginStepConfigurations()
+                {
+                    SecureConfigId = Guid.NewGuid(),
+                    SecureConfig = secureConfig,
+                    UnsecureConfig = unsecureConfig
+                }
+            };
+            
+            _context.RegisterPluginStep<AccountNumberPlugin>(pluginStepDefinition);
+
+            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            Assert.Single(steps);
+            
+            var pluginStep = steps.FirstOrDefault();
+            Assert.Equal(secureConfig, pluginStep.Configurations.SecureConfig);
+            Assert.Equal(unsecureConfig, pluginStep.Configurations.UnsecureConfig);
+            Assert.Equal(pluginStepDefinition.Configurations.SecureConfigId, pluginStep.Configurations.SecureConfigId);
+        }
 
     }
 }
