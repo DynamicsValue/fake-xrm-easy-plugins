@@ -472,8 +472,31 @@ namespace FakeXrmEasy.Pipeline
             }
         }
 
+        private static void ExecutePlugin(IXrmFakedContext context,
+            PluginStepDefinition pluginStepDefinition,
+            XrmFakedPluginExecutionContext pluginContext,
+            bool isAuditEnabled)
+        {
+            var pluginMethod = GetPluginMethod(pluginStepDefinition);
+            
+            try
+            {
+                InvokePluginMethod(pluginMethod, context, pluginStepDefinition, pluginContext);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            if (isAuditEnabled)
+            {
+                context.AddPluginStepAuditDetails(pluginMethod, pluginContext, pluginStepDefinition);
+            }
+        }
+            
+            
         /// <summary>
-        /// 
+        /// Executes all the relevant plugin steps for the current request
         /// </summary>
         /// <param name="context"></param>
         /// <param name="pluginSteps"></param>
@@ -492,8 +515,6 @@ namespace FakeXrmEasy.Pipeline
 
             foreach (var pluginStep in pluginSteps)
             {
-                var pluginMethod = GetPluginMethod(pluginStep);
-
                 IEnumerable<Entity> preImageDefinitions = null;
                 if (previousValues != null)
                 {
@@ -515,19 +536,7 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.PreEntityImages = GetEntityImageCollection(preImageDefinitions, previousValues);
                 pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, resultingAttributes);
 
-                try
-                {
-                    pluginMethod.Invoke(null, new object[] { context, pluginContext });
-                }
-                catch (TargetInvocationException ex)
-                {
-                    throw ex.InnerException;
-                }
-
-                if (isAuditEnabled)
-                {
-                    context.AddPluginStepAuditDetails(pluginMethod, pluginContext, pluginStep);
-                }
+                ExecutePlugin(context, pluginStep, pluginContext, isAuditEnabled);
             }
         }
 
@@ -544,7 +553,8 @@ namespace FakeXrmEasy.Pipeline
                 MessageName = pluginContext.MessageName,
                 Stage = (ProcessingStepStage)pluginContext.Stage,
                 InputParameters = pluginContext.InputParameters,
-                OutputParameters = pluginContext.OutputParameters
+                OutputParameters = pluginContext.OutputParameters,
+                PluginStepDefinition = pluginStep
             };
 
             if (pluginContext.InputParameters.ContainsKey("Target"))
@@ -557,8 +567,6 @@ namespace FakeXrmEasy.Pipeline
                     pluginStepAuditDetails.TargetEntityReference = (EntityReference)target;
             }
 
-
-
             var pluginStepAudit = context.GetProperty<IPluginStepAudit>() as PluginStepAudit;
             pluginStepAudit.Add(pluginStepAuditDetails);
         }
@@ -568,10 +576,41 @@ namespace FakeXrmEasy.Pipeline
             var assembly = AppDomain.CurrentDomain.Load(pluginStepDefinition.AssemblyName);
             var pluginType = assembly.GetType(pluginStepDefinition.PluginType);
 
-            var methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
-            var pluginMethod = methodInfo.MakeGenericMethod(pluginType);
+            MethodInfo methodInfo = null;
+            if (pluginStepDefinition.Configurations != null)
+            {
+                //_context.ExecutePluginWithConfigurations<ConfigurationPlugin>(plugCtx, unsecureConfiguration, secureConfiguration);
+                methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWithConfigurations", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext), typeof(string), typeof(string) });
+            }
+            else
+            {
+                methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
+            }
+            
+            return methodInfo.MakeGenericMethod(pluginType);
+        }
+        
+        private static void InvokePluginMethod(MethodInfo pluginMethod, 
+            IXrmFakedContext context,
+            IPluginStepDefinition pluginStepDefinition, 
+            XrmFakedPluginExecutionContext pluginContext)
+        {
+            var assembly = AppDomain.CurrentDomain.Load(pluginStepDefinition.AssemblyName);
+            var pluginType = assembly.GetType(pluginStepDefinition.PluginType);
 
-            return pluginMethod;
+            MethodInfo methodInfo = null;
+            if (pluginStepDefinition.Configurations != null)
+            {
+                pluginMethod.Invoke(null, new object[] { context, 
+                    pluginContext, 
+                    pluginStepDefinition.Configurations.UnsecureConfig,
+                    pluginStepDefinition.Configurations.SecureConfig
+                });
+            }
+            else
+            {
+                pluginMethod.Invoke(null, new object[] { context, pluginContext });
+            }
         }
 
         private static IEnumerable<PluginStepDefinition> GetStepsForStageWithRetrieveMultiple(this IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, Entity entity)

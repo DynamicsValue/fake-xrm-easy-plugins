@@ -15,6 +15,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
+using FakeXrmEasy.Tests;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
@@ -95,6 +96,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
+                EntityLogicalName = Account.EntityLogicalName,
                 MessageName = "Create",
                 Stage = stage
             });
@@ -126,16 +128,16 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
+                EntityLogicalName = Account.EntityLogicalName,
                 MessageName = "Create",
-                Stage = ProcessingStepStage.Preoperation,
-                EntityLogicalName = Account.EntityLogicalName
+                Stage = ProcessingStepStage.Preoperation
             });
 
             _context.RegisterPluginStep<FollowupPlugin>(new PluginStepDefinition()
             {
+                EntityLogicalName = Account.EntityLogicalName,
                 MessageName = "Create",
-                Stage = ProcessingStepStage.Postoperation,
-                EntityLogicalName = Account.EntityLogicalName
+                Stage = ProcessingStepStage.Postoperation
             });
 
             var account = new Account() { Name = "Some name" };
@@ -210,6 +212,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
+                EntityLogicalName = Account.EntityLogicalName,
                 MessageName = "Create",
                 Stage = ProcessingStepStage.Preoperation
             });
@@ -255,6 +258,47 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(accountId, stepsAudit[0].OutputParameters["id"]);
         }
 
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_capture_plugin_step_execution_with_configurations_for_several_stages_if_audit_is_enabled(ProcessingStepStage stage)
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            var secureConfig = "FakeSecureConfig";
+            var unsecureConfig = "FakeUnsecureConfig";
+            
+            _context.RegisterPluginStep<ConfigurationPluginPipeline>(new PluginStepDefinition()
+            {
+                EntityLogicalName = Account.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage,
+                Configurations = new PluginStepConfigurations()
+                {
+                    SecureConfig = secureConfig,
+                    UnsecureConfig = unsecureConfig
+                }
+            });
+
+            _service.Create(new Entity("account"));
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            var auditedStep = stepsAudit[0];
+
+            Assert.Equal("Create", auditedStep.MessageName);
+            Assert.Equal(stage, auditedStep.Stage);
+            Assert.Equal(typeof(ConfigurationPluginPipeline), auditedStep.PluginAssemblyType);
+            Assert.Equal(secureConfig, auditedStep.PluginStepDefinition.Configurations.SecureConfig);
+            Assert.Equal(unsecureConfig, auditedStep.PluginStepDefinition.Configurations.UnsecureConfig);
+
+        }
+        
         /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented 
 
         [Theory]
