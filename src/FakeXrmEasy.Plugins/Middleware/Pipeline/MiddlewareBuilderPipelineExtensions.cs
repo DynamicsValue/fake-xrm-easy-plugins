@@ -12,6 +12,7 @@ using FakeXrmEasy.Plugins.PluginSteps;
 using System.Linq;
 using FakeXrmEasy.Plugins.Middleware.Pipeline.Exceptions;
 using FakeXrmEasy.Plugins.Extensions;
+using FakeXrmEasy.Plugins.PluginInstances;
 
 namespace FakeXrmEasy.Middleware.Pipeline
 {
@@ -55,6 +56,8 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 {
                     DiscoverAndRegisterPluginSteps(context, options);
                 }
+                
+                context.SetProperty<IPluginInstancesRepository>(new PluginInstancesRepository());
             });
 
             return builder;

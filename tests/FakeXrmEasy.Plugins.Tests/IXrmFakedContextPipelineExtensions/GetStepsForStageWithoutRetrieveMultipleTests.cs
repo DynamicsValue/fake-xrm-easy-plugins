@@ -294,6 +294,36 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Equal(unsecureConfig, pluginStep.Configurations.UnsecureConfig);
             Assert.Equal(pluginStepDefinition.Configurations.SecureConfigId, pluginStep.Configurations.SecureConfigId);
         }
+        
+        [Theory]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_registered_plugin_step_with_specific_plugin_instance(
+            string requestName, 
+            ProcessingStepStage stage,
+            ProcessingStepMode mode)
+        {
+            var pluginInstance = new AccountNumberPlugin();
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                PluginInstance = pluginInstance
+            };
+            
+            _context.RegisterPluginStep<AccountNumberPlugin>(pluginStepDefinition);
+
+            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            Assert.Single(steps);
+            
+            var pluginStep = steps.FirstOrDefault();
+            Assert.Equal(pluginInstance, pluginStep.PluginInstance);
+        }
 
     }
 }
