@@ -74,7 +74,7 @@ namespace FakeXrmEasy.Plugins.Definitions
         IPluginStepConfigurations Configurations { get; set; }
         
         /// <summary>
-        /// Optional. Specific plugin instance that will executed instead of the plugin parameterless constructor or configurations constructor
+        /// Optional. Specific plugin instance that will be executed instead of the plugin parameterless constructor or configurations constructor
         /// </summary>
         IPlugin PluginInstance { get; set; }
     }

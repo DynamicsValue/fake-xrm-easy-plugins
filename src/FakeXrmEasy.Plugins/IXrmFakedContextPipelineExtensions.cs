@@ -232,17 +232,20 @@ namespace FakeXrmEasy.Pipeline
                 var hasSdkMessageFilter = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessageFilter) != null;
                 var hasSdkMessageProcessingStep = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessageProcessingStep) != null;
                 var hasPluginType = context.FindReflectedType(PluginStepRegistrationEntityNames.PluginType) != null;
-
+                var hasSdkMessageProcessingStepSecureConfig = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessageProcessingStepSecureConfig) != null;
+                
                 var hasAllPipelineTypes =
                     hasSdkMessage &&
                     hasSdkMessageFilter &&
                     hasSdkMessageProcessingStep &&
+                    hasSdkMessageProcessingStepSecureConfig &&
                     hasPluginType;
 
                 var hasSomePipelineTypes =
                     hasSdkMessage ||
                     hasSdkMessageFilter ||
                     hasSdkMessageProcessingStep ||
+                    hasSdkMessageProcessingStepSecureConfig ||
                     hasPluginType;
 
                 if(hasAllPipelineTypes)
