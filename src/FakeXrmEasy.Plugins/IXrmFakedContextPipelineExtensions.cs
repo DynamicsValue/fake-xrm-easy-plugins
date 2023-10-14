@@ -577,7 +577,16 @@ namespace FakeXrmEasy.Pipeline
                                 XrmFakedPluginExecutionContext pluginContext,
                                 PluginStepDefinition pluginStep)
         {
-            var pluginType = pluginMethod.GetGenericArguments()[0];
+            Type pluginType = null;
+            if (pluginStep.PluginInstance != null)
+            {
+                pluginType = pluginStep.PluginInstance.GetType();
+            }
+            else
+            {
+                pluginType = pluginMethod.GetGenericArguments()[0];
+            }
+            
             var pluginStepAuditDetails = new PluginStepAuditDetails()
             {
                 PluginAssemblyType = pluginType,
