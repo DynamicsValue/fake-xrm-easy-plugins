@@ -299,6 +299,40 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
         }
         
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_capture_plugin_step_execution_with_plugin_instance_for_several_stages_if_audit_is_enabled(ProcessingStepStage stage)
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            var pluginInstance = new CustomInstancePluginPipeline("My Injected Value");
+            
+            _context.RegisterPluginStep<ConfigurationPluginPipeline>(new PluginStepDefinition()
+            {
+                EntityLogicalName = Account.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage,
+                PluginInstance = pluginInstance
+            });
+
+            _service.Create(new Entity("account"));
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            var auditedStep = stepsAudit[0];
+
+            Assert.Equal("Create", auditedStep.MessageName);
+            Assert.Equal(stage, auditedStep.Stage);
+            Assert.Equal(typeof(CustomInstancePluginPipeline), auditedStep.PluginAssemblyType);
+            Assert.Equal(pluginInstance, auditedStep.PluginStepDefinition.PluginInstance);
+        }
+        
         /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented 
 
         [Theory]

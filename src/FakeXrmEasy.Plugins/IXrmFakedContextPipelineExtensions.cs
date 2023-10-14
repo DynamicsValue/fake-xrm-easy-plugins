@@ -577,7 +577,16 @@ namespace FakeXrmEasy.Pipeline
                                 XrmFakedPluginExecutionContext pluginContext,
                                 PluginStepDefinition pluginStep)
         {
-            var pluginType = pluginMethod.GetGenericArguments()[0];
+            Type pluginType = null;
+            if (pluginStep.PluginInstance != null)
+            {
+                pluginType = pluginStep.PluginInstance.GetType();
+            }
+            else
+            {
+                pluginType = pluginMethod.GetGenericArguments()[0];
+            }
+            
             var pluginStepAuditDetails = new PluginStepAuditDetails()
             {
                 PluginAssemblyType = pluginType,
@@ -609,6 +618,12 @@ namespace FakeXrmEasy.Pipeline
             var pluginType = assembly.GetType(pluginStepDefinition.PluginType);
 
             MethodInfo methodInfo = null;
+            if (pluginStepDefinition.PluginInstance != null)
+            {
+                methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext), typeof(IPlugin) });
+                return methodInfo;
+            }
+            
             if (pluginStepDefinition.Configurations != null)
             {
                 methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWithConfigurations", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext), typeof(string), typeof(string) });
@@ -626,7 +641,11 @@ namespace FakeXrmEasy.Pipeline
             IPluginStepDefinition pluginStepDefinition, 
             XrmFakedPluginExecutionContext pluginContext)
         {
-            if (pluginStepDefinition.Configurations != null)
+            if (pluginStepDefinition.PluginInstance != null)
+            {
+                pluginMethod.Invoke(null, new object[] { context, pluginContext, pluginStepDefinition.PluginInstance });
+            }
+            else if (pluginStepDefinition.Configurations != null)
             {
                 pluginMethod.Invoke(null, new object[] { context, 
                     pluginContext, 
