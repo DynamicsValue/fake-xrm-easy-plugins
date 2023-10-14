@@ -626,7 +626,6 @@ namespace FakeXrmEasy.Pipeline
             IPluginStepDefinition pluginStepDefinition, 
             XrmFakedPluginExecutionContext pluginContext)
         {
-            MethodInfo methodInfo = null;
             if (pluginStepDefinition.Configurations != null)
             {
                 pluginMethod.Invoke(null, new object[] { context, 
