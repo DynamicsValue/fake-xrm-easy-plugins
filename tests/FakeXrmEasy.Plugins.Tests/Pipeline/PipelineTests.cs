@@ -75,7 +75,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         [Fact]
         public void Should_trigger_plugin_registered_on_sync_delete_preoperation()
         {
-            // Arange
+            // Arrange
             _context.Initialize(_contact);
             _context.RegisterPluginStep<ValidatePipelinePlugin, Contact>("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous);
 

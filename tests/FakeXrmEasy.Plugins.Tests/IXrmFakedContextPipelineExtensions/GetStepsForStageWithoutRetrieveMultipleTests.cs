@@ -1,4 +1,5 @@
-﻿using Crm;
+﻿using System;
+using Crm;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.PluginSteps;
@@ -6,11 +7,13 @@ using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System.Linq;
+using System.Reflection;
+using FakeXrmEasy.Plugins.PluginInstances;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 {
-    public class GetStepsForStageWithoutRetrieveMultipleTests : FakeXrmEasyTestsBase
+    public class GetStepsForStageWithoutRetrieveMultipleTests : FakeXrmEasyPipelineTestsBase
     {
         private readonly CreateRequest _createRequest;
         private readonly Account _target;
@@ -34,9 +37,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
@@ -65,13 +66,12 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_and_entity_type_code_if_present(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(DataverseEntities.Account)));
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
                 MessageName = requestName,
@@ -98,9 +98,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_not_return_registered_plugin_step_for_another_request_name(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
@@ -118,9 +116,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_multiple_registered_plugin_steps_for_exact_request_name_stage_and_mode_ordered_by_rank(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
@@ -165,9 +161,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_with_filtering_attributes(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
@@ -200,9 +194,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_with_multiple_filtering_attributes(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
@@ -237,9 +229,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
         [Theory]
         [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Asynchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_not_return_registered_plugin_step_with_filtering_attributes_if_request_does_not_contain_such_attribute(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
@@ -256,6 +246,69 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             Assert.Empty(steps);
         }
 
+        [Theory]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, "secure", "unsecure")]
+        public void Should_return_registered_plugin_step_with_secure_and_unsecure_configurations(
+            string requestName, 
+            ProcessingStepStage stage,
+            ProcessingStepMode mode,
+            string secureConfig,
+            string unsecureConfig)
+        {
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                Configurations = new PluginStepConfigurations()
+                {
+                    SecureConfigId = Guid.NewGuid(),
+                    SecureConfig = secureConfig,
+                    UnsecureConfig = unsecureConfig
+                }
+            };
+            
+            _context.RegisterPluginStep<AccountNumberPlugin>(pluginStepDefinition);
+
+            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            Assert.Single(steps);
+            
+            var pluginStep = steps.FirstOrDefault();
+            Assert.Equal(secureConfig, pluginStep.Configurations.SecureConfig);
+            Assert.Equal(unsecureConfig, pluginStep.Configurations.UnsecureConfig);
+            Assert.Equal(pluginStepDefinition.Configurations.SecureConfigId, pluginStep.Configurations.SecureConfigId);
+        }
+        
+        [Theory]
+        [InlineData("Create", ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_registered_plugin_step_with_specific_plugin_instance(
+            string requestName, 
+            ProcessingStepStage stage,
+            ProcessingStepMode mode)
+        {
+            var pluginInstance = new AccountNumberPlugin();
+            var pluginStepDefinition = new PluginStepDefinition()
+            {
+                MessageName = requestName,
+                Stage = stage,
+                Mode = mode,
+                PluginInstance = pluginInstance
+            };
+            
+            _context.RegisterPluginStep<AccountNumberPlugin>(pluginStepDefinition);
+
+            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            Assert.Single(steps);
+            
+            var pluginStep = steps.FirstOrDefault();
+            Assert.Equal(pluginInstance, pluginStep.PluginInstance);
+        }
 
     }
 }

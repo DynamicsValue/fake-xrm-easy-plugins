@@ -12,13 +12,14 @@ namespace FakeXrmEasy.Plugins.Pipeline.PipelineTypes
         /// Default constructor
         /// </summary>
         public MissingPipelineTypesException() 
-            : base($@"Some types needed for pipeline simulation but some are missing.
+            : base($@"Some types are needed for pipeline simulation but some are missing.
                         Please either generate all of them or do not generate any.
                         Types needed for pipeline simulation are:
                             '{PluginStepRegistrationEntityNames.PluginType}', 
                             '{PluginStepRegistrationEntityNames.SdkMessage}',
-                            '{PluginStepRegistrationEntityNames.SdkMessageFilter}' and
-                            '{PluginStepRegistrationEntityNames.SdkMessageProcessingStep}'.")
+                            '{PluginStepRegistrationEntityNames.SdkMessageFilter}'
+                            '{PluginStepRegistrationEntityNames.SdkMessageProcessingStep}' and
+                            '{PluginStepRegistrationEntityNames.SdkMessageProcessingStepSecureConfig}' .")
         {
 
         }

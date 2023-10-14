@@ -7,5 +7,6 @@
         internal const string SdkMessage = "sdkmessage";
         internal const string SdkMessageProcessingStep = "sdkmessageprocessingstep";
         internal const string SdkMessageProcessingStepImage = "sdkmessageprocessingstepimage";
+        internal const string SdkMessageProcessingStepSecureConfig = "sdkmessageprocessingstepsecureconfig";
     }
 }

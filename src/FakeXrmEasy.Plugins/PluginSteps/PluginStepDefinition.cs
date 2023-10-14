@@ -3,6 +3,7 @@ using FakeXrmEasy.Plugins.Definitions;
 using FakeXrmEasy.Plugins.PluginImages;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Plugins.PluginSteps
 {
@@ -54,7 +55,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         public IEnumerable<string> FilteringAttributes { get; set; }
 
         /// <summary>
-        /// The name of the assembly that will be used to serch for the plugin type
+        /// The name of the assembly that will be used to search for the plugin type
         /// </summary>
         public string AssemblyName { get; set; }
 
@@ -68,6 +69,16 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         /// </summary>
         public IEnumerable<IPluginImageDefinition> ImagesDefinitions { get; set; }
 
+        /// <summary>
+        /// Stores information about the secure and unsecure configurations of this plugin step
+        /// </summary>
+        public IPluginStepConfigurations Configurations { get; set; }
+
+        /// <summary>
+        /// Optional. Specific plugin instance that will executed instead of the plugin parameterless constructor or configurations constructor
+        /// </summary>
+        public IPlugin PluginInstance { get; set; }
+        
         /// <summary>
         /// Default constructor
         /// </summary>
