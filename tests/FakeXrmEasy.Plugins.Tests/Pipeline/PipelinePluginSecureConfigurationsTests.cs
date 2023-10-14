@@ -15,22 +15,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
     /// </summary>
     public class PipelinePluginSecureConfigurationsTests: FakeXrmEasyPipelineTestsBase
     {
-        private readonly Account _account;
-        private readonly Contact _contact;
-
-        public PipelinePluginSecureConfigurationsTests()
-        {
-            _account = new Account()
-            {
-                Id = Guid.NewGuid(),
-                AccountNumber = "1234567890",
-                AccountCategoryCode = new OptionSetValue(1),
-                NumberOfEmployees = 5,
-                Revenue = new Money(20000),
-                Telephone1 = "+123456"
-            };
-        }
-        
         [Fact]
         public void Should_trigger_registered_plugin_with_configurations()
         {

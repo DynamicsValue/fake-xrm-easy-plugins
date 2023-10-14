@@ -611,7 +611,6 @@ namespace FakeXrmEasy.Pipeline
             MethodInfo methodInfo = null;
             if (pluginStepDefinition.Configurations != null)
             {
-                //_context.ExecutePluginWithConfigurations<ConfigurationPlugin>(plugCtx, unsecureConfiguration, secureConfiguration);
                 methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWithConfigurations", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext), typeof(string), typeof(string) });
             }
             else
@@ -627,9 +626,6 @@ namespace FakeXrmEasy.Pipeline
             IPluginStepDefinition pluginStepDefinition, 
             XrmFakedPluginExecutionContext pluginContext)
         {
-            var assembly = AppDomain.CurrentDomain.Load(pluginStepDefinition.AssemblyName);
-            var pluginType = assembly.GetType(pluginStepDefinition.PluginType);
-
             MethodInfo methodInfo = null;
             if (pluginStepDefinition.Configurations != null)
             {
