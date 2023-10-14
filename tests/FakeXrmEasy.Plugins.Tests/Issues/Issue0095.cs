@@ -29,10 +29,11 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
         }
         
         [Fact]
-        public void Should_have_all_necessary_entities_for_pipeline_simulation()
+        public void Should_have_all_necessary_entities_for_pipeline_simulation_without_raising_exception()
         {
             _context.Initialize(new DataverseEntities.SdkMessage() { Id = Guid.NewGuid()});
-            FakeXrmEasy.Pipeline.IXrmFakedContextPipelineExtensions.AddPipelineTypes(_context);
+            var ex = Record.Exception(() => FakeXrmEasy.Pipeline.IXrmFakedContextPipelineExtensions.AddPipelineTypes(_context));
+            Assert.Null(ex);
         }
 
         [Fact]
