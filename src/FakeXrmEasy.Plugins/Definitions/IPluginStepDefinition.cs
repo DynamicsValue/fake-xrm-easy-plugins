@@ -32,14 +32,14 @@ namespace FakeXrmEasy.Plugins.Definitions
 
         /// <summary>
         /// Entity Logical Name or null, the plugin will only execute for these entities if specified. 
-        /// This property will take precedence over EntityTypeCode
         /// </summary>
         string EntityLogicalName { get; set; }
 
         /// <summary>
         /// If present, the plugin will only execute for entities whose EntityTypeCode matches this value, or any entity otherwise
-        /// EntityTypeCode will be ignored if EntityLogicalName is set
+        /// EntityTypeCode will throw an exception if also EntityLogicalName was set
         /// </summary>
+        [Obsolete("Deprecated. Please use EntityLogicalName instead")]
         int? EntityTypeCode { get; set; }
 
         /// <summary>

@@ -19,6 +19,7 @@ using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Plugins.PluginSteps.Extensions;
 using FakeXrmEasy.Plugins.Definitions;
 using FakeXrmEasy.Plugins.Pipeline.PipelineTypes;
+using FakeXrmEasy.Plugins.PluginInstances;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -111,13 +112,6 @@ namespace FakeXrmEasy.Pipeline
             var entityType = entity.GetType();
             if (entityType.IsSubclassOf(typeof(Entity)))
             {
-                var entityTypeCodeField = entityType.GetField("EntityTypeCode");
-                if (entityTypeCodeField == null)
-                {
-                    throw new EntityTypeCodeNotFoundException(entity.LogicalName);
-                }
-                var entityTypeCode = (int)entityTypeCodeField.GetValue(entity);
-
                 var pluginStepDefinition = new PluginStepDefinition()
                 {
                     MessageName = message,
@@ -125,7 +119,6 @@ namespace FakeXrmEasy.Pipeline
                     Mode = mode,
                     Rank = rank,
                     FilteringAttributes = filteringAttributes,
-                    EntityTypeCode = entityTypeCode,
                     EntityLogicalName = entity.LogicalName,
                     ImagesDefinitions = registeredImages
                 };
@@ -350,11 +343,41 @@ namespace FakeXrmEasy.Pipeline
             return context.RegisterPluginStepInternal(typeof(TPlugin), pluginStepDefinition);
         }
 
+        internal static void VerifyPluginStepDefinition(IXrmFakedContext context,
+            IPluginStepDefinition pluginStepDefinition)
+        {
+            if (pluginStepDefinition.EntityTypeCode != null &&
+                !string.IsNullOrWhiteSpace(pluginStepDefinition.EntityLogicalName))
+            {
+                throw new RegisterStepWithEntityTypeCodeAndEntityLogicalNameException(
+                    pluginStepDefinition.EntityTypeCode.Value, pluginStepDefinition.EntityLogicalName);
+            }
+
+            if (pluginStepDefinition.EntityTypeCode != null)
+            {
+                if (!context.ProxyTypesAssemblies.Any())
+                {
+                    throw new RegisterEntityTypeCodePluginStepWithoutProxyTypesAssemblyException(pluginStepDefinition
+                        .EntityTypeCode.Value);
+                }
+                
+                var reflectedType = context.FindReflectedType(pluginStepDefinition.EntityTypeCode.Value);
+                if (reflectedType == null)
+                {
+                    throw new RegisterInvalidEntityTypeCodePluginStepException(pluginStepDefinition
+                        .EntityTypeCode.Value);
+                }
+                
+                pluginStepDefinition.EntityLogicalName = (string)reflectedType.GetField("EntityLogicalName")?.GetValue(null);
+            }
+        }
+        
         internal static Guid RegisterPluginStepInternal(this IXrmFakedContext context,
                                                                 Type pluginType,
                                                                 IPluginStepDefinition pluginStepDefinition)
 
         {
+            VerifyPluginStepDefinition(context, pluginStepDefinition);
             ValidatePluginStep(context, pluginStepDefinition);
 
             AddPipelineTypes(context);
@@ -389,6 +412,12 @@ namespace FakeXrmEasy.Pipeline
             };
             context.AddEntityWithDefaults(sdkMessageProcessingStep);
 
+            if (pluginStepDefinition.PluginInstance != null)
+            {
+                var pluginInstancesRepository = context.GetProperty<IPluginInstancesRepository>();
+                pluginInstancesRepository.SetPluginInstance(sdkMessageProcessingStepId, pluginStepDefinition.PluginInstance);
+            }
+            
             AddSdkMessageProcessingStepImages(context, pluginStepDefinition, sdkMessageProcessingStep);
 
             return sdkMessageProcessingStepId;
@@ -723,6 +752,8 @@ namespace FakeXrmEasy.Pipeline
                 entityLogicalName = entity.LogicalName;
             }
 
+            var pluginInstancesRepository = context.GetProperty<IPluginInstancesRepository>();
+            
             var pluginSteps = (from step in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
                                join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
                                join pluginAssembly in context.CreateQuery(PluginStepRegistrationEntityNames.PluginType) on (step[SdkMessageProcessingStepFieldNames.EventHandler] as EntityReference).Id equals pluginAssembly.Id
@@ -752,7 +783,8 @@ namespace FakeXrmEasy.Pipeline
                                        SecureConfigId = secureConfiguration.Id,
                                        SecureConfig = secureConfiguration.GetAttributeValue<string>(SdkMessageProcessingStepSecureConfigFieldNames.SecureConfig),
                                        UnsecureConfig = step.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.Configuration)
-                                   } : null
+                                   } : null,
+                                   PluginInstance = pluginInstancesRepository.GetPluginInstance(step.Id)
                                }).OrderBy(ps => ps.Rank)
                                  .ToList();
 
