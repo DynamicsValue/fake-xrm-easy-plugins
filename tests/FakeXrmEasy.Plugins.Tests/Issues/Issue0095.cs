@@ -16,7 +16,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
         [Fact]
         public void Should_not_raise_reflected_typed_not_found_exception_when_using_early_bound_and_registering_steps()
         {
-            _context.Initialize(new Account() { Id = Guid.NewGuid()});
+            _context.Initialize(new DataverseEntities.Account() { Id = Guid.NewGuid()});
             
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
@@ -26,6 +26,14 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
 
             var sdkMessages = _context.CreateQuery<SdkMessage>().ToList();
             Assert.Single(sdkMessages);
+        }
+        
+        [Fact]
+        public void Should_have_all_necessary_entities_for_pipeline_simulation_without_raising_exception()
+        {
+            _context.Initialize(new DataverseEntities.SdkMessage() { Id = Guid.NewGuid()});
+            var ex = Record.Exception(() => FakeXrmEasy.Pipeline.IXrmFakedContextPipelineExtensions.AddPipelineTypes(_context));
+            Assert.Null(ex);
         }
 
         [Fact]

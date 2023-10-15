@@ -8,7 +8,7 @@
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">net452</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY'">net452</TargetFrameworks>
     <PackageId>FakeXrmEasy.Plugins</PackageId>
-    <VersionPrefix>2.3.2</VersionPrefix>
+    <VersionPrefix>2.3.3</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
     <Company>Dynamics Value</Company>
     <Title>FakeXrmEasy Plugins</Title>
@@ -19,7 +19,7 @@
     <PackageReleaseNotes>Please write release notes in CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
     <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-plugins</RepositoryUrl>
-    <Configurations>Debug;Release;FAKE_XRM_EASY;FAKE_XRM_EASY_2013;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_365;FAKE_XRM_EASY_9</Configurations>
+    <Configurations>FAKE_XRM_EASY;FAKE_XRM_EASY_2013;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_365;FAKE_XRM_EASY_9</Configurations>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly>True</SignAssembly>
@@ -94,10 +94,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' And '$(Configuration)'=='FAKE_XRM_EASY'">
-    <PackageReference Include="Microsoft.Xrm.Sdk.2011" Version="[5.0.18]" />
-    <PackageReference Include="Microsoft.Crm.Sdk.Proxy.2011" Version="[5.0.18]" />
-    <PackageReference Include="Microsoft.Xrm.Sdk.Workflow.2011" Version="[5.0.18]" />
-    <PackageReference Include="Microsoft.Xrm.Client.2011" Version="[5.0.18]" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[5.0.18]" />
+    <PackageReference Include="Microsoft.CrmSdk.Extensions" Version="[5.0.18]" />
+    <PackageReference Include="Microsoft.CrmSdk.Workflow" Version="[5.0.18]" />
+    <PackageReference Include="Microsoft.CrmSdk.Deployment" Version="[5.0.18]" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
 
@@ -106,31 +106,28 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2011" Version="[2.3.0-*,3.0)" />
-    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="[2.3.0-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2011" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2013" Version="[2.3.0-*,3.0)" />
-    <PackageReference Include="FakeXrmEasy.Core.v2013" Version="[2.3.0-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2013" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2013" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2015" Version="[2.3.0-*,3.0)" />
-    <PackageReference Include="FakeXrmEasy.Core.v2015" Version="[2.3.0-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2015" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2015" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2016" Version="[2.3.0-*,3.0)" />
-    <PackageReference Include="FakeXrmEasy.Core.v2016" Version="[2.3.0-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2016" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2016" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v365" Version="[2.3.0-*,3.0)" />
-    <PackageReference Include="FakeXrmEasy.Core.v365" Version="[2.3.0-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v365" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v365" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="[2.3.0-*,3.0)" />
-    <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.3.0-*,3.0)" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
 
   <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">

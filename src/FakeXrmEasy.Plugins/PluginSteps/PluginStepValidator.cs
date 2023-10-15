@@ -240,6 +240,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
                 return false;
 
             string entityLogicalNameToCheck = stepDefinition.EntityLogicalName;
+
             if (stepDefinition.EntityTypeCode == null && string.IsNullOrWhiteSpace(stepDefinition.EntityLogicalName))
             {
                 entityLogicalNameToCheck = "*";
