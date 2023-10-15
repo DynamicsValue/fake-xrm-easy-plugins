@@ -1,6 +1,7 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk;
 using System;
+using FakeXrmEasy.Plugins.Definitions;
 
 namespace FakeXrmEasy.Plugins.Audit
 {
@@ -53,5 +54,10 @@ namespace FakeXrmEasy.Plugins.Audit
         /// OutputParameters that were part of the plugin execution
         /// </summary>
         public ParameterCollection OutputParameters { get; set; }
+        
+        /// <summary>
+        /// The plugin step definition that triggered the plugin execution
+        /// </summary>
+        public IPluginStepDefinition PluginStepDefinition { get; set; }
     }
 }

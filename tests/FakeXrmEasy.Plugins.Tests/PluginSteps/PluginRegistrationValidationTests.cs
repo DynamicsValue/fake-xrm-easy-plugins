@@ -138,25 +138,6 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
             A.CallTo(() => _invalidValidator.IsValid(A<IPluginStepDefinition>.Ignored)).MustNotHaveHappened();
         }
 
-
-        /// <summary>
-        /// We're keeping this one with an obsolete method cause the test was only applicable to such obsolete method
-        /// </summary>
-        [Fact]
-        public void Should_return_error_when_registering_plugin_step_with_early_bound_and_no_entity_type_code()
-        {
-            _context = MiddlewareBuilder
-                        .New()
-                        .AddPipelineSimulation(new PipelineOptions() { UsePluginStepRegistrationValidation = true })
-                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
-                        .Build();
-
-            _context.SetProperty(_validValidator);
-            Assert.Throws<EntityTypeCodeNotFoundException>(() =>
-                _context.RegisterPluginStep<AccountNumberPlugin, EarlyBoundEntityWithNoEntityTypeCode>(MessageNameConstants.Create, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)
-            );
-        }
-
         [Fact]
         public void Should_return_error_when_registering_plugin_step_with_early_bound_method_and_late_bound_entity()
         {

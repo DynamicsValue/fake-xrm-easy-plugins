@@ -6,6 +6,7 @@ using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
@@ -72,6 +73,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_and_entity_type_code_if_present(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(DataverseEntities.Account)));
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
                 MessageName = requestName,

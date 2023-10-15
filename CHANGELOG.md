@@ -1,3 +1,20 @@
+
+
+## [3.3.3]
+
+### Added 
+
+- **[Possibly breaking change]** : Exception raised if both EntityTypeCode and EntityLogicalName are set when registering a plugin step. EntityTypeCode is deprecated, please move all plugin registrations to use EntityLogicalName instead.
+- Introduced new user-defined exceptions to verify plugin step registrations when EntityTypeCode is used
+- Adding support for secure and unsecure configurations in pipeline simulation - https://github.com/DynamicsValue/fake-xrm-easy/issues/103
+
+### Changed
+
+- Resolves an issue when using early bound types without pipeline types being generated caused plugin step registration to fail - https://github.com/DynamicsValue/fake-xrm-easy/issues/85
+- Resolves an issue where the exception raised by a plugin was hidden because of reflection. 
+- Resolves an issue with PostImages: where attributes defined in a PluginStepDefintion of a PostImage event where not returned  - https://github.com/DynamicsValue/fake-xrm-easy/issues/102
+- Update legacy CRM SDK 2011 dependency to use official MS package - https://github.com/DynamicsValue/fake-xrm-easy/issues/105
+
 ## [3.3.1]
 
 ### Changed
