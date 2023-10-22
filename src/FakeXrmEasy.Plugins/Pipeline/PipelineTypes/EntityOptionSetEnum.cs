@@ -14,7 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DataverseEntities
 {
 	[ExcludeFromCodeCoverage]
-	internal sealed class EntityOptionSetEnum
+	internal static class EntityOptionSetEnum
 	{
 		
 		public static System.Nullable<int> GetEnum(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName)
@@ -50,7 +50,7 @@ namespace DataverseEntities
 		{
 			if (values == null)
 			{
-				return null;
+				return new Microsoft.Xrm.Sdk.OptionSetValueCollection();
 			}
 			Microsoft.Xrm.Sdk.OptionSetValueCollection collection = new Microsoft.Xrm.Sdk.OptionSetValueCollection();
 			collection.AddRange(System.Linq.Enumerable.Select(values, v => new Microsoft.Xrm.Sdk.OptionSetValue((int)(object)v)));
