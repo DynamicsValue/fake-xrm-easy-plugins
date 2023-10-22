@@ -96,13 +96,7 @@
     </ReadLinesFromFile>
     <Message Text="Value of Lines read = '@(ReleaseNoteLines, '%0a')'" />
     <PropertyGroup>
-      <PackageDescription>
-This package contains helpers to aid in developing and testing of plugins as well as pipeline simulation features.
-
-RELEASE NOTES
-------------------
-@(ReleaseNoteLines, '%0a')
-      </PackageDescription>
+      <PackageDescription>This package contains helpers to aid in developing and testing of plugins as well as pipeline simulation features.</PackageDescription>
       <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
     </PropertyGroup>
   </Target>
