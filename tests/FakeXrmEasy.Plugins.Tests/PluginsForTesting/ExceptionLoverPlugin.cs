@@ -5,6 +5,7 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
 {
     public class ExceptionLoverPlugin : IPlugin
     {
+        public const string PluginExceptionMessage = "This is an amazing exception raised from a plugin!";
         public void Execute(IServiceProvider serviceProvider)
         {
             var tracing = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
@@ -12,7 +13,7 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
             var factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = factory.CreateOrganizationService(context.UserId);
 
-            throw new InvalidPluginExecutionException("This is an amazing exception raised from a plugin!");
+            throw new InvalidPluginExecutionException(PluginExceptionMessage);
         }
     }
 }

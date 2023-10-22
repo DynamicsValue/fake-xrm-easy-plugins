@@ -1,6 +1,7 @@
 ﻿using FakeXrmEasy.Abstractions.Plugins.Enums;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Plugins.Definitions
 {
@@ -31,14 +32,14 @@ namespace FakeXrmEasy.Plugins.Definitions
 
         /// <summary>
         /// Entity Logical Name or null, the plugin will only execute for these entities if specified. 
-        /// This property will take precedence over EntityTypeCode
         /// </summary>
         string EntityLogicalName { get; set; }
 
         /// <summary>
         /// If present, the plugin will only execute for entities whose EntityTypeCode matches this value, or any entity otherwise
-        /// EntityTypeCode will be ignored if EntityLogicalName is set
+        /// EntityTypeCode will throw an exception if also EntityLogicalName was set
         /// </summary>
+        [Obsolete("Deprecated. Please use EntityLogicalName instead")]
         int? EntityTypeCode { get; set; }
 
         /// <summary>
@@ -66,5 +67,15 @@ namespace FakeXrmEasy.Plugins.Definitions
         /// Any plugin images to be registered for this plugin step, or null or empty
         /// </summary>
         IEnumerable<IPluginImageDefinition> ImagesDefinitions { get; set; }
+        
+        /// <summary>
+        /// Stores information about the secure and unsecure configurations of this plugin step
+        /// </summary>
+        IPluginStepConfigurations Configurations { get; set; }
+        
+        /// <summary>
+        /// Optional. Specific plugin instance that will be executed instead of the plugin parameterless constructor or configurations constructor
+        /// </summary>
+        IPlugin PluginInstance { get; set; }
     }
 }

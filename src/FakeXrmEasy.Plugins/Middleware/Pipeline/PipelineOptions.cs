@@ -23,7 +23,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
         public bool UsePluginStepAudit { get; set; }
 
         /// <summary>
-        /// Enables vaidation of the registration of unsupported plugin steps
+        /// Enables validation of the registration of unsupported plugin steps
         /// </summary>
         public bool UsePluginStepRegistrationValidation { get; set; }
 
