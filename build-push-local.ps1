@@ -1,6 +1,6 @@
 
 param (
-    [string]$targetFrameworks = "netcoreapp3.1"
+    [string]$targetFrameworks = "all"
 )
 
 Write-Host " -> Checking local packages..." -ForegroundColor Yellow
