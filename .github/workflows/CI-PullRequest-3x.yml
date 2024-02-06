@@ -38,7 +38,7 @@ jobs:
     - name: Build
       run: pwsh ./build.ps1
       env: 
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
   
   build-windows:
@@ -66,7 +66,7 @@ jobs:
     - name: Build
       run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
   sonar:
@@ -94,7 +94,7 @@ jobs:
         testCommand: dotnet test . --configuration FAKE_XRM_EASY_9 --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-plugins
-        sonarOrganisation: dynamicsvalue
+        sonarOrganisation: ${{ vars.SONAR_ORG_NAME }}
         beginArguments: >
             /d:sonar.verbose="true"
             /d:sonar.qualitygate.wait="true"
@@ -103,5 +103,5 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
