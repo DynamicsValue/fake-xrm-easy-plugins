@@ -52,13 +52,14 @@ namespace FakeXrmEasy.Plugins.Tests
         }
 
         [Fact]
-        public void Should_return_unsupported_exception_when_getting_an_invalid_service()
+        public void Should_return_null_when_getting_an_invalid_service()
         {
             _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
 
             var serviceProvider = _context.PluginContextProperties.GetServiceProvider(_context.GetDefaultPluginContext());
-
-            Assert.Throws<OpenSourceUnsupportedException>(() => serviceProvider.GetService(typeof(XrmFakedPluginContextPropertiesTests)));
+            var service = serviceProvider.GetService(typeof(XrmFakedPluginContextPropertiesTests));
+            
+            Assert.Null(service);
         }
 
         [Fact]

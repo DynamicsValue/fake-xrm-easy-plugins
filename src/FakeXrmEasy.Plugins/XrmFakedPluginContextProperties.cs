@@ -143,7 +143,7 @@ namespace FakeXrmEasy.Plugins
                        return _entityDataSourceRetrieverService;
                    }
 #endif
-                   throw UnsupportedExceptionFactory.New(_context.LicenseContext.Value, "The specified service type is not supported");
+                   return null;
                });
 
             return fakedServiceProvider;
