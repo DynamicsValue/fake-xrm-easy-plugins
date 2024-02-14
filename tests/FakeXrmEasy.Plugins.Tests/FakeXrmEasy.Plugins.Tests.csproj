@@ -11,7 +11,7 @@
     <IsPackable>true</IsPackable>
 
     <PackageId>FakeXrmEasy.PluginsTests</PackageId>
-    <VersionPrefix>2.4.0</VersionPrefix>
+    <VersionPrefix>2.4.1</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
     <Company>Dynamics Value S.L.</Company>
     <Title>Internal Unit test suite for FakeXrmEasy.Plugins package</Title>
