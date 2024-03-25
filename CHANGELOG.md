@@ -1,3 +1,10 @@
+## [2.5.0]
+
+### Changed
+
+- Upgraded dependency "Microsoft.CrmSdk.CoreAssemblies" to 9.0.2.52
+- Upgraded dependency "Microsoft.CrmSdk.XrmTooling.CoreAssembly" to 9.1.1.45
+
 ## [2.4.1]
 
 ### Changed
