@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Plugins.PluginExecutionContext
@@ -25,3 +26,4 @@ namespace FakeXrmEasy.Plugins.PluginExecutionContext
         
     }
 }
+#endif

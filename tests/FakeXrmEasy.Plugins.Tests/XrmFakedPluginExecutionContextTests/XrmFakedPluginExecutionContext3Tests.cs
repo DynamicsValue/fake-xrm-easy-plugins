@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using FakeXrmEasy.Plugins.PluginExecutionContext;
 using Xunit;
@@ -15,3 +16,4 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
         }
     }
 }
+#endif
