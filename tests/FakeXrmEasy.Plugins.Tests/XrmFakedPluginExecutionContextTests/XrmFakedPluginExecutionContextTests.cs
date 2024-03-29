@@ -5,7 +5,7 @@ using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Plugins;
 using Crm;
 
-namespace FakeXrmEasy.Abstractions.Tests.Plugins
+namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
 {
     public class XrmFakedPluginExecutionContextTests
     {
@@ -42,13 +42,12 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
         [Fact]
         public void Should_set_default_plugin_context_with_custom_properties()
         {
-            
             var plugCtx = new XrmFakedPluginExecutionContext();
             
             var operationCreatedOn = DateTime.UtcNow;
             var businessUnitId = Guid.NewGuid();
             var correlationId = Guid.NewGuid();
-            var initiatinUserId = Guid.NewGuid();
+            var initiatingUserId = Guid.NewGuid();
             var inputParameters = new ParameterCollection();
             var outputParameters = new ParameterCollection();
             var sharedVariables = new ParameterCollection();
@@ -65,7 +64,7 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             plugCtx.BusinessUnitId = businessUnitId;
             plugCtx.CorrelationId = correlationId;
             plugCtx.Depth = 2;
-            plugCtx.InitiatingUserId = initiatinUserId;
+            plugCtx.InitiatingUserId = initiatingUserId;
             plugCtx.InputParameters = inputParameters;
             plugCtx.IsOfflinePlayback = false;
             plugCtx.IsolationMode = (int) PluginAssemblyIsolationMode.None;
@@ -91,7 +90,7 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             Assert.Equal(businessUnitId, plugCtx.BusinessUnitId);
             Assert.Equal(correlationId, plugCtx.CorrelationId);
             Assert.Equal(2, plugCtx.Depth);
-            Assert.Equal(initiatinUserId, plugCtx.InitiatingUserId);
+            Assert.Equal(initiatingUserId, plugCtx.InitiatingUserId);
             Assert.Equal(inputParameters, plugCtx.InputParameters);
             Assert.False(plugCtx.IsOfflinePlayback);
             Assert.Equal((int) PluginAssemblyIsolationMode.None, plugCtx.IsolationMode);
@@ -113,7 +112,6 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             Assert.Equal(userId, plugCtx.UserId);
             Assert.Equal(parentPluginContext, plugCtx.ParentContext);
             Assert.Equal((int) ProcessingStepStage.Preoperation, plugCtx.Stage);
-            
         }
 
         [Fact]

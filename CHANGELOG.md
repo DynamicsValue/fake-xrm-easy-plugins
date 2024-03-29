@@ -1,5 +1,9 @@
 ## [2.5.0]
 
+### Added
+
+- Added support for new IPluginExecutionContext2, IPluginExecutionContext3, and IPluginExecutionContext4 interfaces
+
 ### Changed
 
 - Upgraded dependency "Microsoft.CrmSdk.CoreAssemblies" to 9.0.2.52
