@@ -89,40 +89,35 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             ParameterCollection inputParameters = new ParameterCollection();
             inputParameters.Add("Target", new Entity());
 
-            var pluginContext = new XrmFakedPluginExecutionContext()
-            {
-                InputParameters = inputParameters,
-                UserId = Guid.NewGuid(),
-                InitiatingUserId = Guid.NewGuid()
-            };
+            var pluginContext = XrmFakedPluginExecutionContext.New();
+            
+            pluginContext.InputParameters = inputParameters;
+            pluginContext.UserId = Guid.NewGuid();
+            pluginContext.InitiatingUserId = Guid.NewGuid();
 
             //Parameters are defaulted now...
             var ex = Record.Exception(() => _context.ExecutePluginWith<TestContextPlugin>(pluginContext));
             Assert.Null(ex);
-
-            pluginContext = new XrmFakedPluginExecutionContext()
-            {
-                InputParameters = inputParameters,
-                MessageName = "Create",
-                InitiatingUserId = Guid.NewGuid()
-            };
-
+            
+            pluginContext = XrmFakedPluginExecutionContext.New();
+            pluginContext.InputParameters = inputParameters;
+            pluginContext.MessageName = "Create";
+            pluginContext.InitiatingUserId = Guid.NewGuid();
+            
             ex = Record.Exception(() => _context.ExecutePluginWith<TestContextPlugin>(pluginContext));
             Assert.Null(ex);
 
-            pluginContext = new XrmFakedPluginExecutionContext()
-            {
-                InputParameters = inputParameters,
-                MessageName = "Update",
-                UserId = Guid.NewGuid()
-            };
-
+            pluginContext = XrmFakedPluginExecutionContext.New();
+            pluginContext.InputParameters = inputParameters;
+            pluginContext.MessageName = "Update";
+            pluginContext.UserId = Guid.NewGuid();
+            
             ex = Record.Exception(() => _context.ExecutePluginWith<TestContextPlugin>(pluginContext));
             Assert.Null(ex);
         }
 
         [Fact]
-        public void When_executing_a_plugin_primaryentityname_exists_in_the_context()
+        public void When_executing_a_plugin_primary_entityname_exists_in_the_context()
         {
             var pluginContext = _context.GetDefaultPluginContext();
             pluginContext.PrimaryEntityName = "Account";

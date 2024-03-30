@@ -15,7 +15,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
         [Fact]
         public void Should_set_default_plugin_context_properties()
         {
-            var plugCtx = new XrmFakedPluginExecutionContext();
+            var plugCtx = XrmFakedPluginExecutionContext.New();
 
             Assert.Equal(1, plugCtx.Depth);
             Assert.Equal(1, plugCtx.IsolationMode);
@@ -26,7 +26,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
         [Fact]
         public void Should_set_default_plugin_context_in_transaction_based_on_stage_and_mode()
         {
-            var plugCtx = new XrmFakedPluginExecutionContext();
+            var plugCtx = XrmFakedPluginExecutionContext.New();
 
             Assert.False(plugCtx.IsInTransaction);
 
@@ -45,7 +45,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
         [Fact]
         public void Should_set_default_plugin_context_with_custom_properties()
         {
-            var plugCtx = new XrmFakedPluginExecutionContext();
+            var plugCtx = XrmFakedPluginExecutionContext.New();
             
             var operationCreatedOn = DateTime.UtcNow;
             var businessUnitId = Guid.NewGuid();
@@ -59,7 +59,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
             var owningExtension = new EntityReference();
             var postEntityImages = new EntityImageCollection();
             var preEntityImages = new EntityImageCollection();
-            var parentPluginContext = new XrmFakedPluginExecutionContext();
+            var parentPluginContext = XrmFakedPluginExecutionContext.New();
             var primaryEntityId = Guid.NewGuid();
             var requestId = Guid.NewGuid();
             var userId = Guid.NewGuid();
