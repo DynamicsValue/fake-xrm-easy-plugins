@@ -7,7 +7,9 @@ using System.IO.Compression;
 using System.Text;
 using System.Xml.Linq;
 using System.Linq;
+#if FAKE_XRM_EASY_9
 using FakeXrmEasy.Plugins.PluginExecutionContext;
+#endif
 
 namespace FakeXrmEasy.Plugins
 {

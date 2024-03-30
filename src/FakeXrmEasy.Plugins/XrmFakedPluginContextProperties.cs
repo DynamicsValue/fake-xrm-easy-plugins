@@ -6,9 +6,10 @@ using FakeXrmEasy.Abstractions.Plugins;
 using Microsoft.Xrm.Sdk;
 #if FAKE_XRM_EASY_9
 using Microsoft.Xrm.Sdk.PluginTelemetry;
+using FakeXrmEasy.Plugins.PluginExecutionContext;
 #endif
 using System;
-using FakeXrmEasy.Plugins.PluginExecutionContext;
+
 
 namespace FakeXrmEasy.Plugins 
 {

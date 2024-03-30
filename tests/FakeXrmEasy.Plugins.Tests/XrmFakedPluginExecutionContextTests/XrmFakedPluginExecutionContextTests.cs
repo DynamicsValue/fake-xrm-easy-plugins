@@ -4,7 +4,9 @@ using Xunit;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Plugins;
 using Crm;
+#if FAKE_XRM_EASY_9
 using FakeXrmEasy.Plugins.PluginExecutionContext;
+#endif
 
 namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
 {
