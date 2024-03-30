@@ -213,7 +213,8 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             var pluginContext = _context.GetDefaultPluginContext();
             pluginContext.InputParameters.Add("Targets", new EntityCollection() {});
             
-            _context.ExecutePluginWith<FollowupPlugin4>(pluginContext);
+            var ex = Record.Exception(() => _context.ExecutePluginWith<FollowupPlugin4>(pluginContext));
+            Assert.Null(ex);
         }
         #endif
     }

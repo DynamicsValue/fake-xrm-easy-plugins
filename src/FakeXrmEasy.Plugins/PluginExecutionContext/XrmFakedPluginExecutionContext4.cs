@@ -3,6 +3,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Plugins.PluginExecutionContext
 {
+    /// <summary>
+    /// XrmFakedPluginExecutionContext4 adds the necessary plugin context properties for bulk operations (xMultiple messages)
+    /// </summary>
     public class XrmFakedPluginExecutionContext4: XrmFakedPluginExecutionContext3, IPluginExecutionContext4
     {
         /// <summary>

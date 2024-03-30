@@ -174,6 +174,11 @@ namespace FakeXrmEasy.Plugins
         }
 
         #if FAKE_XRM_EASY_9
+        /// <summary>
+        /// Returns a fake plugin execution context for xMultiple messages from a default plugin context in code
+        /// </summary>
+        /// <param name="ctx">The fake plugin context with support for xMultiple messages</param>
+        /// <returns></returns>
         protected IPluginExecutionContext4 GetFakedPluginContext4(XrmFakedPluginExecutionContext4 ctx)
         {
             var context = A.Fake<IPluginExecutionContext4>();
@@ -252,6 +257,11 @@ namespace FakeXrmEasy.Plugins
             }
         }
 
+        /// <summary>
+        /// Populates IPluginExecutionContext properties from a XrmFakedPluginExecutionContext
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
         protected void PopulatePluginExecutionContextPropertiesFromFakedContext(IPluginExecutionContext context,
             XrmFakedPluginExecutionContext ctx)
         {
