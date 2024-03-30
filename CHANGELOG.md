@@ -6,6 +6,7 @@
 
 ### Changed
 
+- ExecutePluginWith* methods now return the new XrmFakedPluginExecutionContext4 class which implements IPluginExecutionContext4 for v9 versions. 
 - Upgraded dependency "Microsoft.CrmSdk.CoreAssemblies" to 9.0.2.52
 - Upgraded dependency "Microsoft.CrmSdk.XrmTooling.CoreAssembly" to 9.1.1.45
 

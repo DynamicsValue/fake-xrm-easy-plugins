@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Xml.Linq;
 using System.Linq;
+using FakeXrmEasy.Plugins.PluginExecutionContext;
 
 namespace FakeXrmEasy.Plugins
 {
@@ -186,6 +187,19 @@ namespace FakeXrmEasy.Plugins
         [DataMember(Order = 27)]
         public int Stage { get; set; }
 
+        /// <summary>
+        /// Factory method that will return a new fake plugin context instance
+        /// </summary>
+        /// <returns></returns>
+        public static XrmFakedPluginExecutionContext New()
+        {
+            #if FAKE_XRM_EASY_9
+            return new XrmFakedPluginExecutionContext4();
+            #else
+            return new XrmFakedPluginExecutionContext();
+            #endif
+        }
+        
         /// <summary>
         /// Default constructor
         /// </summary>

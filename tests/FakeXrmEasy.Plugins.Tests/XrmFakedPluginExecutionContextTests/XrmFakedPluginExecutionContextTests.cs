@@ -4,6 +4,7 @@ using Xunit;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Plugins;
 using Crm;
+using FakeXrmEasy.Plugins.PluginExecutionContext;
 
 namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
 {
@@ -133,6 +134,18 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
 
             Assert.Equal("asadsadasd", target["name"]);
 
+        }
+        
+        [Fact]
+        public void Should_return_latest_implementation_of_the_plugin_context_if_v9()
+        {
+            #if FAKE_XRM_EASY_9
+            var plugCtx = XrmFakedPluginExecutionContext.New();
+            Assert.IsType<XrmFakedPluginExecutionContext4>(plugCtx);
+            #else
+            var plugCtx = XrmFakedPluginExecutionContext.New();
+            Assert.IsType<XrmFakedPluginExecutionContext>(plugCtx);
+            #endif
         }
     }
 }

@@ -21,21 +21,22 @@ namespace FakeXrmEasy.Plugins
             var userId = context.CallerProperties.CallerId?.Id ?? Guid.NewGuid();
             Guid businessUnitId = context.CallerProperties.BusinessUnitId?.Id ?? Guid.NewGuid();
 
-            return new XrmFakedPluginExecutionContext
-            {
-                Depth = 1,
-                IsExecutingOffline = false,
-                MessageName = "Create",
-                UserId = userId,
-                BusinessUnitId = businessUnitId,
-                InitiatingUserId = userId,
-                InputParameters = new ParameterCollection(),
-                OutputParameters = new ParameterCollection(),
-                SharedVariables = new ParameterCollection(),
-                PreEntityImages = new EntityImageCollection(),
-                PostEntityImages = new EntityImageCollection(),
-                IsolationMode = 1
-            };
+            var plugCtx = XrmFakedPluginExecutionContext.New();
+
+            plugCtx.Depth = 1;
+            plugCtx.IsExecutingOffline = false;
+            plugCtx.MessageName = "Create";
+            plugCtx.UserId = userId;
+            plugCtx.InitiatingUserId = userId;
+            plugCtx.BusinessUnitId = businessUnitId;
+            plugCtx.InputParameters = new ParameterCollection();
+            plugCtx.OutputParameters = new ParameterCollection();
+            plugCtx.SharedVariables = new ParameterCollection();
+            plugCtx.PreEntityImages = new EntityImageCollection();
+            plugCtx.PostEntityImages = new EntityImageCollection();
+            plugCtx.IsolationMode = 1;
+
+            return plugCtx;
         }
 
         /// <summary>
