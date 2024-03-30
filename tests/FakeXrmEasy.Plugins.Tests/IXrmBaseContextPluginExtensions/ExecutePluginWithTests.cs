@@ -210,6 +210,16 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             Assert.Equal(pluginContext.OperationCreatedOn, executionContext.OperationCreatedOn);
             Assert.Equal(pluginContext.IsInTransaction, executionContext.IsInTransaction);
         }
-
+        
+        #if FAKE_XRM_EASY_9
+        [Fact]
+        public void When_executing_a_plugin_that_demands_bulk_operations_interfaces_they_are_returned()
+        {
+            var pluginContext = _context.GetDefaultPluginContext();
+            pluginContext.InputParameters.Add("Targets", new EntityCollection() {});
+            
+            _context.ExecutePluginWith<FollowupPlugin4>(pluginContext);
+        }
+        #endif
     }
 }

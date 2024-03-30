@@ -8,6 +8,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.PluginTelemetry;
 #endif
 using System;
+using FakeXrmEasy.Plugins.PluginExecutionContext;
 
 namespace FakeXrmEasy.Plugins 
 {
@@ -117,11 +118,18 @@ namespace FakeXrmEasy.Plugins
                        return GetFakedPluginContext((XrmFakedPluginExecutionContext) plugCtx);
                    }
 
+#if FAKE_XRM_EASY_9
+                   if (t == typeof(IPluginExecutionContext4))
+                   {
+                       return GetFakedPluginContext4((XrmFakedPluginExecutionContext4) plugCtx);
+                   }
+#endif
+                   
                    if (t == typeof(IExecutionContext))
                    {
                        return GetFakedExecutionContext((XrmFakedPluginExecutionContext) plugCtx);
                    }
-
+                   
                    if (t == typeof(IOrganizationServiceFactory))
                    {
                        return _organizationServiceFactory;
@@ -159,14 +167,24 @@ namespace FakeXrmEasy.Plugins
         {
             var context = A.Fake<IPluginExecutionContext>();
 
-            PopulateExecutionContextPropertiesFromFakedContext(context, ctx);
-
-            A.CallTo(() => context.ParentContext).ReturnsLazily(() => ctx.ParentContext);
-            A.CallTo(() => context.Stage).ReturnsLazily(() => ctx.Stage);
+            PopulatePluginExecutionContextPropertiesFromFakedContext(context, ctx);
 
             return context;
         }
 
+        #if FAKE_XRM_EASY_9
+        protected IPluginExecutionContext4 GetFakedPluginContext4(XrmFakedPluginExecutionContext4 ctx)
+        {
+            var context = A.Fake<IPluginExecutionContext4>();
+
+            PopulatePluginExecutionContextPropertiesFromFakedContext(context, ctx);
+
+            A.CallTo(() => context.PreEntityImagesCollection).ReturnsLazily(() => ctx.PreEntityImagesCollection);
+            A.CallTo(() => context.PostEntityImagesCollection).ReturnsLazily(() => ctx.PostEntityImagesCollection);
+
+            return context;
+        }
+        #endif
         
         /// <summary>
         /// Returns a fake execution context
@@ -231,6 +249,14 @@ namespace FakeXrmEasy.Plugins
                     A.CallTo(() => context.PrimaryEntityName).ReturnsLazily(() => target.LogicalName);
                 }
             }
+        }
+
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext(IPluginExecutionContext context,
+            XrmFakedPluginExecutionContext ctx)
+        {
+            PopulateExecutionContextPropertiesFromFakedContext(context, ctx);
+            A.CallTo(() => context.ParentContext).ReturnsLazily(() => ctx.ParentContext);
+            A.CallTo(() => context.Stage).ReturnsLazily(() => ctx.Stage);
         }
     }
 }
