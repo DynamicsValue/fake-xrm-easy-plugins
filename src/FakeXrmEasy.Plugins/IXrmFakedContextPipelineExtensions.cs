@@ -890,28 +890,11 @@ namespace FakeXrmEasy.Pipeline
 
         internal static object GetTargetForRequest(OrganizationRequest request)
         {
-            if (request is CreateRequest)
+            if (request.Parameters.ContainsKey("Target"))
             {
-                return ((CreateRequest)request).Target;
+                return request.Parameters["Target"];
             }
-            else if (request is UpdateRequest)
-            {
-                return ((UpdateRequest)request).Target;
-            }
-#if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-            else if(request is UpsertRequest)
-            {
-                return ((UpsertRequest) request).Target;
-            }
-#endif
-            else if (request is RetrieveRequest)
-            {
-                return ((RetrieveRequest)request).Target;
-            }
-            else if (request is DeleteRequest)
-            {
-                return ((DeleteRequest)request).Target;
-            }
+
             return null;
         }
 
