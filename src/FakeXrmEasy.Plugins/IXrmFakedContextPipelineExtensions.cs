@@ -390,9 +390,5 @@ namespace FakeXrmEasy.Pipeline
 
             return collection;
         }
-
-        
-
-
     }
 }

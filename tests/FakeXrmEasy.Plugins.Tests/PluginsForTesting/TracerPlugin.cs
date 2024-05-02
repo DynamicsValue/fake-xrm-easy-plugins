@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9 
 using DataverseEntities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
@@ -188,3 +189,4 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
@@ -21,3 +22,4 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
         }
     }
 }
+#endif
