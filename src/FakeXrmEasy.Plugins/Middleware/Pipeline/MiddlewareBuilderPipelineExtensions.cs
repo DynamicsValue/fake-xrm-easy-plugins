@@ -85,7 +85,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
                         throw new MissingPluginTypeInPluginStepDefinitionException();
                     }
                     var pluginType = assembly.GetType(stepDefinition.PluginType);
-                    context.RegisterPluginStepInternal(pluginType, stepDefinition);
+                    PluginStepRegistrationManager.RegisterPluginStepInternal(context, pluginType, stepDefinition);
                 }
             }
         }
@@ -115,6 +115,49 @@ namespace FakeXrmEasy.Middleware.Pipeline
         }
 
         private static OrganizationResponse ProcessPipelineRequest(OrganizationRequest request, IXrmFakedContext context,
+            OrganizationRequestDelegate next)
+        {
+            if (request.IsBulkOperation())
+            {
+                return ProcessBulkPipelineRequest(request, context, next);
+            }
+            else
+            {
+                return ProcessNonBulkPipelineRequest(request, context, next);
+            }
+        }
+
+        private static OrganizationResponse ProcessNonBulkPipelineRequest(OrganizationRequest request,
+            IXrmFakedContext context,
+            OrganizationRequestDelegate next)
+        {
+            var preImagePreValidation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Prevalidation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+
+            var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+
+            var preImagePostOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+
+            ProcessPreValidation(context, request, preImagePreValidation);
+            ProcessPreOperation(context, request, preImagePreOperation);
+
+            var response = next.Invoke(context, request);
+
+            var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation)
+                ? GetPostImageEntityForRequest(context, request)
+                : null;
+
+            ProcessPostOperation(context, request, response, preImagePostOperation, postImagePostOperation);
+            return response;
+        }
+        
+        private static OrganizationResponse ProcessBulkPipelineRequest(OrganizationRequest request,
+            IXrmFakedContext context,
             OrganizationRequestDelegate next)
         {
             var preImagePreValidation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Prevalidation)
