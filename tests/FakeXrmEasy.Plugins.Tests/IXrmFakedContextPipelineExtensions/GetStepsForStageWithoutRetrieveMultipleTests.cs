@@ -31,7 +31,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
         [Fact]
         public void Should_return_empty_list_of_steps_if_none_were_registered()
         {
-            var steps = _context.GetPluginStepsForOrganizationRequest(_createRequest.RequestName, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, _createRequest.RequestName, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, _createRequest);
             Assert.Empty(steps);
         }
 
@@ -49,7 +49,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 Mode = mode
             });
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Single(steps);
 
             var pluginStep = steps.FirstOrDefault();
@@ -80,7 +80,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 EntityTypeCode = Account.EntityTypeCode
             });
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Single(steps);
 
             var pluginStep = steps.FirstOrDefault();
@@ -110,7 +110,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 Mode = mode
             });
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Empty(steps);
         }
 
@@ -137,7 +137,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 Rank = 1
             });
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest).ToList();
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest).ToList();
             Assert.Equal(2, steps.Count);
 
             var firstPluginStep = steps[0];
@@ -176,7 +176,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
             _target.Name = "Some name";
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Single(steps);
 
             var pluginStep = steps.FirstOrDefault();
@@ -209,7 +209,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 
             _target.AccountCategoryCode = new OptionSetValue(0);
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Single(steps);
 
             var pluginStep = steps.FirstOrDefault();
@@ -242,7 +242,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 FilteringAttributes = new string[] { "name" }
             });
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Empty(steps);
         }
 
@@ -273,7 +273,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             
             _context.RegisterPluginStep<AccountNumberPlugin>(pluginStepDefinition);
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Single(steps);
             
             var pluginStep = steps.FirstOrDefault();
@@ -303,7 +303,7 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
             
             _context.RegisterPluginStep<AccountNumberPlugin>(pluginStepDefinition);
 
-            var steps = _context.GetPluginStepsForOrganizationRequest(requestName, stage, mode, _createRequest);
+            var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, requestName, stage, mode, _createRequest);
             Assert.Single(steps);
             
             var pluginStep = steps.FirstOrDefault();

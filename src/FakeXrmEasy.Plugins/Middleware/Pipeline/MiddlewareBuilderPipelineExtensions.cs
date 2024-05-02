@@ -251,7 +251,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
 
         private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
         {
-            var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
+            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(request);
             if (target == null)
             {
                 return null;
@@ -279,7 +279,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
 
         private static Entity GetPostImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
         {
-            var target = IXrmFakedContextPipelineExtensions.GetTargetForRequest(request);
+            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(request);
             if (target == null)
             {
                 return null;

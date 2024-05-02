@@ -44,25 +44,25 @@ namespace FakeXrmEasy.Plugins.Performance
         [Benchmark]
         public void GetPluginStepsWithRetrieveMultiple()
         {
-            _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
+            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
 
         [Benchmark]
         public void GetPluginStepsWithQuery()
         {
-            _context.GetPluginStepsForOrganizationRequest("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
+            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
 
         [Benchmark]
         public void GetPluginStepImageWithRetrieveMultiple()
         {
-            _context.GetPluginImageDefinitionsWithRetrieveMultiple(_lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
+            RegisteredPluginStepsRetriever.GetPluginImageDefinitionsWithRetrieveMultiple(_context, _lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
         }
 
         [Benchmark]
         public void GetPluginStepImageWithQuery()
         {
-            _context.GetPluginImageDefinitionsWithQuery(_lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
+            RegisteredPluginStepsRetriever.GetPluginImageDefinitionsWithQuery(_context, _lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
         }
     }
 }
