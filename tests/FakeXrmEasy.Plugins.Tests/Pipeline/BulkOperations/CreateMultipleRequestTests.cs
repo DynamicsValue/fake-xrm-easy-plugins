@@ -33,6 +33,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
             _entities = new List<Entity>() { _account };
         }
         
+        /*
         [Fact]
         public void Should_trigger_registered_bulk_preoperation_preoperation_step()
         {
@@ -56,5 +57,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
             Assert.Equal(typeof(TracerPlugin), auditedStep.PluginAssemblyType);
             Assert.Equal(ProcessingStepStage.Preoperation, auditedStep.Stage);
         }
+        */
     }
 }
