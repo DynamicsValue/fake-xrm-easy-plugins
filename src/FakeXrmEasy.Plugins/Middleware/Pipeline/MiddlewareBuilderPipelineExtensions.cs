@@ -5,11 +5,9 @@ using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk;
 
 using FakeXrmEasy.Pipeline;
-using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
-using System.Linq;
 using FakeXrmEasy.Plugins.Middleware.Pipeline.Exceptions;
 using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginInstances;
@@ -206,7 +204,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 PostEntitySnapshot = postEntity
             };
 
-            context.ExecutePipelineStage(pipelineParameters);
+            PipelineProcessor.ExecutePipelineStage(context, pipelineParameters);
         }
 
         private static void ProcessPreOperation(IXrmFakedContext context, 
@@ -224,7 +222,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 PostEntitySnapshot = postEntity
             };
 
-            context.ExecutePipelineStage(pipelineParameters);
+            PipelineProcessor.ExecutePipelineStage(context, pipelineParameters);
         }
 
         private static void ProcessPostOperation(IXrmFakedContext context, 
@@ -243,10 +241,10 @@ namespace FakeXrmEasy.Middleware.Pipeline
                 PreEntitySnapshot = preEntity,
                 PostEntitySnapshot = postEntity
             };
-            context.ExecutePipelineStage(pipelineParameters);
+            PipelineProcessor.ExecutePipelineStage(context, pipelineParameters);
 
             pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
-            context.ExecutePipelineStage(pipelineParameters);
+            PipelineProcessor.ExecutePipelineStage(context, pipelineParameters);
         }
 
         private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)

@@ -6,6 +6,7 @@
 
 ### Changed
 
+- Resolves issue where a DeleteRequest was not triggering plugin steps when using late bound entities - https://github.com/DynamicsValue/fake-xrm-easy/issues/144
 - ExecutePluginWith* methods now return the new XrmFakedPluginExecutionContext4 class which implements IPluginExecutionContext4 for v9 versions. 
 - Upgraded dependency "Microsoft.CrmSdk.CoreAssemblies" to 9.0.2.52
 - Upgraded dependency "Microsoft.CrmSdk.XrmTooling.CoreAssembly" to 9.1.1.45

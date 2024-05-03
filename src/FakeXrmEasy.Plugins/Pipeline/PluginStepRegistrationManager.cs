@@ -16,7 +16,7 @@ namespace FakeXrmEasy.Pipeline
     /// <summary>
     /// Internal helper class that contains logic to register new plugin steps
     /// </summary>
-    internal class PluginStepRegistrationManager
+    internal static class PluginStepRegistrationManager
     {
         internal static Guid RegisterPluginStepInternal<TPlugin>(IXrmFakedContext context,
             IPluginStepDefinition pluginStepDefinition)

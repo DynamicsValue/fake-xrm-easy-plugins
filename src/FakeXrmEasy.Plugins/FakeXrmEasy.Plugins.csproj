@@ -129,6 +129,9 @@
     <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="[2.5.0-*,3.0)" />
     <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pipeline\PipelineProcessors\" />
+  </ItemGroup>
 
   <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
     <Message Text="Value of MSBuildProjectDirectory = '$(MSBuildProjectDirectory)'" />

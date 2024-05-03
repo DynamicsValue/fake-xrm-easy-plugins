@@ -15,7 +15,7 @@ namespace FakeXrmEasy.Pipeline
     /// <summary>
     /// Given an organization request, retrieves all the plugin steps registered for that message
     /// </summary>
-    internal class RegisteredPluginStepsRetriever
+    internal static class RegisteredPluginStepsRetriever
     {
         internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequest(IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
         {
@@ -28,12 +28,18 @@ namespace FakeXrmEasy.Pipeline
             {
                 var entityReference = target as EntityReference;
                 var entityType = context.FindReflectedType(entityReference.LogicalName);
+                Entity entity = null;
                 if (entityType == null)
                 {
-                    return null;
+                    entity = new Entity(entityReference.LogicalName) { Id = entityReference.Id };
+                }
+                else
+                {
+                    entity = (Entity)Activator.CreateInstance(entityType);
+                    entity.Id = entityReference.Id;
                 }
 
-                return GetStepsForStage(context, requestName, stage, mode, (Entity)Activator.CreateInstance(entityType));
+                return GetStepsForStage(context, requestName, stage, mode, entity);
             }
             else
             {

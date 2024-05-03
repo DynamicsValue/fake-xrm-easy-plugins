@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Issues
 {
-    public class Issue0095: FakeXrmEasyPipelineTestsBase
+    public class Issue00095: FakeXrmEasyPipelineTestsBase
     {
         [Fact]
         public void Should_not_raise_reflected_typed_not_found_exception_when_using_early_bound_and_registering_steps()
