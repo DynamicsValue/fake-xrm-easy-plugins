@@ -33,11 +33,11 @@ namespace FakeXrmEasy.Pipeline
         /// <summary>
         /// Snapshot of all the entity preimages before the execution of a bulk operation request
         /// </summary>
-        internal List<Entity> PreEntitySnapshots { get; set; }
+        internal List<Entity> PreEntitySnapshotCollection { get; set; }
         
         /// <summary>
         /// Snapshot of all the entity postimages after the execution of a bulk operation request
         /// </summary>
-        internal List<Entity> PostEntitySnapshots { get; set; }
+        internal List<Entity> PostEntitySnapshotCollection { get; set; }
     }
 }

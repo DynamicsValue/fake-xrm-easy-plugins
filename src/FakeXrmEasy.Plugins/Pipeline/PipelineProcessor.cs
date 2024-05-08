@@ -220,33 +220,7 @@ namespace FakeXrmEasy.Pipeline
             if (plugins == null)
                 return;
 
-            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(parameters.Request);
-
-            if (target != null)
-            {
-                var entityTarget = target as Entity;
-                if (entityTarget != null)
-                {
-                    ExecutePipelinePlugins(context, plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
-                }
-
-                var entityReferenceTarget = target as EntityReference;
-                if (entityReferenceTarget != null)
-                {
-                    /*
-                    var entityType = context.FindReflectedType(entityReferenceTarget.LogicalName);
-                    if (entityType == null)
-                    {
-                        return;
-                    }
-                    */
-                    ExecutePipelinePlugins(context, plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
-                }
-            }
-            else
-            {
-                ExecutePipelinePlugins(context, plugins, parameters.Request, null, null, parameters.Response);
-            }
+            ExecutePipelinePlugins(context, plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
         }
     }
 }
