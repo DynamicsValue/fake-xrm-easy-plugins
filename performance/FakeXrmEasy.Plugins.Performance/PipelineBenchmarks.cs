@@ -41,12 +41,14 @@ namespace FakeXrmEasy.Plugins.Performance
             }
         }
 
+        /* Significantly slower than GetPluginStepsWithQuery below
         [Benchmark]
         public void GetPluginStepsWithRetrieveMultiple()
         {
             RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
-
+        */
+        
         [Benchmark]
         public void GetPluginStepsWithQuery()
         {

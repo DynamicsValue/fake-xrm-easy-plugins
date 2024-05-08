@@ -13,12 +13,12 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
 {
-    public class GetStepsForStageWithoutRetrieveMultipleTests : FakeXrmEasyPipelineTestsBase
+    public class GetStepsForStageTests : FakeXrmEasyPipelineTestsBase
     {
         private readonly CreateRequest _createRequest;
         private readonly Account _target;
 
-        public GetStepsForStageWithoutRetrieveMultipleTests()
+        public GetStepsForStageTests()
         {
             _target = new Account() { };
 

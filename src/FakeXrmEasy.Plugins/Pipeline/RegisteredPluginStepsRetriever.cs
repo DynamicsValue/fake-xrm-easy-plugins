@@ -242,30 +242,7 @@ namespace FakeXrmEasy.Pipeline
                                     ((OptionSetValue)pluginStepImage[SdkMessageProcessingStepImageFieldNames.ImageType]).Value == (int)imageType)
                     select pluginStepImage).AsEnumerable();
         }
-        
-        [Obsolete("This method is obsolete, should no longer be used as it has been replaced by a more efficient method 'GetPluginStepsForOrganizationRequest' that instead directly queries the FakeXrmEasy internal in-memory database")]
-        internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequestWithRetrieveMultiple(IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
-        {
-            var target = GetTargetForRequest(request);
-            if (target is Entity)
-            {
-                return RegisteredPluginStepsRetriever.GetStepsForStageWithRetrieveMultiple(context, requestName, stage, mode, target as Entity);
-            }
-            else if (target is EntityReference)
-            {
-                var entityReference = target as EntityReference;
-                var entityType = context.FindReflectedType(entityReference.LogicalName);
-                if (entityType == null)
-                {
-                    return null;
-                }
 
-                return RegisteredPluginStepsRetriever.GetStepsForStageWithRetrieveMultiple(context, requestName, stage, mode, (Entity)Activator.CreateInstance(entityType));
-            }
-
-            return null;
-        }
-        
         internal static object GetTargetForRequest(OrganizationRequest request)
         {
             if (request.Parameters.ContainsKey("Target"))

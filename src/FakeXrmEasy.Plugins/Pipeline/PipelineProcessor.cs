@@ -214,6 +214,11 @@ namespace FakeXrmEasy.Pipeline
             }
         }
         
+        /// <summary>
+        /// Retrieves any necessary plugins for the current stage and mode and executes them with the given request
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="parameters"></param>
         internal static void ExecutePipelineStage(IXrmFakedContext context, PipelineStageExecutionParameters parameters)
         {
             var plugins = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(context, parameters.RequestName, parameters.Stage, parameters.Mode, parameters.Request);
