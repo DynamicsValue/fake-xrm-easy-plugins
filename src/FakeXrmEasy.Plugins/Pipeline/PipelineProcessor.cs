@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Middleware.Pipeline;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.Definitions;
+using FakeXrmEasy.Plugins.Extensions;
+using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using Microsoft.Xrm.Sdk;
@@ -20,6 +23,53 @@ namespace FakeXrmEasy.Pipeline
     /// </summary>
     internal static class PipelineProcessor
     {
+        /// <summary>
+        /// Processes the event execution pipeline for the current request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        internal static OrganizationResponse ProcessPipelineRequest(OrganizationRequest request, IXrmFakedContext context,
+            OrganizationRequestDelegate next)
+        {
+            var preImagePostOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+
+            ProcessPreValidation(context, request);
+            ProcessPreOperation(context, request);
+
+            var response = next.Invoke(context, request);
+
+            var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation)
+                ? GetPostImageEntityForRequest(context, request)
+                : null;
+
+            ProcessPostOperation(context, request, response, preImagePostOperation, postImagePostOperation);
+            return response;
+        }
+        
+        private static void ProcessPreValidation(IXrmFakedContext context, 
+            OrganizationRequest request)
+        {
+            var preImagePreValidation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Prevalidation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+            
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                RequestName = request.RequestName,
+                Request = request,
+                Stage = ProcessingStepStage.Prevalidation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preImagePreValidation,
+                PostEntitySnapshot = null
+            };
+
+            PipelineProcessor.ExecutePipelineStage(context, pipelineParameters);
+        }
+        
         /// <summary>
         /// Gets an entity image collection for each registered entity image and the current entity record
         /// </summary>
@@ -226,6 +276,121 @@ namespace FakeXrmEasy.Pipeline
                 return;
 
             ExecutePipelinePlugins(context, plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
+        }
+        
+        internal static void PopulatePrePluginStageParameters(IXrmFakedContext context,
+            OrganizationRequest request)
+        {
+            
+        }
+        
+        private static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
+        {
+            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(request);
+            if (target == null)
+            {
+                return null;
+            }
+
+            string logicalName = "";
+            Guid id = Guid.Empty;
+
+            if (target is Entity)
+            {
+                var targetEntity = target as Entity;
+                logicalName = targetEntity.LogicalName;
+                id = targetEntity.Id;
+            }
+
+            else if (target is EntityReference)
+            {
+                var targetEntityRef = target as EntityReference;
+                logicalName = targetEntityRef.LogicalName;
+                id = targetEntityRef.Id;
+            }
+
+            return context.GetEntityById(logicalName, id);
+        }
+
+        private static Entity GetPostImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
+        {
+            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(request);
+            if (target == null)
+            {
+                return null;
+            }
+
+            string logicalName = "";
+            Guid id = Guid.Empty;
+
+            if (target is Entity)
+            {
+                var targetEntity = target as Entity;
+                logicalName = targetEntity.LogicalName;
+                id = targetEntity.Id;
+
+                if (id == Guid.Empty)
+                {
+                    return targetEntity;
+                }
+            }
+
+            else if (target is EntityReference)
+            {
+                var targetEntityRef = target as EntityReference;
+                logicalName = targetEntityRef.LogicalName;
+                id = targetEntityRef.Id;
+            }
+
+            var postImage = context.GetEntityById(logicalName, id);
+            if (target is Entity)
+            {
+                postImage = postImage.ReplaceAttributesWith(target as Entity);
+            }
+
+            return postImage;
+        }
+        
+        private static void ProcessPreOperation(IXrmFakedContext context, 
+            OrganizationRequest request) 
+        {
+            var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+            
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                RequestName = request.RequestName,
+                Request = request,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preImagePreOperation,
+                PostEntitySnapshot = null
+            };
+
+            ExecutePipelineStage(context, pipelineParameters);
+        }
+
+        private static void ProcessPostOperation(IXrmFakedContext context, 
+            OrganizationRequest request, 
+            OrganizationResponse response,
+            Entity preEntity = null, 
+            Entity postEntity = null) 
+        {
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                RequestName = request.RequestName,
+                Request = request,
+                Response = response,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preEntity,
+                PostEntitySnapshot = postEntity
+            };
+            ExecutePipelineStage(context, pipelineParameters);
+
+            pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
+            ExecutePipelineStage(context, pipelineParameters);
         }
     }
 }
