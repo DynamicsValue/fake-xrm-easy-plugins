@@ -17,12 +17,12 @@ namespace FakeXrmEasy.Pipeline
     /// </summary>
     internal static class RegisteredPluginStepsRetriever
     {
-        internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequest(IXrmFakedContext context, string requestName, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
+        internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequest(IXrmFakedContext context, ProcessingStepStage stage, ProcessingStepMode mode, OrganizationRequest request)
         {
             var target = GetTargetForRequest(request);
             if (target is Entity)
             {
-                return GetStepsForStage(context, requestName, stage, mode, target as Entity);
+                return GetStepsForStage(context, request.RequestName, stage, mode, target as Entity);
             }
             else if (target is EntityReference)
             {
@@ -39,12 +39,12 @@ namespace FakeXrmEasy.Pipeline
                     entity.Id = entityReference.Id;
                 }
 
-                return GetStepsForStage(context, requestName, stage, mode, entity);
+                return GetStepsForStage(context, request.RequestName, stage, mode, entity);
             }
             else
             {
                 //Possibly a custom api execution
-                return GetStepsForStage(context, requestName, stage, mode, null);
+                return GetStepsForStage(context, request.RequestName, stage, mode, null);
             }
         }
         
@@ -202,37 +202,7 @@ namespace FakeXrmEasy.Pipeline
         {
             return GetPluginImageDefinitionsWithQuery(context, stepId, imageType);
         }
-
-
-        internal static IEnumerable<Entity> GetPluginImageDefinitionsWithRetrieveMultiple(IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
-        {
-            var query = new QueryExpression(PluginStepRegistrationEntityNames.SdkMessageProcessingStepImage)
-            {
-                ColumnSet = new ColumnSet(SdkMessageProcessingStepImageFieldNames.Name, SdkMessageProcessingStepImageFieldNames.ImageType, SdkMessageProcessingStepImageFieldNames.Attributes),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression(SdkMessageProcessingStepImageFieldNames.SdkMessageProcessingStepId, ConditionOperator.Equal, stepId)
-                    }
-                }
-            };
-
-            FilterExpression filter = new FilterExpression(LogicalOperator.Or)
-            {
-                Conditions = { new ConditionExpression(SdkMessageProcessingStepImageFieldNames.ImageType, ConditionOperator.Equal, (int)ProcessingStepImageType.Both) }
-            };
-
-            if (imageType == ProcessingStepImageType.PreImage || imageType == ProcessingStepImageType.PostImage)
-            {
-                filter.AddCondition(new ConditionExpression(SdkMessageProcessingStepImageFieldNames.ImageType, ConditionOperator.Equal, (int)imageType));
-            }
-
-            query.Criteria.AddFilter(filter);
-
-            return context.GetOrganizationService().RetrieveMultiple(query).Entities.AsEnumerable();
-        }
-
+        
         internal static IEnumerable<Entity> GetPluginImageDefinitionsWithQuery(IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
         {
             return (from pluginStepImage in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStepImage)

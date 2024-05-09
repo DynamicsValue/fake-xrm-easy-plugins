@@ -55,12 +55,14 @@ namespace FakeXrmEasy.Plugins.Performance
             RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
 
+        /*
         [Benchmark]
         public void GetPluginStepImageWithRetrieveMultiple()
         {
             RegisteredPluginStepsRetriever.GetPluginImageDefinitionsWithRetrieveMultiple(_context, _lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
         }
-
+        */
+        
         [Benchmark]
         public void GetPluginStepImageWithQuery()
         {
