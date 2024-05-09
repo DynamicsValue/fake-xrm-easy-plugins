@@ -52,7 +52,7 @@ namespace FakeXrmEasy.Plugins.Performance
         [Benchmark]
         public void GetPluginStepsWithQuery()
         {
-            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
+            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
 
         /*
