@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
+namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
 {
     public class GetPluginImageDefinitionsWithRetrieveMultipleTests : FakeXrmEasyTestsBase
     {
