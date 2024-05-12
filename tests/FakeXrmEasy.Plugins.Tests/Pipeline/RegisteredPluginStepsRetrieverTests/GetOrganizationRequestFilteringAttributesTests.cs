@@ -11,12 +11,12 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
     /// <summary>
     /// Tests that calculate the distinct attributes that were sent in a given organization request for purposes of plugin step attribute filtering in pipeline simulation
     /// </summary>
-    public class FilteringAttributesTests: FakeXrmEasyTestsBase
+    public class GetOrganizationRequestFilteringAttributesTests: FakeXrmEasyTestsBase
     {
         private readonly Account _account;
         private readonly UpdateRequest _updateRequest;
 
-        public FilteringAttributesTests()
+        public GetOrganizationRequestFilteringAttributesTests()
         {
             _account = new Account() { Id = Guid.NewGuid() };
             _updateRequest = new UpdateRequest() { Target = _account };

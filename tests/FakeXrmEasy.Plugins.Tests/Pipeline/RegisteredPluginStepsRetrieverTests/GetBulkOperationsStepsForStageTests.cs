@@ -28,6 +28,9 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             _createMultipleRequest = new CreateMultipleRequest()
             {
                 Targets = new EntityCollection(new List<Entity>() { _target })
+                {
+                    EntityName = Account.EntityLogicalName
+                }
             };
 
             _pipelineParameters = new PipelineStageExecutionParameters()
@@ -85,7 +88,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         [InlineData(createMultipleRequestName, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_return_registered_plugin_step_for_exact_request_name_stage_and_mode_and_entity_type_code_if_present(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(DataverseEntities.Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
                 MessageName = requestName,

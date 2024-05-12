@@ -19,75 +19,87 @@ namespace FakeXrmEasy.Pipeline
     {
         internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequest(IXrmFakedContext context, PipelineStageExecutionParameters parameters)
         {
-            var target = GetTargetForRequest(parameters.Request);
-            if (target is Entity)
-            {
-                return GetStepsForStage(context, parameters, target as Entity);
-            }
-
-            if (target is EntityReference)
-            {
-                var entityReference = target as EntityReference;
-                var entityType = context.FindReflectedType(entityReference.LogicalName);
-                Entity entity = null;
-                if (entityType == null)
-                {
-                    entity = new Entity(entityReference.LogicalName) { Id = entityReference.Id };
-                }
-                else
-                {
-                    entity = (Entity)Activator.CreateInstance(entityType);
-                    entity.Id = entityReference.Id;
-                }
-
-                return GetStepsForStage(context, parameters, entity);
-            }
-
-            //Possibly a custom api execution
-            return GetStepsForStage(context, parameters, null);
+            return GetStepsForStage(context, parameters);
         }
 
         /// <summary>
-        /// Returns a distinct attribute array that was sent in a given organization request
+        /// Returns the distinct set of attributes that was sent in a given organization request
         /// </summary>
         /// <returns></returns>
         internal static string[] GetOrganizationRequestFilteringAttributes(OrganizationRequest request)
         {
             var target = GetTargetForRequest(request);
-            var entity = target as Entity;
-            if (entity != null)
+            if (target != null)
             {
-                return entity.Attributes.Keys.ToArray();
+                var entity = target as Entity;
+                if (entity != null)
+                {
+                    return entity.Attributes.Keys.ToArray();
+                }
+            }
+            else
+            {
+                var targets = GetTargetsForRequest(request);
+                var entityCollection = targets as EntityCollection;
+                if (entityCollection != null)
+                {
+                    List<string> attributes = new List<string>();
+                    foreach (var e in entityCollection.Entities)
+                    {
+                        attributes.AddRange(e.Attributes.Keys);
+                    }
+                    return attributes.Distinct().ToArray();
+                }
             }
 
-            var targets = GetTargetsForRequest(request);
-            var entityCollection = targets as EntityCollection;
-            if (entityCollection != null)
+            return new string[] { };
+        }
+
+        internal static string GetOrganizationRequestEntityLogicalName(OrganizationRequest request)
+        {
+            var target = GetTargetForRequest(request);
+            if (target != null)
             {
-                List<string> attributes = new List<string>();
-                foreach (var e in entityCollection.Entities)
+                var entity = target as Entity;
+                if (entity != null)
                 {
-                    attributes.AddRange(e.Attributes.Keys);
+                    return entity.LogicalName;
                 }
-                return attributes.Distinct().ToArray();
+
+                var entityReference = target as EntityReference;
+                if (entityReference != null)
+                {
+                    return entityReference.LogicalName;
+                }
+            }
+            else
+            {
+                var targets = GetTargetsForRequest(request);
+                var entityCollection = targets as EntityCollection;
+                if (entityCollection != null)
+                {
+                    return entityCollection.EntityName;
+                }
             }
             
-            return new string[] { };
+            return null;
         }
         
         private static IEnumerable<PluginStepDefinition> GetStepsForStage(IXrmFakedContext context,
-                                                                            PipelineStageExecutionParameters parameters,
-                                                                            Entity entity)
+                                                                            PipelineStageExecutionParameters parameters)
         {
             int? entityTypeCode = null;
-            string entityLogicalName = null;
-
-            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(parameters.Request);
             
-            if (entity != null)
+            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(parameters.Request);
+            string entityLogicalName = GetOrganizationRequestEntityLogicalName(parameters.Request);
+            if (entityLogicalName != null)
             {
-                entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
-                entityLogicalName = entity.LogicalName;
+                var entityType = context.FindReflectedType(entityLogicalName);
+                if (entityType != null)
+                {
+                    var entity = Activator.CreateInstance(entityType);
+                    entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
+                }
             }
 
             var pluginInstancesRepository = context.GetProperty<IPluginInstancesRepository>();
