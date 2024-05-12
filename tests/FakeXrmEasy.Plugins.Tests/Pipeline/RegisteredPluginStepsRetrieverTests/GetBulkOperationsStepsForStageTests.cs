@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FAKE_XRM_EASY_9
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Crm;
@@ -353,3 +354,4 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
 
     }
 }
+#endif

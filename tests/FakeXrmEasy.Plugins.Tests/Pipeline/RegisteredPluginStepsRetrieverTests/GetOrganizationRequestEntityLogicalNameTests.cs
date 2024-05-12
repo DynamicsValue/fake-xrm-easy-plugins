@@ -13,14 +13,20 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         private readonly Account _account;
         
         private readonly UpdateRequest _updateRequest;
-        private readonly UpdateMultipleRequest _updateMultipleRequest;
-        
         private readonly DeleteRequest _deleteRequest;
+        
+        #if FAKE_XRM_EASY_9
+        private readonly UpdateMultipleRequest _updateMultipleRequest;
+        #endif
+        
         
         public GetOrganizationRequestEntityLogicalNameTests()
         {
             _account = new Account() { Id = Guid.NewGuid() };
             _updateRequest = new UpdateRequest() { Target = _account };
+            _deleteRequest = new DeleteRequest() { Target = _account.ToEntityReference() };
+            
+            #if FAKE_XRM_EASY_9
             _updateMultipleRequest = new UpdateMultipleRequest()
             {
                 Targets = new EntityCollection(new List<Entity>() { _account })
@@ -28,7 +34,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
                     EntityName = Account.EntityLogicalName
                 }
             };
-            _deleteRequest = new DeleteRequest() { Target = _account.ToEntityReference() };
+            #endif
         }
 
         [Fact]
@@ -45,11 +51,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             Assert.Equal(Account.EntityLogicalName, entityLogicalName);
         }
         
+        #if FAKE_XRM_EASY_9
         [Fact]
         public void Should_return_entity_logical_name_for_a_multiple_request()
         {
             var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_updateMultipleRequest);
             Assert.Equal(Account.EntityLogicalName, entityLogicalName);
         }
+        #endif
+        
     }
 }

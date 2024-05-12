@@ -44,6 +44,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             Assert.Contains("name", attributes);
         }
         
+        #if FAKE_XRM_EASY_9
         [Fact]
         public void Should_return_any_different_attributes_in_an_any_of_the_entities_of_an_update_multiple_message()
         {
@@ -68,6 +69,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             Assert.Contains("telephone1", attributes);
             Assert.Contains("name", attributes);
         }
-        
+        #endif
     }
 }
