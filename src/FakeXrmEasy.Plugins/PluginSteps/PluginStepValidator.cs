@@ -241,10 +241,12 @@ namespace FakeXrmEasy.Plugins.PluginSteps
 
             string entityLogicalNameToCheck = stepDefinition.EntityLogicalName;
 
+#pragma warning disable CS0618
             if (stepDefinition.EntityTypeCode == null && string.IsNullOrWhiteSpace(stepDefinition.EntityLogicalName))
             {
                 entityLogicalNameToCheck = "*";
             }
+#pragma warning restore CS0618
             
             if (_combinations[messageNameToCheck].ContainsKey("*") && !_combinations[messageNameToCheck].ContainsKey(entityLogicalNameToCheck))
             {

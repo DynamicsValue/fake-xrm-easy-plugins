@@ -224,7 +224,8 @@ namespace FakeXrmEasy.Pipeline
 
             return sdkMessage;
         }
-                
+  
+#pragma warning disable CS0618 
         internal static Entity AddSdkMessageFilter(IXrmFakedContext context,
             IPluginStepDefinition pluginStepDefinition)
         {
@@ -242,6 +243,7 @@ namespace FakeXrmEasy.Pipeline
             }
             return sdkFilter;
         }
+        
         
         internal static void VerifyPluginStepDefinition(IXrmFakedContext context,
             IPluginStepDefinition pluginStepDefinition)
@@ -271,5 +273,7 @@ namespace FakeXrmEasy.Pipeline
                 pluginStepDefinition.EntityLogicalName = (string)reflectedType.GetField("EntityLogicalName")?.GetValue(null);
             }
         }
+        
+#pragma warning restore CS0618
     }
 }

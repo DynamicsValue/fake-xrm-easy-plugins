@@ -223,6 +223,7 @@ namespace FakeXrmEasy.Pipeline
                 PluginStepId = pluginStep.Id,
                 MessageName = pluginContext.MessageName,
                 Stage = (ProcessingStepStage)pluginContext.Stage,
+                Mode = (ProcessingStepMode)pluginContext.Mode,
                 InputParameters = pluginContext.InputParameters,
                 OutputParameters = pluginContext.OutputParameters,
                 PluginStepDefinition = pluginStep
@@ -353,7 +354,7 @@ namespace FakeXrmEasy.Pipeline
         
         private static void ProcessPreOperation(IXrmFakedContext context, 
             OrganizationRequest request) 
-        {
+        {  
             var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation)
                 ? GetPreImageEntityForRequest(context, request)
                 : null;

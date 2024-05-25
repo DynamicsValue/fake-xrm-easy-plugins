@@ -55,5 +55,27 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
             _request.RequestName = requestName;
             Assert.False(_request.IsBulkOperation());
         }
+        
+        [Theory]
+        [InlineData("CreateMultiple", "Create")]
+        [InlineData("UpdateMultiple", "Update")]
+        [InlineData("UpsertMultiple", "Upsert")]
+        public void Should_return_associated_non_bulk_request_name_for_bulk_operation(string bulkOperation, string nonBulkOperation)
+        {
+            _request.RequestName = bulkOperation;
+            var nonBulkRequestName = _request.GetAssociatedNonBulkRequestName();
+            Assert.Equal(nonBulkOperation, nonBulkRequestName);
+        }
+        
+        [Theory]
+        [InlineData("Create", "CreateMultiple")]
+        [InlineData("Update", "UpdateMultiple")]
+        [InlineData("Upsert", "UpsertMultiple")]
+        public void Should_return_associated_bulk_request_name_for_non_bulk_operation(string nonBulkOperation, string bulkOperation)
+        {
+            _request.RequestName = nonBulkOperation;
+            var nonBulkRequestName = _request.GetAssociatedBulkRequestName();
+            Assert.Equal(bulkOperation, nonBulkRequestName);
+        }
     }
 }

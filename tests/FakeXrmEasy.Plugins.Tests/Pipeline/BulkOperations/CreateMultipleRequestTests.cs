@@ -33,15 +33,20 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
             _entities = new List<Entity>() { _account };
         }
         
-        /*
-        [Fact]
-        public void Should_trigger_registered_bulk_preoperation_preoperation_step()
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_trigger_registered_bulk_step(ProcessingStepStage stage, ProcessingStepMode mode)
         {
             _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
             {
                 MessageName = "CreateMultiple",
                 EntityLogicalName = Account.EntityLogicalName,
-                Stage = ProcessingStepStage.Preoperation
+                Stage = stage,
+                Mode = mode
             });
 
             var response = _service.Execute(_entities.ToCreateMultipleRequest());
@@ -55,8 +60,53 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
             var auditedStep = auditedSteps[0];
             Assert.Equal("CreateMultiple", auditedStep.MessageName);
             Assert.Equal(typeof(TracerPlugin), auditedStep.PluginAssemblyType);
-            Assert.Equal(ProcessingStepStage.Preoperation, auditedStep.Stage);
+            Assert.Equal(stage, auditedStep.Stage);
+            Assert.Equal(mode, auditedStep.Mode);
         }
-        */
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_trigger_registered_bulk_step_and_single_step_if_both_are_registered(ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "CreateMultiple",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = stage,
+                Mode = mode
+            });
+
+            _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Create",
+                EntityLogicalName = Account.EntityLogicalName,
+                Stage = stage,
+                Mode = mode
+            });
+            
+            var response = _service.Execute(_entities.ToCreateMultipleRequest());
+            Assert.IsType<CreateMultipleResponse>(response);
+            
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var auditedSteps = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Equal(2, auditedSteps.Count);
+
+            var bulkAuditedStep = auditedSteps[0];
+            Assert.Equal("CreateMultiple", bulkAuditedStep.MessageName);
+            Assert.Equal(typeof(TracerPlugin), bulkAuditedStep.PluginAssemblyType);
+            Assert.Equal(stage, bulkAuditedStep.Stage);
+            Assert.Equal(mode, bulkAuditedStep.Mode);
+            
+            var singleAuditedStep = auditedSteps[1];
+            Assert.Equal("Create", singleAuditedStep.MessageName);
+            Assert.Equal(typeof(TracerPlugin), singleAuditedStep.PluginAssemblyType);
+            Assert.Equal(stage, singleAuditedStep.Stage);
+            Assert.Equal(mode, singleAuditedStep.Mode);
+        }
+        
     }
 }

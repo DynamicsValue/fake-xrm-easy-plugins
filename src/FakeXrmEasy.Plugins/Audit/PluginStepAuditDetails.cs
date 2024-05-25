@@ -24,6 +24,11 @@ namespace FakeXrmEasy.Plugins.Audit
         /// Stage that triggered this plugin execution
         /// </summary>
         public ProcessingStepStage Stage { get; set; }
+        
+        /// <summary>
+        /// The mode the in which the plugin step was executed
+        /// </summary>
+        public ProcessingStepMode Mode { get; set; }
 
         /// <summary>
         /// Message that triggered this execution (i.e. Create, Update, and so on...)
