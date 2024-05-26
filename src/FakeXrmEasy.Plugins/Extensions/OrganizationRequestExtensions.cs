@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 
@@ -67,6 +68,45 @@ namespace FakeXrmEasy.Plugins.Extensions
 
             throw new GetAssociatedNonBulkRequestNameException(request);
         }
-  
+
+        /// <summary>
+        /// Converts the current bulk operation organisation request into an array of multiple non-bulk organization requests
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static OrganizationRequest[] ToNonBulkOrganizationRequests(this OrganizationRequest request)
+        {
+            if (!IsBulkOperation(request))
+            {
+                throw new InvalidBulkOperationExtensionException();
+            }
+
+            var targets = request["Targets"] as EntityCollection;
+            var entities = targets.Entities;
+            
+            var requestName = GetAssociatedNonBulkRequestName(request);
+
+            var requests = new List<OrganizationRequest> { };
+            foreach (var target in entities)
+            {
+                requests.Add(new OrganizationRequest()
+                {
+                    RequestName = requestName,
+                    ["Target"] = target
+                });
+            }
+
+            return requests.ToArray();
+        }
+
+        /// <summary>
+        /// Converts the current non-bulk organisation request into a bulk organisation request with a single record
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static OrganizationRequest ToBulkOrganizationRequest(this OrganizationRequest request)
+        {
+            return null;
+        }
     }
 }

@@ -77,5 +77,8 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
             var nonBulkRequestName = _request.GetAssociatedBulkRequestName();
             Assert.Equal(bulkOperation, nonBulkRequestName);
         }
+        
+        
+        
     }
 }

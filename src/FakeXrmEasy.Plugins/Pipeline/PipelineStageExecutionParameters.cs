@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Pipeline
 {
     internal class PipelineStageExecutionParameters
     {
-        internal string RequestName { get; set; }
         internal ProcessingStepStage Stage { get; set; }
         internal ProcessingStepMode Mode { get; set; }
 
@@ -39,5 +39,26 @@ namespace FakeXrmEasy.Pipeline
         /// Snapshot of all the entity postimages after the execution of a bulk operation request
         /// </summary>
         internal List<Entity> PostEntitySnapshotCollection { get; set; }
+
+        /// <summary>
+        /// Converts the current bulk operation pipeline request parameters into an array of multiple non-bulk operation pipeline execution parameters 
+        /// </summary>
+        /// <returns></returns>
+        internal PipelineStageExecutionParameters[] ToNonBulkPipelineExecutionParameters()
+        {
+            var requests = Request.ToNonBulkOrganizationRequests();
+            var pipelineParameters = new List<PipelineStageExecutionParameters>();
+            foreach (var request in requests)
+            {
+                pipelineParameters.Add(new PipelineStageExecutionParameters()
+                {
+                    Stage = Stage,
+                    Mode = Mode,
+                    Request = request
+                });
+            }
+
+            return pipelineParameters.ToArray();
+        }
     }
 }
