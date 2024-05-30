@@ -11,7 +11,10 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
     {
         private CreateRequest _createRequest;
         private UpdateRequest _updateRequest;
+        
+        #if !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY
         private UpsertRequest _upsertRequest;
+        #endif
         
         private readonly Account _account1;
         private readonly Account _account2;
@@ -48,6 +51,7 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
             AssertIsBulkOperationWithSingleRecord(request, "CreateMultiple", _account1);
         }
         
+        
         [Fact]
         public void Should_convert_update_operation_into_a_update_multiple_request_with_a_single_record()
         {
@@ -62,6 +66,7 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
             AssertIsBulkOperationWithSingleRecord(request, "UpdateMultiple", _account1);
         }
         
+#if !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY
         [Fact]
         public void Should_convert_upsert_operation_into_a_upsert_multiple_request_with_a_single_record()
         {
@@ -75,7 +80,8 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
 
             AssertIsBulkOperationWithSingleRecord(request, "UpsertMultiple", _account1);
         }
-
+#endif
+        
         private void AssertIsBulkOperationWithSingleRecord(OrganizationRequest request, string requestName, Entity record)
         {
             var entityCollection = request["Targets"] as EntityCollection;
