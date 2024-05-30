@@ -48,6 +48,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.PipelineProcessorTests
             AssertPreEntityImage(_account1, preEntityImage);
         }
         
+#if FAKE_XRM_EASY_9
         [Fact]
         public void Should_return_pre_entity_image_collection()
         {
@@ -84,7 +85,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.PipelineProcessorTests
             AssertPreEntityImage(_account2, preImageEntities[1]);
 
         }
-
+#endif
+        
         private void AssertPreEntityImage(Account expected, Entity preImage)
         {
             Assert.Equal(expected.Id, preImage.Id);

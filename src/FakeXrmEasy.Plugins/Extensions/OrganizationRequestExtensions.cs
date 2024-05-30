@@ -100,13 +100,33 @@ namespace FakeXrmEasy.Plugins.Extensions
         }
 
         /// <summary>
-        /// Converts the current non-bulk organisation request into a bulk organisation request with a single record
+        /// Converts a single non-bulk operation request into an equivalent bulk operation with a single record
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// <exception cref="InvalidBulkOperationExtensionException"></exception>
         public static OrganizationRequest ToBulkOrganizationRequest(this OrganizationRequest request)
         {
-            return null;
+            if (IsBulkOperation(request))
+            {
+                throw new InvalidBulkOperationExtensionException();
+            }
+
+            var target = request["Target"] as Entity;
+
+            var requestName = GetAssociatedBulkRequestName(request);
+
+            return new OrganizationRequest()
+            {
+                RequestName = requestName,
+                ["Targets"] = new EntityCollection(new List<Entity>()
+                {
+                    target
+                })
+                {
+                  EntityName  = target.LogicalName
+                }
+            };
         }
     }
 }

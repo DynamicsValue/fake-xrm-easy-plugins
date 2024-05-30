@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System.Collections.Generic;
 using DataverseEntities;
 using FakeXrmEasy.Plugins.Extensions;
@@ -92,3 +93,4 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
         }
     }
 }
+#endif
