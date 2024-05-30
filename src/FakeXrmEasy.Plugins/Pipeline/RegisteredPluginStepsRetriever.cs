@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginInstances;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.Extensions;
@@ -17,9 +18,28 @@ namespace FakeXrmEasy.Pipeline
     /// </summary>
     internal static class RegisteredPluginStepsRetriever
     {
+        /// <summary>
+        /// Gets all the plugin steps needed to execute the request specified in the pipeline stage execution parameter.
+        /// Also implements the merged pipeline simulation where a bulk operation request might also trigger "non-bulk" plugins if they exist and were registered
+        /// and vice-versa (a non-bulk request triggering a bulk operation plugin)
+        /// </summary>
+        /// <param name="context">The In-Memory XrmFakedContext</param>
+        /// <param name="parameters">The pipeline stage execution parameter with info about the current event pipeline stage that is being executed</param>
+        /// <returns></returns>
         internal static IEnumerable<PluginStepDefinition> GetPluginStepsForOrganizationRequest(IXrmFakedContext context, PipelineStageExecutionParameters parameters)
         {
-            return GetStepsForStage(context, parameters);
+            var steps = GetStepsForStage(context, parameters);
+            if (parameters.Request.IsBulkOperation())
+            {
+                var nonBulkPipelineParameters = parameters.ToNonBulkPipelineExecutionParameters();
+                foreach (var nonBulkPipelineStageExecutionParameter in nonBulkPipelineParameters)
+                {
+                    var nonBulkSteps = GetStepsForStage(context, nonBulkPipelineStageExecutionParameter);
+                    steps.AddRange(nonBulkSteps);
+                }
+            }
+
+            return steps;
         }
 
         /// <summary>
@@ -85,7 +105,7 @@ namespace FakeXrmEasy.Pipeline
             return null;
         }
         
-        private static IEnumerable<PluginStepDefinition> GetStepsForStage(IXrmFakedContext context,
+        private static List<PluginStepDefinition> GetStepsForStage(IXrmFakedContext context,
                                                                             PipelineStageExecutionParameters parameters)
         {
             int? entityTypeCode = null;
@@ -142,7 +162,7 @@ namespace FakeXrmEasy.Pipeline
                         .Where(ps => ps.EntityLogicalName != null && ps.EntityLogicalName == entityLogicalName || //Matches logical name
                                         ps.EntityTypeCode != null && ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode || //Or matches entity type code
                                         ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none (Custom Apis)
-                        .Where(ps => !ps.FilteringAttributes.Any() || ps.FilteringAttributes.Any(attr => requestDistinctAttributes.Contains(attr))).AsEnumerable();
+                        .Where(ps => !ps.FilteringAttributes.Any() || ps.FilteringAttributes.Any(attr => requestDistinctAttributes.Contains(attr))).ToList();
         }
 
         internal static IEnumerable<Entity> GetPluginImageDefinitions(IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)

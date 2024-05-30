@@ -65,6 +65,49 @@ namespace FakeXrmEasy.Pipeline
             PipelineProcessor.ExecutePipelineStage(context, pipelineParameters);
         }
         
+        private static void ProcessPreOperation(IXrmFakedContext context, 
+            OrganizationRequest request) 
+        {  
+            var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation)
+                ? GetPreImageEntityForRequest(context, request)
+                : null;
+            
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                Request = request,
+                Stage = ProcessingStepStage.Preoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preImagePreOperation,
+                PostEntitySnapshot = null
+            };
+
+            ExecutePipelineStage(context, pipelineParameters);
+        }
+
+        private static void ProcessPostOperation(IXrmFakedContext context, 
+            OrganizationRequest request, 
+            OrganizationResponse response,
+            Entity preEntity = null) 
+        {
+            var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation)
+                ? GetPostImageEntityForRequest(context, request)
+                : null;
+            
+            var pipelineParameters = new PipelineStageExecutionParameters()
+            {
+                Request = request,
+                Response = response,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                PreEntitySnapshot = preEntity,
+                PostEntitySnapshot = postImagePostOperation
+            };
+            ExecutePipelineStage(context, pipelineParameters);
+
+            pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
+            ExecutePipelineStage(context, pipelineParameters);
+        }
+        
         /// <summary>
         /// Gets an entity image collection for each registered entity image and the current entity record
         /// </summary>
@@ -377,47 +420,6 @@ namespace FakeXrmEasy.Pipeline
             return postImage;
         }
         
-        private static void ProcessPreOperation(IXrmFakedContext context, 
-            OrganizationRequest request) 
-        {  
-            var preImagePreOperation = PreImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Preoperation)
-                ? GetPreImageEntityForRequest(context, request)
-                : null;
-            
-            var pipelineParameters = new PipelineStageExecutionParameters()
-            {
-                Request = request,
-                Stage = ProcessingStepStage.Preoperation,
-                Mode = ProcessingStepMode.Synchronous,
-                PreEntitySnapshot = preImagePreOperation,
-                PostEntitySnapshot = null
-            };
-
-            ExecutePipelineStage(context, pipelineParameters);
-        }
-
-        private static void ProcessPostOperation(IXrmFakedContext context, 
-            OrganizationRequest request, 
-            OrganizationResponse response,
-            Entity preEntity = null) 
-        {
-            var postImagePostOperation = PostImage.IsAvailableFor(request.GetType(), ProcessingStepStage.Postoperation)
-                ? GetPostImageEntityForRequest(context, request)
-                : null;
-            
-            var pipelineParameters = new PipelineStageExecutionParameters()
-            {
-                Request = request,
-                Response = response,
-                Stage = ProcessingStepStage.Postoperation,
-                Mode = ProcessingStepMode.Synchronous,
-                PreEntitySnapshot = preEntity,
-                PostEntitySnapshot = postImagePostOperation
-            };
-            ExecutePipelineStage(context, pipelineParameters);
-
-            pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
-            ExecutePipelineStage(context, pipelineParameters);
-        }
+        
     }
 }
