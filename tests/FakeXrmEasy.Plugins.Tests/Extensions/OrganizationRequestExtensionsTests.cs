@@ -49,11 +49,30 @@ namespace FakeXrmEasy.Plugins.Tests.Extensions
         
         [Theory]
         [InlineData("Create")]
+        [InlineData("Update")]
+        [InlineData("Upsert")]
+        public void Should_return_true_when_its_a_non_bulk_operation(string requestName)
+        {
+            _request.RequestName = requestName;
+            Assert.True(_request.IsNonBulkOperation());
+        }
+        
+        [Theory]
+        [InlineData("Create")]
         [InlineData("Assign")]
         public void Should_return_false_when_it_is_not_a_bulk_operation(string requestName)
         {
             _request.RequestName = requestName;
             Assert.False(_request.IsBulkOperation());
+        }
+        
+        [Theory]
+        [InlineData("CreateMultiple")]
+        [InlineData("Assign")]
+        public void Should_return_false_when_it_is_not_a_non_a_bulk_operation(string requestName)
+        {
+            _request.RequestName = requestName;
+            Assert.False(_request.IsNonBulkOperation());
         }
         
         [Theory]

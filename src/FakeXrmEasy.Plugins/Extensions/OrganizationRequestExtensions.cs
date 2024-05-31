@@ -21,6 +21,13 @@ namespace FakeXrmEasy.Plugins.Extensions
                    IsUpsertMultipleRequest(request);
         }
         
+        public static bool IsNonBulkOperation(this OrganizationRequest request)
+        {
+            return IsCreateRequest(request) ||
+                   IsUpdateRequest(request) ||
+                   IsUpsertRequest(request);
+        }
+        
         public static bool IsCreateMultipleRequest(this OrganizationRequest request)
         {
             return CreateMultipleRequestName.Equals(request.RequestName);
@@ -34,6 +41,21 @@ namespace FakeXrmEasy.Plugins.Extensions
         public static bool IsUpsertMultipleRequest(this OrganizationRequest request)
         {
             return UpsertMultipleRequestName.Equals(request.RequestName);
+        }
+        
+        public static bool IsCreateRequest(this OrganizationRequest request)
+        {
+            return CreateRequestName.Equals(request.RequestName);
+        }
+        
+        public static bool IsUpdateRequest(this OrganizationRequest request)
+        {
+            return UpdateRequestName.Equals(request.RequestName);
+        }
+        
+        public static bool IsUpsertRequest(this OrganizationRequest request)
+        {
+            return UpsertRequestName.Equals(request.RequestName);
         }
         
         /// <summary>

@@ -38,7 +38,12 @@ namespace FakeXrmEasy.Pipeline
                     steps.AddRange(nonBulkSteps);
                 }
             }
-
+            else if (parameters.Request.IsNonBulkOperation())
+            {
+                var bulkPipelineParameters = parameters.ToBulkPipelineExecutionParameters();
+                var bulkSteps = GetStepsForStage(context, bulkPipelineParameters);
+                steps.AddRange(bulkSteps);
+            }
             return steps;
         }
 

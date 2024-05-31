@@ -60,5 +60,20 @@ namespace FakeXrmEasy.Pipeline
 
             return pipelineParameters.ToArray();
         }
+        
+        /// <summary>
+        /// Converts the current non-bulk operation pipeline request parameter into another pipeline execution parameter with a bulk operation and a single record
+        /// </summary>
+        /// <returns></returns>
+        internal PipelineStageExecutionParameters ToBulkPipelineExecutionParameters()
+        {
+            var request = Request.ToBulkOrganizationRequest();
+            return new PipelineStageExecutionParameters()
+            {
+                Stage = Stage,
+                Mode = Mode,
+                Request = request
+            };
+        }
     }
 }

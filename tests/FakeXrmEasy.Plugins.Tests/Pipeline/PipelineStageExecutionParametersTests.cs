@@ -13,7 +13,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
     {
         private readonly PipelineStageExecutionParameters _parameters;
         private readonly OrganizationRequest _bulkRequest;
-
+        private readonly OrganizationRequest _nonBulkRequest;
+        
         private readonly Account _account1;
         private readonly Account _account2;
         
@@ -30,6 +31,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             _bulkRequest = new CreateMultipleRequest()
             {
                 Targets = entityCollection
+            };
+
+            _nonBulkRequest = new CreateRequest()
+            {
+                Target = _account1
             };
             
             _parameters = new PipelineStageExecutionParameters()
@@ -57,6 +63,24 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             AssertNonBulkPipelineParameters(pipelineParameters[0], stage, mode, _account1);
             AssertNonBulkPipelineParameters(pipelineParameters[1], stage, mode, _account2);
         }
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_convert_non_bulk_operation_pipeline_stage_execution_parameters_into_a_bulk_pipeline_stage_execution_parameter_with_a_single_request
+            (ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            _parameters.Request = _nonBulkRequest;
+            _parameters.Stage = stage;
+            _parameters.Mode = mode;
+
+            var pipelineParameters = _parameters.ToBulkPipelineExecutionParameters();
+            Assert.NotNull(pipelineParameters);
+            
+            AssertBulkPipelineParameters(pipelineParameters, stage, mode, _account1);
+        }
 
         private void AssertNonBulkPipelineParameters(PipelineStageExecutionParameters parameters, ProcessingStepStage stage,
             ProcessingStepMode mode,
@@ -65,6 +89,17 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(stage, parameters.Stage);
             Assert.Equal(mode, parameters.Mode);
             Assert.Equal(record, parameters.Request["Target"]);
+        }
+        
+        private void AssertBulkPipelineParameters(PipelineStageExecutionParameters parameters, ProcessingStepStage stage,
+            ProcessingStepMode mode,
+            Entity record)
+        {
+            var entityCollection = parameters.Request["Targets"] as EntityCollection;
+            
+            Assert.Equal(stage, parameters.Stage);
+            Assert.Equal(mode, parameters.Mode);
+            Assert.Equal(record, entityCollection.Entities[0]);
         }
     }
 }
