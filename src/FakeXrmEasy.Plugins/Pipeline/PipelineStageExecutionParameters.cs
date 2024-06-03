@@ -75,5 +75,17 @@ namespace FakeXrmEasy.Pipeline
                 Request = request
             };
         }
+
+        /// <summary>
+        /// Creates new pipeline execution parameters from the current organization request
+        /// </summary>
+        /// <returns></returns>
+        internal static PipelineStageExecutionParameters FromOrganizationRequest(OrganizationRequest request)
+        {
+            return new PipelineStageExecutionParameters()
+            {
+                Request = request
+            };
+        }
     }
 }

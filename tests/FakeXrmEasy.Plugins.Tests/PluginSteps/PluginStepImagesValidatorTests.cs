@@ -79,7 +79,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         [InlineData(MessageNameConstants.Update, ProcessingStepStage.Prevalidation)]
         [InlineData(MessageNameConstants.Create, ProcessingStepStage.Preoperation)]
         [InlineData(MessageNameConstants.Update, ProcessingStepStage.Preoperation)]
-        public void Should_return_not_valid_registration_for_valid_postimages(string messageName, ProcessingStepStage stage)
+        public void Should_return_not_valid_registration_for_not_valid_postimages(string messageName, ProcessingStepStage stage)
         {
             var pluginStepDefinition = new PluginStepDefinition()
             {

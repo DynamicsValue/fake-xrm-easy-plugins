@@ -283,7 +283,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
 
             foreach(var preImage in preImages)
             {
-                if (!PreImage.IsAvailableFor(stepDefinition.MessageName.ToOrganizationCrudRequestType(), stepDefinition.Stage))
+                if (!PreImage.IsAvailableFor(stepDefinition.MessageName.ToOrganizationCrudRequestType()))
                 {
                     throw new PreImageNotAvailableException(preImage.Name);
                 }

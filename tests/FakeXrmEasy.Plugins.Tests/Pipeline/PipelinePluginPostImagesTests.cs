@@ -55,7 +55,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void Should_pass_postimage_when_there_is_a_registered_postimage()
+        public void Should_pass_post_image_when_there_is_a_registered_post_image()
         {
             _context.Initialize(new List<Entity>()
             {
@@ -94,7 +94,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
         }
 
         [Fact]
-        public void Should_pass_postimage_attributes_along_with_target_when_there_is_a_registered_postimage()
+        public void Should_pass_post_image_attributes_along_with_target_when_there_is_a_registered_post_image()
         {
             _context.Initialize(new List<Entity>()
             {
