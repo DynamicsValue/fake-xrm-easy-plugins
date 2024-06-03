@@ -20,6 +20,19 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
                 Targets = entityCollection
             };
         }
+        
+        public static UpdateMultipleRequest ToUpdateMultipleRequest(this List<Entity> entities)
+        {
+            var entityCollection = new EntityCollection(entities)
+            {
+                EntityName = entities.First().LogicalName
+            };
+
+            return new UpdateMultipleRequest()
+            {
+                Targets = entityCollection
+            };
+        }
     }
 }
 #endif
