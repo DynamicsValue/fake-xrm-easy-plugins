@@ -35,50 +35,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         {
             _combinations = new Dictionary<string, Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>>()
             {
-                { "upsert", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
-                    {
-                        { EntityLogicalNameContants.AppNotification, new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        },
-                        { EntityLogicalNameContants.SearchTelemetry, new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
+                { "upsert", GetUpsertValidPluginStepRules() },
                 { "create", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
                         { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
@@ -228,6 +185,67 @@ namespace FakeXrmEasy.Plugins.PluginSteps
   
         }
 
+        private Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>> GetUpsertValidPluginStepRules()
+        {
+            var validEntityNames = new string[]
+            {
+                EntityLogicalNameConstants.AppNotification,
+                EntityLogicalNameConstants.BackgroundOperation,
+                EntityLogicalNameConstants.CardStateItem,
+                EntityLogicalNameConstants.ComponentVersionNrdDataSource,
+                EntityLogicalNameConstants.ElasticFileAttachment,
+                EntityLogicalNameConstants.EventExpanderBreadcrumb,
+                EntityLogicalNameConstants.FlowLog,
+                EntityLogicalNameConstants.FlowRun,
+                EntityLogicalNameConstants.MsDynTimelinePin,
+                EntityLogicalNameConstants.NlsqRegistration,
+                EntityLogicalNameConstants.None,
+                EntityLogicalNameConstants.PowerPagesLog,
+                EntityLogicalNameConstants.RecentlyUsed,
+                EntityLogicalNameConstants.SearchTelemetry,
+                EntityLogicalNameConstants.SearchResultsCache,
+                EntityLogicalNameConstants.SharedWorkspaceAccessToken,
+                EntityLogicalNameConstants.SharedWorkspaceNr,
+            };
+            
+            var validUpsertRules =
+                new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>();
+
+            foreach (var entityName in validEntityNames)
+            {
+                validUpsertRules.Add(entityName, GetDefaultValidPluginStepAndModeRules());
+            }
+
+            return validUpsertRules;
+        }
+
+        private Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>
+            GetDefaultValidPluginStepAndModeRules()
+        {
+            return new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
+            {
+                {
+                    ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
+                    {
+                        { ProcessingStepMode.Synchronous, 0 }
+                    }
+                },
+                {
+                    ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
+                    {
+                        { ProcessingStepMode.Synchronous, 0 }
+                    }
+                },
+                {
+                    ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
+                    {
+                        { ProcessingStepMode.Synchronous, 0 },
+                        { ProcessingStepMode.Asynchronous, 0 }
+                    }
+                }
+            };
+        }
+        
         public bool IsValid(IPluginStepDefinition stepDefinition)
         {
             var messageNameToCheck = stepDefinition.MessageName.ToLower().Trim();
