@@ -238,11 +238,13 @@ namespace FakeXrmEasy.Pipeline
             if (pluginContext.InputParameters.ContainsKey("Target"))
             {
                 var target = pluginContext.InputParameters["Target"];
-                if (target is Entity)
-                    pluginStepAuditDetails.TargetEntity = (Entity)target;
+                var targetEntity = target as Entity;
+                if (targetEntity != null)
+                    pluginStepAuditDetails.TargetEntity = targetEntity;
 
-                if (target is EntityReference)
-                    pluginStepAuditDetails.TargetEntityReference = (EntityReference)target;
+                var targetEntityRef = target as EntityReference;
+                if (targetEntityRef != null)
+                    pluginStepAuditDetails.TargetEntityReference = targetEntityRef;
             }
 
             var pluginStepAudit = context.GetProperty<IPluginStepAudit>() as PluginStepAudit;
