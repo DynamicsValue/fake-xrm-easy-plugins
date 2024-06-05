@@ -1,6 +1,6 @@
 ﻿namespace FakeXrmEasy.Plugins
 {
-    internal class MessageNameConstants
+    internal static class MessageNameConstants
     {
         internal const string Associate = "Associate";
         internal const string Assign = "Assign";

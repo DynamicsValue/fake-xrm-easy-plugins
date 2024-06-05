@@ -1,9 +1,8 @@
 ﻿namespace FakeXrmEasy.Plugins
 {
-    internal class EntityLogicalNameConstants
+    internal static class EntityLogicalNameConstants
     {
         internal const string AppNotification = "appnotification";
-        
         internal const string BackgroundOperation = "backgroundoperation";
         internal const string CardStateItem = "cardstateitem";
         internal const string ComponentVersionNrdDataSource = "componentversionnrddatasource";

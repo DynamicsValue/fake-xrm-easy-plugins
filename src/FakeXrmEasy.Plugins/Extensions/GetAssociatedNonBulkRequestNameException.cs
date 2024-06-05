@@ -8,6 +8,10 @@ namespace FakeXrmEasy.Plugins.Extensions
     /// </summary>
     public class GetAssociatedNonBulkRequestNameException: Exception
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="request"></param>
         public GetAssociatedNonBulkRequestNameException(OrganizationRequest request): 
             base($"GetAssociatedNonBulkRequestName can not be called on a non-bulk organization request '{request.RequestName}'")
         {
