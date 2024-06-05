@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk.Messages;
 
 namespace FakeXrmEasy.Plugins.Extensions
 {
-    public static class OrganizationRequestExtensions
+    internal static class OrganizationRequestExtensions
     {
         private const string CreateMultipleRequestName = "CreateMultiple";
         private const string UpdateMultipleRequestName = "UpdateMultiple";
