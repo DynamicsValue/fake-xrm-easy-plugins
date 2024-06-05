@@ -2,7 +2,8 @@
 
 ### Added
 
-- Pipeline Simulation: Update Plugin Step Validator to include bulk operations - - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Add support for pre images and post image collections - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Update Plugin Step Validator to include bulk operations - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Add support merged pipeline of bulk operations (trigger bulk plugins from non-bulk messages and vice-versa) - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Add support specific attribute filtering of bulk operation plugin steps - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Add support for bulk operations in pipeline simulation - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
