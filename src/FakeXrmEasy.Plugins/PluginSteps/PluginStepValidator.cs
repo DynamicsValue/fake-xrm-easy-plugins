@@ -36,148 +36,35 @@ namespace FakeXrmEasy.Plugins.PluginSteps
             _combinations = new Dictionary<string, Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>>()
             {
                 { "upsert", GetUpsertValidPluginStepRules() },
+                { "upsertmultiple", GetUpsertValidPluginStepRules() },
                 { "create", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
-                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
+                        { "*", GetDefaultValidPluginStepAndModeRules() }
                     }
                 },
                 { "update", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
-                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
+                        { "*", GetDefaultValidPluginStepAndModeRules() }
                     }
                 },
                 { "retrieve", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
-                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
+                        { "*", GetDefaultValidPluginStepAndModeRules() }
                     }
                 },
                 { "retrievemultiple", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
-                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
+                        { "*", GetDefaultValidPluginStepAndModeRules() }
                     }
                 },
                 { "delete", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
                     {
-                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
+                        { "*", GetDefaultValidPluginStepAndModeRules() }
                     }
                 },
                 { "*", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()  //default entry
                     {
-                        { "*", new Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>()
-                            {
-                                { ProcessingStepStage.Prevalidation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Preoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 }
-                                    }
-                                },
-                                { ProcessingStepStage.Postoperation, new Dictionary<ProcessingStepMode, int>()
-                                    {
-                                        {  ProcessingStepMode.Synchronous, 0 },
-                                        {  ProcessingStepMode.Asynchronous, 0 }
-                                    }
-                                }
-                            }
-                        }
+                        { "*", GetDefaultValidPluginStepAndModeRules() }
                     }
                 }
             };
