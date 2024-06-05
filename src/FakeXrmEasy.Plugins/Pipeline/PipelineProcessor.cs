@@ -341,16 +341,15 @@ namespace FakeXrmEasy.Pipeline
             string logicalName = "";
             Guid id = Guid.Empty;
 
-            if (target is Entity)
+            var targetEntity = target as Entity;
+            var targetEntityRef = target as EntityReference; 
+            if (targetEntity != null)
             {
-                var targetEntity = target as Entity;
                 logicalName = targetEntity.LogicalName;
                 id = targetEntity.Id;
             }
-
-            else if (target is EntityReference)
+            else if (targetEntityRef != null)
             {
-                var targetEntityRef = target as EntityReference;
                 logicalName = targetEntityRef.LogicalName;
                 id = targetEntityRef.Id;
             }
@@ -394,9 +393,11 @@ namespace FakeXrmEasy.Pipeline
             string logicalName = "";
             Guid id = Guid.Empty;
 
-            if (target is Entity)
+            var targetEntity = target as Entity;
+            var targetEntityRef = target as EntityReference; 
+            
+            if (targetEntity != null)
             {
-                var targetEntity = target as Entity;
                 logicalName = targetEntity.LogicalName;
                 id = targetEntity.Id;
 
@@ -405,18 +406,16 @@ namespace FakeXrmEasy.Pipeline
                     return targetEntity;
                 }
             }
-
-            else if (target is EntityReference)
+            else if (targetEntityRef != null)
             {
-                var targetEntityRef = target as EntityReference;
                 logicalName = targetEntityRef.LogicalName;
                 id = targetEntityRef.Id;
             }
 
             var postImage = context.GetEntityById(logicalName, id);
-            if (target is Entity)
+            if (targetEntity != null)
             {
-                postImage = postImage.ReplaceAttributesWith(target as Entity);
+                postImage = postImage.ReplaceAttributesWith(targetEntity);
             }
 
             return postImage;

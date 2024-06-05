@@ -169,7 +169,7 @@ namespace FakeXrmEasy.Pipeline
         
         internal static void AddPipelineTypes(IXrmFakedContext context)
         {
-            if(context.ProxyTypesAssemblies.Count() > 0)
+            if(context.ProxyTypesAssemblies.Any())
             {
                 var hasSdkMessage = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessage) != null;
                 var hasSdkMessageFilter = context.FindReflectedType(PluginStepRegistrationEntityNames.SdkMessageFilter) != null;
