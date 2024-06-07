@@ -14,7 +14,7 @@ using System;
 namespace FakeXrmEasy.Plugins 
 {
     /// <summary>
-    /// Implementation to override default plugin context properties
+    /// Implementation to override default plugin context properties and the ability to create fake implementations for any interface returned by the plugin execution context
     /// </summary>
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {

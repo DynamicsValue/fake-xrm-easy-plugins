@@ -2,9 +2,10 @@
 
 ### Added
 
+- Event Pipeline Scopes : Introducing new capability to capture the 'scope' or stack of plugin executions. This will enable many features including - https://github.com/DynamicsValue/fake-xrm-easy/issues/70
 - Pipeline Simulation: Add support for pre images and post image collections - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Update Plugin Step Validator to include bulk operations - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
-- Pipeline Simulation: Add support merged pipeline of bulk operations (trigger bulk plugins from non-bulk messages and vice-versa) - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Add support for merged pipeline of bulk operations (trigger bulk plugins from non-bulk messages and vice-versa) - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Add support specific attribute filtering of bulk operation plugin steps - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Add support for bulk operations in pipeline simulation - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Added support for new IPluginExecutionContext2, IPluginExecutionContext3, and IPluginExecutionContext4 interfaces - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
