@@ -6,7 +6,7 @@ namespace FakeXrmEasy.Pipeline.Scope
     /// <summary>
     /// An event pipeline scope contains information about the current stack / context that is being executed for a given request
     /// It uses a different naming convention 'Scope' as opposed to 'Context'  to avoid confusion with existing plugin execution context.
-    /// Think of it as function 'scope', like a reference to a specific execution stack
+    /// Think of it as function 'scope', like a reference to a specific call stack
     /// </summary>
     internal class EventPipelineScope
     {

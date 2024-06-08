@@ -13,7 +13,7 @@ namespace FakeXrmEasy.Pipeline.Scope
         /// <param name="service">An existing IOrganizationService that was created from an IXrmFakedContext</param>
         /// <param name="scope">The EventPipelineScope that will be stored in this service</param>
         /// <returns></returns>
-        public IPipelineOrganizationService New(IOrganizationService service, EventPipelineScope scope)
+        public static IPipelineOrganizationService New(IOrganizationService service, EventPipelineScope scope)
         {
             var pipelineOrganizationService = A.Fake<IPipelineOrganizationService>();
             pipelineOrganizationService.Scope = scope;
@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Pipeline.Scope
             return pipelineOrganizationService;
         }
 
-        private void AddCrudMethods(IPipelineOrganizationService pipelineService, IOrganizationService service)
+        private static void AddCrudMethods(IPipelineOrganizationService pipelineService, IOrganizationService service)
         {
             AddFakeCreate(pipelineService, service);
             AddFakeUpdate(pipelineService, service);
