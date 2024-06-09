@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Issues
 {
-    public class Issue00144: FakeXrmEasyPipelineWidthAuditTestsBase
+    public class Issue00144: FakeXrmEasyPipelineWithAuditTestsBase
     {
         private readonly Entity _account;
 

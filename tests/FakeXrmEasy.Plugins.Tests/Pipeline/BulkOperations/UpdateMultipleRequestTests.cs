@@ -14,7 +14,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline.BulkOperations
 {
-    public class UpdateMultipleRequestTests: FakeXrmEasyPipelineWidthAuditTestsBase
+    public class UpdateMultipleRequestTests: FakeXrmEasyPipelineWithAuditTestsBase
     {
         private readonly Account _account;
         private List<Entity> _entities;

@@ -8,12 +8,12 @@ using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Plugins.Tests
 {
-    public class FakeXrmEasyPipelineWidthAuditTestsBase
+    public class FakeXrmEasyPipelineWithAuditTestsBase
     {
         protected readonly IXrmFakedContext _context;
         protected readonly IOrganizationService _service;
 
-        public FakeXrmEasyPipelineWidthAuditTestsBase()
+        public FakeXrmEasyPipelineWithAuditTestsBase()
         {
             _context = MiddlewareBuilder
                         .New()

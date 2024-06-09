@@ -4,6 +4,7 @@ using DataverseEntities;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
+using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
@@ -11,10 +12,9 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline.Scope
 {
-    public class PipelineScopeTests: FakeXrmEasyPipelineTestsBase
+    public class PipelineScopeTests: FakeXrmEasyPipelineWithAuditTestsBase
     {
         private readonly Account _account;
-        private readonly Contact _contact;
 
         public PipelineScopeTests()
         {
@@ -26,11 +26,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.Scope
                 NumberOfEmployees = 5,
                 Revenue = new Money(20000),
                 Telephone1 = "+123456"
-            };
-
-            _contact = new Contact()
-            {
-                Id = Guid.NewGuid()
             };
         }
         
@@ -52,6 +47,28 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.Scope
                 () => _service.Update(new Account() { Id = _account.Id, NumberOfEmployees = 6 }));
         }
         
-        
+        [Fact]
+        public void Should_stop_executing_depth_plugin_on_the_2nd_call()
+        {
+            _context.Initialize(_account);
+            
+            _context.RegisterPluginStep<DepthPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Update",
+                EntityLogicalName = DataverseEntitiesPartial.Account.EntityLogicalName,
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous
+            });
+
+            _service.Update(new Account() { Id = _account.Id, NumberOfEmployees = 6 });
+
+            var auditedSteps = _context.GetPluginStepAudit().CreateQuery().ToList();
+            Assert.Equal(2, auditedSteps.Count);
+            
+            //Inner plugins are logged first as they are called recursively and auditing is saved post plugin execution
+            //Hence why Depth is recorded in reverse order
+            Assert.Equal(2, auditedSteps[0].PluginContext.Depth);
+            Assert.Equal(1, auditedSteps[1].PluginContext.Depth);
+        }
     }
 }

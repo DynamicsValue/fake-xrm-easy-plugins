@@ -64,5 +64,10 @@ namespace FakeXrmEasy.Plugins.Audit
         /// The plugin step definition that triggered the plugin execution
         /// </summary>
         public IPluginStepDefinition PluginStepDefinition { get; set; }
+        
+        /// <summary>
+        /// The plugin execution context that was passed into the plugin when it was executed to check any other necessary properties
+        /// </summary>
+        public IPluginExecutionContext PluginContext { get; set; }
     }
 }

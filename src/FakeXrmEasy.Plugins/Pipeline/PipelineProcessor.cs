@@ -255,7 +255,8 @@ namespace FakeXrmEasy.Pipeline
                 Mode = (ProcessingStepMode)pluginContext.Mode,
                 InputParameters = pluginContext.InputParameters,
                 OutputParameters = pluginContext.OutputParameters,
-                PluginStepDefinition = pluginStep
+                PluginStepDefinition = pluginStep,
+                PluginContext = pluginContext
             };
 
             if (pluginContext.InputParameters.ContainsKey("Target"))
