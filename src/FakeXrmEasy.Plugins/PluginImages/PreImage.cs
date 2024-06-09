@@ -29,16 +29,11 @@ namespace FakeXrmEasy.Plugins.PluginImages
         /// Determines if a PreImage is available for the given request and plugin stage
         /// </summary>
         /// <param name="organizationRequestType">The request to check the availability for</param>
-        /// <param name="stage">The plugin stage to check such availability</param>
         /// <returns></returns>
-        internal static bool IsAvailableFor(Type organizationRequestType, ProcessingStepStage stage)
+        internal static bool IsAvailableFor(Type organizationRequestType)
         {
-            return organizationRequestType == typeof(UpdateRequest) && stage == ProcessingStepStage.Prevalidation
-                || organizationRequestType == typeof(DeleteRequest) && stage == ProcessingStepStage.Prevalidation
-                || organizationRequestType == typeof(UpdateRequest) && stage == ProcessingStepStage.Preoperation 
-                || organizationRequestType == typeof(DeleteRequest) && stage == ProcessingStepStage.Preoperation
-                || organizationRequestType == typeof(UpdateRequest) && stage == ProcessingStepStage.Postoperation
-                || organizationRequestType == typeof(DeleteRequest) && stage == ProcessingStepStage.Postoperation;
+            return organizationRequestType == typeof(UpdateRequest)
+                   || organizationRequestType == typeof(DeleteRequest);
         }
     }
 }

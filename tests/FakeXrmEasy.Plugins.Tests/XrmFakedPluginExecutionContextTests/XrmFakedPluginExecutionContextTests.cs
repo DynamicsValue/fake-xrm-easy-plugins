@@ -4,15 +4,18 @@ using Xunit;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Plugins;
 using Crm;
+#if FAKE_XRM_EASY_9
+using FakeXrmEasy.Plugins.PluginExecutionContext;
+#endif
 
-namespace FakeXrmEasy.Abstractions.Tests.Plugins
+namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
 {
     public class XrmFakedPluginExecutionContextTests
     {
         [Fact]
         public void Should_set_default_plugin_context_properties()
         {
-            var plugCtx = new XrmFakedPluginExecutionContext();
+            var plugCtx = XrmFakedPluginExecutionContext.New();
 
             Assert.Equal(1, plugCtx.Depth);
             Assert.Equal(1, plugCtx.IsolationMode);
@@ -23,7 +26,7 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
         [Fact]
         public void Should_set_default_plugin_context_in_transaction_based_on_stage_and_mode()
         {
-            var plugCtx = new XrmFakedPluginExecutionContext();
+            var plugCtx = XrmFakedPluginExecutionContext.New();
 
             Assert.False(plugCtx.IsInTransaction);
 
@@ -42,13 +45,12 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
         [Fact]
         public void Should_set_default_plugin_context_with_custom_properties()
         {
-            
-            var plugCtx = new XrmFakedPluginExecutionContext();
+            var plugCtx = XrmFakedPluginExecutionContext.New();
             
             var operationCreatedOn = DateTime.UtcNow;
             var businessUnitId = Guid.NewGuid();
             var correlationId = Guid.NewGuid();
-            var initiatinUserId = Guid.NewGuid();
+            var initiatingUserId = Guid.NewGuid();
             var inputParameters = new ParameterCollection();
             var outputParameters = new ParameterCollection();
             var sharedVariables = new ParameterCollection();
@@ -57,7 +59,7 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             var owningExtension = new EntityReference();
             var postEntityImages = new EntityImageCollection();
             var preEntityImages = new EntityImageCollection();
-            var parentPluginContext = new XrmFakedPluginExecutionContext();
+            var parentPluginContext = XrmFakedPluginExecutionContext.New();
             var primaryEntityId = Guid.NewGuid();
             var requestId = Guid.NewGuid();
             var userId = Guid.NewGuid();
@@ -65,7 +67,7 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             plugCtx.BusinessUnitId = businessUnitId;
             plugCtx.CorrelationId = correlationId;
             plugCtx.Depth = 2;
-            plugCtx.InitiatingUserId = initiatinUserId;
+            plugCtx.InitiatingUserId = initiatingUserId;
             plugCtx.InputParameters = inputParameters;
             plugCtx.IsOfflinePlayback = false;
             plugCtx.IsolationMode = (int) PluginAssemblyIsolationMode.None;
@@ -91,7 +93,7 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             Assert.Equal(businessUnitId, plugCtx.BusinessUnitId);
             Assert.Equal(correlationId, plugCtx.CorrelationId);
             Assert.Equal(2, plugCtx.Depth);
-            Assert.Equal(initiatinUserId, plugCtx.InitiatingUserId);
+            Assert.Equal(initiatingUserId, plugCtx.InitiatingUserId);
             Assert.Equal(inputParameters, plugCtx.InputParameters);
             Assert.False(plugCtx.IsOfflinePlayback);
             Assert.Equal((int) PluginAssemblyIsolationMode.None, plugCtx.IsolationMode);
@@ -113,7 +115,6 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
             Assert.Equal(userId, plugCtx.UserId);
             Assert.Equal(parentPluginContext, plugCtx.ParentContext);
             Assert.Equal((int) ProcessingStepStage.Preoperation, plugCtx.Stage);
-            
         }
 
         [Fact]
@@ -135,6 +136,18 @@ namespace FakeXrmEasy.Abstractions.Tests.Plugins
 
             Assert.Equal("asadsadasd", target["name"]);
 
+        }
+        
+        [Fact]
+        public void Should_return_latest_implementation_of_the_plugin_context_if_v9()
+        {
+            #if FAKE_XRM_EASY_9
+            var plugCtx = XrmFakedPluginExecutionContext.New();
+            Assert.IsType<XrmFakedPluginExecutionContext4>(plugCtx);
+            #else
+            var plugCtx = XrmFakedPluginExecutionContext.New();
+            Assert.IsType<XrmFakedPluginExecutionContext>(plugCtx);
+            #endif
         }
     }
 }

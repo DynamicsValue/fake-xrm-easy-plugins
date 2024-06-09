@@ -1,3 +1,24 @@
+## [2.5.0]
+
+### Added
+
+- Ability to prevent infinite loops in plugin executions - https://github.com/DynamicsValue/fake-xrm-easy/issues/70
+- Event Pipeline Scopes : Introducing new capability to capture the 'scope' or stack of plugin executions. This will enable many features including - https://github.com/DynamicsValue/fake-xrm-easy/issues/70
+- Pipeline Simulation: Add support for pre images and post image collections - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Update Plugin Step Validator to include bulk operations - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Add support for merged pipeline of bulk operations (trigger bulk plugins from non-bulk messages and vice-versa) - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Add support specific attribute filtering of bulk operation plugin steps - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Pipeline Simulation: Add support for bulk operations in pipeline simulation - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Added support for new IPluginExecutionContext2, IPluginExecutionContext3, and IPluginExecutionContext4 interfaces - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+
+### Changed
+
+- Massively refactored Pipeline Simulation due to bulk operations changes
+- Resolves issue where a DeleteRequest was not triggering plugin steps when using late bound entities - https://github.com/DynamicsValue/fake-xrm-easy/issues/144
+- ExecutePluginWith* methods now return the new XrmFakedPluginExecutionContext4 class which implements IPluginExecutionContext4 for v9 versions. 
+- Upgraded dependency "Microsoft.CrmSdk.CoreAssemblies" to 9.0.2.52
+- Upgraded dependency "Microsoft.CrmSdk.XrmTooling.CoreAssembly" to 9.1.1.45
+
 ## [2.4.1]
 
 ### Changed

@@ -76,12 +76,12 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         }
         
         [Theory]
-        [InlineData(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Create, EntityLogicalNameConstants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameConstants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameConstants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_register_plugin_step_with_plugin_definition_and_plugin_type_signature(string messageName,
                                                         string entityLogicalName,
                                                         ProcessingStepStage stage,
@@ -115,12 +115,12 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         }
         
         [Theory]
-        [InlineData(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
-        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
-        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Create, EntityLogicalNameConstants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameConstants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameConstants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous,  "secure", "unsecure")]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous,  "secure", "unsecure")]
         public void Should_register_plugin_step_with_plugin_definition_and_secure_configurations(string messageName,
                                                         string entityLogicalName,
                                                         ProcessingStepStage stage,
@@ -154,12 +154,12 @@ namespace FakeXrmEasy.Plugins.Tests.PluginSteps
         }
         
         [Theory]
-        [InlineData(MessageNameConstants.Create, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Delete, EntityLogicalNameContants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameContants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Update, EntityLogicalNameContants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        [InlineData(MessageNameConstants.Create, EntityLogicalNameConstants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Delete, EntityLogicalNameConstants.Account, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Retrieve, EntityLogicalNameConstants.Account, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Update, EntityLogicalNameConstants.Account, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_register_plugin_step_with_plugin_definition_and_specific_plugin_instance(string messageName,
                                                         string entityLogicalName,
                                                         ProcessingStepStage stage,

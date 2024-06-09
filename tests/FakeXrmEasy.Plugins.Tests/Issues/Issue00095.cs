@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Issues
 {
-    public class Issue0095: FakeXrmEasyPipelineTestsBase
+    public class Issue00095: FakeXrmEasyPipelineTestsBase
     {
         [Fact]
         public void Should_not_raise_reflected_typed_not_found_exception_when_using_early_bound_and_registering_steps()
@@ -32,7 +32,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
         public void Should_have_all_necessary_entities_for_pipeline_simulation_without_raising_exception()
         {
             _context.Initialize(new DataverseEntities.SdkMessage() { Id = Guid.NewGuid()});
-            var ex = Record.Exception(() => FakeXrmEasy.Pipeline.IXrmFakedContextPipelineExtensions.AddPipelineTypes(_context));
+            var ex = Record.Exception(() => PluginStepRegistrationManager.AddPipelineTypes(_context));
             Assert.Null(ex);
         }
 
