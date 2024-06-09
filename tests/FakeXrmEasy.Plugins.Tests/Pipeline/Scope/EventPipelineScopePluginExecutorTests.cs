@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using DataverseEntities;
 using FakeItEasy;
+using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline.Scope;
 using FakeXrmEasy.Plugins.Tests.PluginsForTesting;
 using FakeXrmEasy.Tests.PluginsForTesting;
@@ -21,22 +23,23 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.Scope
 
             _scope.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _pipelineOrganizationService,
                 _context.GetTracingService());
+            
+            _scope.PluginContext = _context.GetDefaultPluginContext();
+            _scope.PluginContext.InputParameters.Add("Target", new Account());
+            _scope.PluginContext.Stage = (int) ProcessingStepStage.Preoperation;
         }
 
         [Fact]
         public void Should_execute_plugin_with_specific_instance()
         {
-            _scope.PluginContext = _context.GetDefaultPluginContext();
-            
-            var plugin = EventPipelineScopePluginExecutor.ExecutePluginWith(_scope, new TracerPlugin());
+            var plugin = EventPipelineScopePluginExecutor.ExecutePluginWith(_scope, new PreAccountCreate());
             A.CallTo(() => plugin.Execute(A<IServiceProvider>._)).MustHaveHappened();
         }
         
         [Fact]
         public void Should_execute_plugin_with_default_constructor()
         {
-            _scope.PluginContext = _context.GetDefaultPluginContext();
-            var plugin = EventPipelineScopePluginExecutor.ExecutePluginWith<TracerPlugin>(_scope);
+            var plugin = EventPipelineScopePluginExecutor.ExecutePluginWith<PreAccountCreate>(_scope);
             A.CallTo(() => plugin.Execute(A<IServiceProvider>._)).MustHaveHappened();
         }
         
