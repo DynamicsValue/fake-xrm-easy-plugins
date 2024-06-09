@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Pipeline.Scope;
+using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 
@@ -40,6 +42,11 @@ namespace FakeXrmEasy.Pipeline
         /// </summary>
         internal List<Entity> PostEntitySnapshotCollection { get; set; }
 
+        /// <summary>
+        /// The current event pipeline scope
+        /// </summary>
+        internal EventPipelineScope Scope { get; set; }
+        
         /// <summary>
         /// Converts the current bulk operation pipeline request parameters into an array of multiple non-bulk operation pipeline execution parameters 
         /// </summary>
@@ -82,9 +89,18 @@ namespace FakeXrmEasy.Pipeline
         /// <returns></returns>
         internal static PipelineStageExecutionParameters FromOrganizationRequest(OrganizationRequest request)
         {
+            EventPipelineScope scope = null;
+            
+            var pipelineOrganizationRequest = request as PipelineOrganizationRequest;
+            if (pipelineOrganizationRequest != null)
+            {
+                scope = pipelineOrganizationRequest.CurrentScope;
+            }
+            
             return new PipelineStageExecutionParameters()
             {
-                Request = request
+                Request = pipelineOrganizationRequest != null ? pipelineOrganizationRequest.OriginalRequest : request,
+                Scope = scope
             };
         }
     }

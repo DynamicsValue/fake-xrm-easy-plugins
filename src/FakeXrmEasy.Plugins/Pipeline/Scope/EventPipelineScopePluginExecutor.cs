@@ -39,7 +39,7 @@ namespace FakeXrmEasy.Pipeline.Scope
         /// <param name="secureConfiguration"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        internal static IPlugin ExecutePluginWithConfigurations<T>(EventPipelineScope scope, string unsecureConfiguration, string secureConfiguration)
+        public static IPlugin ExecutePluginWithConfigurations<T>(EventPipelineScope scope, string unsecureConfiguration, string secureConfiguration)
             where T : class, IPlugin
         {
             var pluginContextProperties = scope.PluginContextProperties;

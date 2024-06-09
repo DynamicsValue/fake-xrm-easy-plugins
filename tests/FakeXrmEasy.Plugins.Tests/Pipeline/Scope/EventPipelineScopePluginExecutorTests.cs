@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline.Scope
 {
-    public class EventPipelineScopePluginExecutorTests: FakeXrmEasyTestsBase
+    public class EventPipelineScopePluginExecutorTests: FakeXrmEasyPipelineTestsBase
     {
         private readonly IPipelineOrganizationService _pipelineOrganizationService;
         private readonly EventPipelineScope _scope;
@@ -27,6 +27,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.Scope
         public void Should_execute_plugin_with_specific_instance()
         {
             _scope.PluginContext = _context.GetDefaultPluginContext();
+            
             var plugin = EventPipelineScopePluginExecutor.ExecutePluginWith(_scope, new TracerPlugin());
             A.CallTo(() => plugin.Execute(A<IServiceProvider>._)).MustHaveHappened();
         }

@@ -45,6 +45,11 @@ namespace FakeXrmEasy.Middleware.Pipeline
         public Func<Assembly, IEnumerable<PluginStepDefinition>> CustomPluginStepDiscoveryFunction { get; set; }
 
         /// <summary>
+        /// Sets the default max depth for plugin execution
+        /// </summary>
+        public int MaxDepth { get; set; }
+        
+        /// <summary>
         /// Default constructor with Pipeline Simulation enabled by default
         /// </summary>
         public PipelineOptions()
@@ -55,6 +60,7 @@ namespace FakeXrmEasy.Middleware.Pipeline
             UseAutomaticPluginStepRegistration = false;
             PluginAssemblies = null;
             CustomPluginStepDiscoveryFunction = null;
+            MaxDepth = 8;  //this is the Dataverse default
         }
     }
 }

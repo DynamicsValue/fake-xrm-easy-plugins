@@ -7,6 +7,7 @@ using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Middleware.Pipeline;
+using FakeXrmEasy.Pipeline.Scope;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.Definitions;
@@ -40,7 +41,7 @@ namespace FakeXrmEasy.Pipeline
             ProcessPreValidation(context, pipelineParameters);
             ProcessPreOperation(context, pipelineParameters);
 
-            var response = next.Invoke(context, request);
+            var response = next.Invoke(context, pipelineParameters.Request);
 
             pipelineParameters.Response = response;
             PopulatePostEntityImagesForRequest(context, pipelineParameters);
@@ -116,26 +117,25 @@ namespace FakeXrmEasy.Pipeline
             return collection;
         }
         
-        private static void InvokePluginMethod(MethodInfo pluginMethod, 
-            IXrmFakedContext context,
+        private static void InvokePluginMethod(MethodInfo pluginMethod,
             IPluginStepDefinition pluginStepDefinition, 
-            XrmFakedPluginExecutionContext pluginContext)
+            EventPipelineScope scope)
         {
             if (pluginStepDefinition.PluginInstance != null)
             {
-                pluginMethod.Invoke(null, new object[] { context, pluginContext, pluginStepDefinition.PluginInstance });
+                pluginMethod.Invoke(null, new object[] { scope, pluginStepDefinition.PluginInstance });
             }
             else if (pluginStepDefinition.Configurations != null)
             {
-                pluginMethod.Invoke(null, new object[] { context, 
-                    pluginContext, 
+                pluginMethod.Invoke(null, new object[] {  
+                    scope, 
                     pluginStepDefinition.Configurations.UnsecureConfig,
                     pluginStepDefinition.Configurations.SecureConfig
                 });
             }
             else
             {
-                pluginMethod.Invoke(null, new object[] { context, pluginContext });
+                pluginMethod.Invoke(null, new object[] { scope });
             }
         }
         
@@ -147,17 +147,17 @@ namespace FakeXrmEasy.Pipeline
             MethodInfo methodInfo = null;
             if (pluginStepDefinition.PluginInstance != null)
             {
-                methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext), typeof(IPlugin) });
+                methodInfo = typeof(EventPipelineScopePluginExecutor).GetMethod("ExecutePluginWith", new[] { typeof(EventPipelineScope), typeof(IPlugin) });
                 return methodInfo;
             }
             
             if (pluginStepDefinition.Configurations != null)
             {
-                methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWithConfigurations", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext), typeof(string), typeof(string) });
+                methodInfo = typeof(EventPipelineScopePluginExecutor).GetMethod("ExecutePluginWithConfigurations", new[] { typeof(EventPipelineScope), typeof(string), typeof(string) });
             }
             else
             {
-                methodInfo = typeof(IXrmBaseContextPluginExtensions).GetMethod("ExecutePluginWith", new[] { typeof(IXrmFakedContext), typeof(XrmFakedPluginExecutionContext) });
+                methodInfo = typeof(EventPipelineScopePluginExecutor).GetMethod("ExecutePluginWith", new[] { typeof(EventPipelineScope) });
             }
             
             return methodInfo.MakeGenericMethod(pluginType);
@@ -174,23 +174,20 @@ namespace FakeXrmEasy.Pipeline
         /// <param name="organizationResponse">The organization response that triggered this plugin execution</param>
         private static void ExecutePipelinePlugins(IXrmFakedContext context,
                                                     IEnumerable<PluginStepDefinition> pluginSteps,
-                                                    OrganizationRequest organizationRequest,
-                                                    Entity previousValues,
-                                                    Entity resultingAttributes,
-                                                    OrganizationResponse organizationResponse)
+                                                    PipelineStageExecutionParameters parameters)
         {
             var isAuditEnabled = context.GetProperty<PipelineOptions>().UsePluginStepAudit;
-
+            
             foreach (var pluginStep in pluginSteps)
             {
                 IEnumerable<Entity> preImageDefinitions = null;
-                if (previousValues != null)
+                if (parameters.PreEntitySnapshot != null)
                 {
                     preImageDefinitions = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(context, pluginStep.Id, ProcessingStepImageType.PreImage);
                 }
 
                 IEnumerable<Entity> postImageDefinitions = null;
-                if (resultingAttributes != null)
+                if (parameters.PostEntitySnapshot != null)
                 {
                     postImageDefinitions = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(context, pluginStep.Id, ProcessingStepImageType.PostImage);
                 }
@@ -199,12 +196,38 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.Mode = (int)pluginStep.Mode;
                 pluginContext.Stage = (int)pluginStep.Stage;
                 pluginContext.MessageName = pluginStep.MessageName;
-                pluginContext.InputParameters = organizationRequest.Parameters;
-                pluginContext.OutputParameters = organizationResponse != null ? organizationResponse.Results : new ParameterCollection();
-                pluginContext.PreEntityImages = GetEntityImageCollection(preImageDefinitions, previousValues);
-                pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, resultingAttributes);
+                pluginContext.InputParameters = parameters.Request.Parameters;
+                pluginContext.OutputParameters = parameters.Response != null ? parameters.Response.Results : new ParameterCollection();
+                pluginContext.PreEntityImages = GetEntityImageCollection(preImageDefinitions, parameters.PreEntitySnapshot);
+                pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, parameters.PostEntitySnapshot);
+                pluginContext.Depth = 1;
+                
+                if (parameters.Scope != null)
+                {
+                    pluginContext.Depth = parameters.Scope.PluginContext.Depth + 1;
 
-                ExecutePlugin(context, pluginStep, pluginContext, isAuditEnabled);
+                    var pipelineOptions = context.GetProperty<PipelineOptions>();
+                    if (pluginContext.Depth > pipelineOptions.MaxDepth)
+                    {
+                        throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.SdkCorrelationTokenDepthTooHigh,
+                            "This workflow job was canceled because the workflow that started it included an infinite loop. Correct the workflow logic and try again. For information about workflow logic, see Help");
+                    }
+                    pluginContext.ParentContext = parameters.Scope.PluginContext;
+                }
+
+                var newScope = new EventPipelineScope()
+                {
+                    PluginContext = pluginContext
+                };
+                
+                var pipelineOrganizationService =
+                    PipelineOrganizationServiceFactory.New(context.GetOrganizationService(),
+                        newScope);
+
+                newScope.PluginContextProperties = new XrmFakedPluginContextProperties(context,
+                    pipelineOrganizationService, context.GetTracingService());
+                
+                ExecutePlugin(context, pluginStep, newScope, isAuditEnabled);
             }
         }
         
@@ -253,14 +276,14 @@ namespace FakeXrmEasy.Pipeline
         
         private static void ExecutePlugin(IXrmFakedContext context,
             PluginStepDefinition pluginStepDefinition,
-            XrmFakedPluginExecutionContext pluginContext,
+            EventPipelineScope scope,
             bool isAuditEnabled)
         {
             var pluginMethod = GetPluginMethod(pluginStepDefinition);
             
             try
             {
-                InvokePluginMethod(pluginMethod, context, pluginStepDefinition, pluginContext);
+                InvokePluginMethod(pluginMethod, pluginStepDefinition, scope);
             }
             catch (TargetInvocationException ex)
             {
@@ -269,7 +292,7 @@ namespace FakeXrmEasy.Pipeline
             
             if (isAuditEnabled)
             {
-                AddPluginStepAuditDetails(context, pluginMethod, pluginContext, pluginStepDefinition);
+                AddPluginStepAuditDetails(context, pluginMethod, scope.PluginContext, pluginStepDefinition);
             }
         }
         
@@ -283,8 +306,8 @@ namespace FakeXrmEasy.Pipeline
             var plugins = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(context, parameters);
             if (plugins == null)
                 return;
-
-            ExecutePipelinePlugins(context, plugins, parameters.Request, parameters.PreEntitySnapshot, parameters.PostEntitySnapshot, parameters.Response);
+            
+            ExecutePipelinePlugins(context, plugins, parameters);
         }
 
         internal static void PopulatePreEntityImagesForRequest(IXrmFakedContext context,

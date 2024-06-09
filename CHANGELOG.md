@@ -2,6 +2,7 @@
 
 ### Added
 
+- Ability to prevent infinite loops in plugin executions - https://github.com/DynamicsValue/fake-xrm-easy/issues/70
 - Event Pipeline Scopes : Introducing new capability to capture the 'scope' or stack of plugin executions. This will enable many features including - https://github.com/DynamicsValue/fake-xrm-easy/issues/70
 - Pipeline Simulation: Add support for pre images and post image collections - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
 - Pipeline Simulation: Update Plugin Step Validator to include bulk operations - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
