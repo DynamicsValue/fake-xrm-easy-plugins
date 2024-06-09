@@ -14,7 +14,8 @@ using System;
 namespace FakeXrmEasy.Plugins 
 {
     /// <summary>
-    /// Implementation to override default plugin context properties and the ability to create fake implementations for any interface returned by the plugin execution context
+    /// Implements several interfaces that are needed for plugin execution (i.e. IServiceProvider, IExecutionContext, IPluginExecutionContext)
+    /// from a given IOrganizationService and ITracingService
     /// </summary>
     public class XrmFakedPluginContextProperties : IXrmFakedPluginContextProperties
     {
@@ -62,7 +63,7 @@ namespace FakeXrmEasy.Plugins
             _serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>();
 
 #if FAKE_XRM_EASY_9
-                _entityDataSourceRetrieverService = A.Fake<IEntityDataSourceRetrieverService>();
+            _entityDataSourceRetrieverService = A.Fake<IEntityDataSourceRetrieverService>();
                 A.CallTo(() => _entityDataSourceRetrieverService.RetrieveEntityDataSource())
                     .ReturnsLazily(() => EntityDataSourceRetriever);
 

@@ -62,18 +62,8 @@ namespace FakeXrmEasy.Plugins
         /// <returns></returns>
         public static IPlugin ExecutePluginWith(this IXrmBaseContext context, XrmFakedPluginExecutionContext plugCtx, IPlugin instance)
         {
-            var fakedServiceProvider = context.GetPluginContextProperties().GetServiceProvider(plugCtx);
-
-            var fakedPlugin = A.Fake<IPlugin>();
-            A.CallTo(() => fakedPlugin.Execute(A<IServiceProvider>._))
-                .Invokes((IServiceProvider provider) =>
-                {
-                    var plugin = instance;
-                    plugin.Execute(fakedServiceProvider);
-                });
-
-            fakedPlugin.Execute(fakedServiceProvider);
-            return fakedPlugin;
+            var pluginContextProperties = context.GetPluginContextProperties();
+            return FakePluginExecutor.ExecutePluginWith(pluginContextProperties, plugCtx, instance);
         }
 
         /// <summary>
@@ -93,7 +83,7 @@ namespace FakeXrmEasy.Plugins
 
             return context.ExecutePluginWith(ctx, new T());
         }
-
+        
         /// <summary>
         /// Method to execute a plugin that takes several plugin execution properties as parameters. Soon to be deprecated, use the ExecutePluginWith&lt;T&gt; that takes a plugin context instance instead
         /// </summary>
@@ -113,18 +103,9 @@ namespace FakeXrmEasy.Plugins
             ctx.PreEntityImages.AddRange(preEntityImages);
             ctx.PostEntityImages.AddRange(postEntityImages);
 
-            var fakedServiceProvider = context.GetPluginContextProperties().GetServiceProvider(ctx);
+            var pluginProperties = context.GetPluginContextProperties();
 
-            var fakedPlugin = A.Fake<IPlugin>();
-            A.CallTo(() => fakedPlugin.Execute(A<IServiceProvider>._))
-                .Invokes((IServiceProvider provider) =>
-                {
-                    var plugin = new T();
-                    plugin.Execute(fakedServiceProvider);
-                });
-
-            fakedPlugin.Execute(fakedServiceProvider); //Execute the plugin
-            return fakedPlugin;
+            return FakePluginExecutor.ExecutePluginWith<T>(pluginProperties, ctx);
         }
 
 
@@ -140,17 +121,8 @@ namespace FakeXrmEasy.Plugins
         public static IPlugin ExecutePluginWithConfigurations<T>(this IXrmBaseContext context, XrmFakedPluginExecutionContext plugCtx, string unsecureConfiguration, string secureConfiguration)
             where T : class, IPlugin
         {
-            var pluginType = typeof(T);
-            var constructors = pluginType.GetConstructors().ToList();
-
-            if (!constructors.Any(c => c.GetParameters().Length == 2 && c.GetParameters().All(param => param.ParameterType == typeof(string))))
-            {
-                throw new ArgumentException("The plugin you are trying to execute does not specify a constructor for passing in two configuration strings.");
-            }
-
-            var pluginInstance = (T)Activator.CreateInstance(typeof(T), unsecureConfiguration, secureConfiguration);
-
-            return context.ExecutePluginWith(plugCtx, pluginInstance);
+            var pluginContextProperties = context.GetPluginContextProperties();
+            return FakePluginExecutor.ExecutePluginWithConfigurations<T>(pluginContextProperties, plugCtx, unsecureConfiguration, secureConfiguration);
         }
 
         /// <summary>
