@@ -168,10 +168,8 @@ namespace FakeXrmEasy.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <param name="pluginSteps"></param>
-        /// <param name="organizationRequest"></param>
-        /// <param name="previousValues"></param>
-        /// <param name="resultingAttributes"></param>
-        /// <param name="organizationResponse">The organization response that triggered this plugin execution</param>
+        /// <param name="parameters"></param>
+        /// <exception cref="Exception"></exception>
         private static void ExecutePipelinePlugins(IXrmFakedContext context,
                                                     IEnumerable<PluginStepDefinition> pluginSteps,
                                                     PipelineStageExecutionParameters parameters)
