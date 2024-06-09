@@ -30,5 +30,21 @@ namespace FakeXrmEasy.Pipeline.Scope
             var pluginContext = scope.PluginContext;
             return FakePluginExecutor.ExecutePluginWith<T>(pluginContextProperties, pluginContext);
         }
+
+        /// <summary>
+        /// Executes a plugin with configurations against the current scope
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <param name="unsecureConfiguration"></param>
+        /// <param name="secureConfiguration"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        internal static IPlugin ExecutePluginWithConfigurations<T>(EventPipelineScope scope, string unsecureConfiguration, string secureConfiguration)
+            where T : class, IPlugin
+        {
+            var pluginContextProperties = scope.PluginContextProperties;
+            var pluginContext = scope.PluginContext;
+            return FakePluginExecutor.ExecutePluginWithConfigurations<T>(pluginContextProperties, pluginContext, unsecureConfiguration, secureConfiguration);
+        }
     }
 }

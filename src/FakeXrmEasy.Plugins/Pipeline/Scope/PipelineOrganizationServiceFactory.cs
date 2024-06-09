@@ -5,7 +5,7 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Pipeline.Scope
 {
-    internal class PipelineOrganizationServiceFactory
+    internal static class PipelineOrganizationServiceFactory
     {
         /// <summary>
         /// Creates a new IPipelineOrganizationService from a previous IOrganizationService with a given scope
