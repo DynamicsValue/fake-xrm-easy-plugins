@@ -35,7 +35,7 @@ namespace FakeXrmEasy.Plugins.Tests.Images
         [InlineData(typeof(DeleteRequest), ProcessingStepStage.Postoperation, true)]
         public void Should_return_valid_availability(Type orgRequestType, ProcessingStepStage stage, bool isAvailable)
         {
-            Assert.Equal(isAvailable, PreImage.IsAvailableFor(orgRequestType, stage));
+            Assert.Equal(isAvailable, PreImage.IsAvailableFor(orgRequestType));
         }
     }
 }

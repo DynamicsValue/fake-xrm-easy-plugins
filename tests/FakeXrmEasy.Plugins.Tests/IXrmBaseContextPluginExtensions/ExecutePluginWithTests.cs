@@ -89,40 +89,35 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             ParameterCollection inputParameters = new ParameterCollection();
             inputParameters.Add("Target", new Entity());
 
-            var pluginContext = new XrmFakedPluginExecutionContext()
-            {
-                InputParameters = inputParameters,
-                UserId = Guid.NewGuid(),
-                InitiatingUserId = Guid.NewGuid()
-            };
+            var pluginContext = XrmFakedPluginExecutionContext.New();
+            
+            pluginContext.InputParameters = inputParameters;
+            pluginContext.UserId = Guid.NewGuid();
+            pluginContext.InitiatingUserId = Guid.NewGuid();
 
             //Parameters are defaulted now...
             var ex = Record.Exception(() => _context.ExecutePluginWith<TestContextPlugin>(pluginContext));
             Assert.Null(ex);
-
-            pluginContext = new XrmFakedPluginExecutionContext()
-            {
-                InputParameters = inputParameters,
-                MessageName = "Create",
-                InitiatingUserId = Guid.NewGuid()
-            };
-
+            
+            pluginContext = XrmFakedPluginExecutionContext.New();
+            pluginContext.InputParameters = inputParameters;
+            pluginContext.MessageName = "Create";
+            pluginContext.InitiatingUserId = Guid.NewGuid();
+            
             ex = Record.Exception(() => _context.ExecutePluginWith<TestContextPlugin>(pluginContext));
             Assert.Null(ex);
 
-            pluginContext = new XrmFakedPluginExecutionContext()
-            {
-                InputParameters = inputParameters,
-                MessageName = "Update",
-                UserId = Guid.NewGuid()
-            };
-
+            pluginContext = XrmFakedPluginExecutionContext.New();
+            pluginContext.InputParameters = inputParameters;
+            pluginContext.MessageName = "Update";
+            pluginContext.UserId = Guid.NewGuid();
+            
             ex = Record.Exception(() => _context.ExecutePluginWith<TestContextPlugin>(pluginContext));
             Assert.Null(ex);
         }
 
         [Fact]
-        public void When_executing_a_plugin_primaryentityname_exists_in_the_context()
+        public void When_executing_a_plugin_primary_entityname_exists_in_the_context()
         {
             var pluginContext = _context.GetDefaultPluginContext();
             pluginContext.PrimaryEntityName = "Account";
@@ -210,6 +205,17 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             Assert.Equal(pluginContext.OperationCreatedOn, executionContext.OperationCreatedOn);
             Assert.Equal(pluginContext.IsInTransaction, executionContext.IsInTransaction);
         }
-
+        
+        #if FAKE_XRM_EASY_9
+        [Fact]
+        public void When_executing_a_plugin_that_demands_bulk_operations_interfaces_they_are_returned()
+        {
+            var pluginContext = _context.GetDefaultPluginContext();
+            pluginContext.InputParameters.Add("Targets", new EntityCollection() {});
+            
+            var ex = Record.Exception(() => _context.ExecutePluginWith<FollowupPlugin4>(pluginContext));
+            Assert.Null(ex);
+        }
+        #endif
     }
 }
