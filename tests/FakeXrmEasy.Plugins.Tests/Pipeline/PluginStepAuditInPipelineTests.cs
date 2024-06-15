@@ -155,10 +155,12 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal("Create", stepsAudit[0].MessageName);
             Assert.Equal(ProcessingStepStage.Preoperation, stepsAudit[0].Stage);
             Assert.Equal(typeof(AccountNumberPlugin), stepsAudit[0].PluginAssemblyType);
+            Assert.Equal(1, stepsAudit[0].PluginContext.Depth);
 
             Assert.Equal("Create", stepsAudit[1].MessageName);
             Assert.Equal(ProcessingStepStage.Postoperation, stepsAudit[1].Stage);
             Assert.Equal(typeof(FollowupPlugin), stepsAudit[1].PluginAssemblyType);
+            Assert.Equal(1, stepsAudit[1].PluginContext.Depth);
         }
 
         [Fact]
