@@ -28,8 +28,13 @@ namespace FakeXrmEasy.Plugins.PluginImages
         /// <returns></returns>
         internal static bool IsAvailableFor(Type organizationRequestType, ProcessingStepStage stage)
         {
-            return organizationRequestType == typeof(CreateRequest) && stage == ProcessingStepStage.Postoperation
-                || organizationRequestType == typeof(UpdateRequest) && stage == ProcessingStepStage.Postoperation;
+            if (stage != ProcessingStepStage.Postoperation)
+            {
+                return false;
+            }
+            
+            return organizationRequestType == typeof(CreateRequest)
+                || organizationRequestType == typeof(UpdateRequest);
         }
     }
 }

@@ -9,14 +9,14 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
+namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
 {
     public class GetPluginImageDefinitionsWithRetrieveMultipleTests : FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_return_empty_plugin_image_list_if_none_were_registered()
         {
-            var pluginImages = _context.GetPluginImageDefinitions(Guid.NewGuid(), ProcessingStepImageType.Both);
+            var pluginImages = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(_context,Guid.NewGuid(), ProcessingStepImageType.Both);
             Assert.Empty(pluginImages);
         }
 
@@ -49,8 +49,8 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 Mode = ProcessingStepMode.Synchronous
             });
 
-            var pluginImagesFirstPluginStep = _context.GetPluginImageDefinitions(pluginStepIdWithImages, queryType).ToList();
-            var pluginImagesSecondPluginStep = _context.GetPluginImageDefinitions(otherPluginStepId, queryType).ToList();
+            var pluginImagesFirstPluginStep = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(_context, pluginStepIdWithImages, queryType).ToList();
+            var pluginImagesSecondPluginStep = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(_context, otherPluginStepId, queryType).ToList();
 
             Assert.Equal(shouldContainImage, pluginImagesFirstPluginStep.Count > 0);
             Assert.Empty(pluginImagesSecondPluginStep);
@@ -92,8 +92,8 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmFakedContextPipelineExtensions
                 Mode = ProcessingStepMode.Synchronous
             });
 
-            var pluginImagesFirstPluginStep = _context.GetPluginImageDefinitions(pluginStepIdWithImages, queryType).ToList();
-            var pluginImagesSecondPluginStep = _context.GetPluginImageDefinitions(otherPluginStepId, queryType).ToList();
+            var pluginImagesFirstPluginStep = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(_context, pluginStepIdWithImages, queryType).ToList();
+            var pluginImagesSecondPluginStep = RegisteredPluginStepsRetriever.GetPluginImageDefinitions(_context, otherPluginStepId, queryType).ToList();
 
             Assert.Equal(shouldContainImage, pluginImagesFirstPluginStep.Count > 0);
             Assert.Empty(pluginImagesSecondPluginStep);

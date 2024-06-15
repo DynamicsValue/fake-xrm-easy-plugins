@@ -25,17 +25,22 @@ namespace FakeXrmEasy.Plugins.Tests.Audit
             Assert.Empty(pluginSteps);
         }
 
-        [Fact]
-        public void Should_return_a_plugin_step_audit_that_was_added()
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_return_a_plugin_step_audit_that_was_added(ProcessingStepStage stage, ProcessingStepMode mode)
         {
             var pluginStepAuditDetails = new PluginStepAuditDetails()
             {
                 MessageName = "Create",
                 PluginAssemblyType = typeof(AccountNumberPlugin),
                 PluginStepId = Guid.NewGuid(),
-                Stage = ProcessingStepStage.Preoperation,
+                Stage = stage,
                 TargetEntity = new Entity(Contact.EntityLogicalName) { Id = Guid.NewGuid() },
-                TargetEntityReference = new EntityReference(Contact.EntityLogicalName, Guid.NewGuid())
+                TargetEntityReference = new EntityReference(Contact.EntityLogicalName, Guid.NewGuid()),
+                Mode = mode
             };
 
             _pluginStepAudit.Add(pluginStepAuditDetails);
@@ -48,6 +53,7 @@ namespace FakeXrmEasy.Plugins.Tests.Audit
             Assert.Equal(pluginStepAuditDetails.PluginAssemblyType, first.PluginAssemblyType);
             Assert.Equal(pluginStepAuditDetails.PluginStepId, first.PluginStepId);
             Assert.Equal(pluginStepAuditDetails.Stage, first.Stage);
+            Assert.Equal(pluginStepAuditDetails.Mode, first.Mode);
             Assert.Equal(pluginStepAuditDetails.TargetEntity, first.TargetEntity);
             Assert.Equal(pluginStepAuditDetails.TargetEntityReference, first.TargetEntityReference);
             Assert.NotEqual(DateTime.MinValue, first.ExecutedOn); 
