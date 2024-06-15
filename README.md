@@ -5,6 +5,8 @@
 --------------------------------------------------
 This repo contains the source code for the FakeXrmEasy.Plugins package.
 
+**NOTE: We centrally manage and prioritize issues in the DynamicsValue/fake-xrm-easy repo, if you need to raise an issue related to this package
+please do so at: https://github.com/DynamicsValue/fake-xrm-easy**
 
 |Build|Quality Gate|Coverage|Security|Maintainability|Reliability|
 |-----| ---------- | ------ | ------ | ------------- | --------- |

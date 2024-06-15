@@ -42,28 +42,38 @@ namespace FakeXrmEasy.Plugins.Performance
             }
         }
 
+        /* Significantly slower than GetPluginStepsWithQuery below
         [Benchmark]
         public void GetPluginStepsWithRetrieveMultiple()
         {
-            _context.GetPluginStepsForOrganizationRequestWithRetrieveMultiple("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
+            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
         }
-
+        */
+        
         [Benchmark]
         public void GetPluginStepsWithQuery()
         {
-            _context.GetPluginStepsForOrganizationRequest("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
+            var parameters = new PipelineStageExecutionParameters()
+            {
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                Request = _createRequest
+            };
+            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, parameters);
         }
 
+        /*
         [Benchmark]
         public void GetPluginStepImageWithRetrieveMultiple()
         {
-            _context.GetPluginImageDefinitionsWithRetrieveMultiple(_lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
+            RegisteredPluginStepsRetriever.GetPluginImageDefinitionsWithRetrieveMultiple(_context, _lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
         }
-
+        */
+        
         [Benchmark]
         public void GetPluginStepImageWithQuery()
         {
-            _context.GetPluginImageDefinitionsWithQuery(_lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
+            RegisteredPluginStepsRetriever.GetPluginImageDefinitionsWithQuery(_context, _lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
         }
     }
 }
