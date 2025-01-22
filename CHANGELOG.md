@@ -1,3 +1,9 @@
+## [2.6.0]
+
+### Changed
+
+- Updated dependencies to 2.6.x
+
 ## [2.5.0]
 
 ### Added
