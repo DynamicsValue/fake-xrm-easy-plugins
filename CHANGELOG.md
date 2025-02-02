@@ -1,3 +1,9 @@
+## [3.6.0]
+
+### Changed
+
+- Updated dependencies to 3.6.x
+
 ## [3.5.0]
 
 ### Added
