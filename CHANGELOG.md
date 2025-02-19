@@ -1,3 +1,9 @@
+## [2.6.1]
+
+### Changed
+
+- Remove XrmTooling dependency
+
 ## [2.6.0]
 
 ### Changed
