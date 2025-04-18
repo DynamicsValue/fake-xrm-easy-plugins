@@ -33,7 +33,8 @@ namespace FakeXrmEasy.Plugins.PluginImages
         internal static bool IsAvailableFor(Type organizationRequestType)
         {
             return organizationRequestType == typeof(UpdateRequest)
-                   || organizationRequestType == typeof(DeleteRequest);
+                   || organizationRequestType == typeof(DeleteRequest)
+                   || organizationRequestType == typeof(AssignRequest);
         }
     }
 }
