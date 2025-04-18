@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginInstances;
 using FakeXrmEasy.Plugins.PluginSteps;
@@ -80,8 +81,29 @@ namespace FakeXrmEasy.Pipeline
             return new string[] { };
         }
 
+        /// <summary>
+        /// Retrieves the logical name for requests that don't have a generic target or targets parameters
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private static string GetNonTargetOrganizationRequestEntityLogicalName(OrganizationRequest request)
+        {
+            if (request.RequestName.Equals(OrganizationRequestNameConstants.SEND_EMAIL))
+            {
+                return EntityLogicalNameConstants.Email;
+            }
+
+            return null;
+        }
+        
         internal static string GetOrganizationRequestEntityLogicalName(OrganizationRequest request)
         {
+            var nonTargetEntityLogicalName = GetNonTargetOrganizationRequestEntityLogicalName(request);
+            if (nonTargetEntityLogicalName != null)
+            {
+                return nonTargetEntityLogicalName;
+            }
+ 
             var target = GetTargetForRequest(request);
             if (target != null)
             {
@@ -128,6 +150,7 @@ namespace FakeXrmEasy.Pipeline
             }
 
             var pluginInstancesRepository = context.GetProperty<IPluginInstancesRepository>();
+            var messageName = parameters.Request.RequestName.ToMessageName();
             
             var pluginSteps = (from step in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
                                join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
@@ -140,14 +163,14 @@ namespace FakeXrmEasy.Pipeline
                                
                                where (step[SdkMessageProcessingStepFieldNames.Stage] as OptionSetValue).Value == (int)parameters.Stage
                                where (step[SdkMessageProcessingStepFieldNames.Mode] as OptionSetValue).Value == (int)parameters.Mode
-                               where (message[SdkMessageFieldNames.Name] as string) == parameters.Request.RequestName
+                               where (message[SdkMessageFieldNames.Name] as string) == messageName
                                select new PluginStepDefinition
                                {
                                    Id = step.Id,
                                    Rank = (int)step[SdkMessageProcessingStepFieldNames.Rank],
                                    Stage = parameters.Stage,
                                    Mode = parameters.Mode,
-                                   MessageName = parameters.Request.RequestName,
+                                   MessageName = messageName,
                                    FilteringAttributes = step.GetPluginStepFilteringAttributes(),
                                    EntityTypeCode = messageFilter.GetMessageFilterPrimaryObjectCode(),
                                    EntityLogicalName = messageFilter.GetMessageFilterEntityLogicalName(),

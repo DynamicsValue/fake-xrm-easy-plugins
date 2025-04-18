@@ -3,6 +3,8 @@ using FakeXrmEasy.Plugins.PluginImages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
+using System.ServiceModel.Channels;
+using Microsoft.Crm.Sdk.Messages;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Images
@@ -22,20 +24,13 @@ namespace FakeXrmEasy.Plugins.Tests.Images
         ///      Upsert       POST            ??             ??
         ///      
         [Theory]
-        [InlineData(typeof(OrganizationRequest), ProcessingStepStage.MainOperation, false)]
-        [InlineData(typeof(OrganizationRequest), ProcessingStepStage.Prevalidation, false)]
-        [InlineData(typeof(CreateRequest), ProcessingStepStage.Prevalidation, false)]
-        [InlineData(typeof(UpdateRequest), ProcessingStepStage.Prevalidation, true)]
-        [InlineData(typeof(DeleteRequest), ProcessingStepStage.Prevalidation, true)]
-        [InlineData(typeof(CreateRequest), ProcessingStepStage.Preoperation, false)]
-        [InlineData(typeof(UpdateRequest), ProcessingStepStage.Preoperation, true)]
-        [InlineData(typeof(DeleteRequest), ProcessingStepStage.Preoperation, true)]
-        [InlineData(typeof(CreateRequest), ProcessingStepStage.Postoperation, false)]
-        [InlineData(typeof(UpdateRequest), ProcessingStepStage.Postoperation, true)]
-        [InlineData(typeof(DeleteRequest), ProcessingStepStage.Postoperation, true)]
-        public void Should_return_valid_availability(Type orgRequestType, ProcessingStepStage stage, bool isAvailable)
+        [InlineData(MessageNameConstants.Create, false)]
+        [InlineData(MessageNameConstants.Update, true)]
+        [InlineData(MessageNameConstants.Delete, true)]
+        [InlineData(MessageNameConstants.Send, true)]
+        public void Should_return_valid_availability(string messageName, bool isAvailable)
         {
-            Assert.Equal(isAvailable, PreImage.IsAvailableFor(orgRequestType));
+            Assert.Equal(isAvailable, PreImage.IsAvailableFor(messageName));
         }
     }
 }

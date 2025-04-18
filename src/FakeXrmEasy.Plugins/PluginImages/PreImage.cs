@@ -23,17 +23,18 @@ namespace FakeXrmEasy.Plugins.PluginImages
     ///      Delete       POST            Yes            No
     ///      Upsert       POST            ??             ??
     /// </summary>
-    internal class PreImage
+    internal static class PreImage
     {
         /// <summary>
         /// Determines if a PreImage is available for the given request and plugin stage
         /// </summary>
-        /// <param name="organizationRequestType">The request to check the availability for</param>
+        /// <param name="messageName">The message name to check the availability for</param>
         /// <returns></returns>
-        internal static bool IsAvailableFor(Type organizationRequestType)
+        internal static bool IsAvailableFor(string messageName)
         {
-            return organizationRequestType == typeof(UpdateRequest)
-                   || organizationRequestType == typeof(DeleteRequest);
+            return MessageNameConstants.Update.Equals(messageName)
+                   || MessageNameConstants.Delete.Equals(messageName)
+                   || MessageNameConstants.Send.Equals(messageName);
         }
     }
 }
