@@ -1,13 +1,13 @@
 ﻿using System;
-using Crm;
+using DataverseEntities;
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Tests.PluginsForTesting
 {
     /// <summary>
-    /// Test plugin used to reproduce infinite loops
+    /// Test plugin used to test plugin depth
     /// </summary>
-    public class InfiniteUpdatePlugin : IPlugin
+    public class DepthPlugin : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
         {
@@ -17,6 +17,8 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             IOrganizationService service = serviceFactory.CreateOrganizationService(null);
 
+            if (context.Depth > 1) return;
+            
             var updatedEntity = new Account { Id = entity.Id, Name = "Updated" };
             service.Update(updatedEntity);
         }

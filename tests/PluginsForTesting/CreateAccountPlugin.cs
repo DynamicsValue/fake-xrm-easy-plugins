@@ -1,5 +1,5 @@
 ﻿using System;
-using Crm;
+using DataverseEntities;
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Tests.PluginsForTesting

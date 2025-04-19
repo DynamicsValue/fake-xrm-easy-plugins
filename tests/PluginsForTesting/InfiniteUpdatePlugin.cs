@@ -1,10 +1,13 @@
 ﻿using System;
-using Crm;
+using DataverseEntities;
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Tests.PluginsForTesting
 {
-    public class PostOperationUpdatePlugin : IPlugin
+    /// <summary>
+    /// Test plugin used to reproduce infinite loops
+    /// </summary>
+    public class InfiniteUpdatePlugin : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
         {

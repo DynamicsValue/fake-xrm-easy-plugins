@@ -112,6 +112,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" />
     <ProjectReference Include="..\DataverseEntitiesWithPartialPipelineTypes\DataverseEntitiesWithPartialPipelineTypes.csproj" />
+    <ProjectReference Include="..\PluginsForTesting\PluginsForTesting.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == ''">
