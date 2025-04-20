@@ -11,21 +11,21 @@
 
 namespace DataverseEntities
 {
-	internal sealed class EntityOptionSetEnum
-	{
+    internal sealed class EntityOptionSetEnum
+    {
 		
-		public static System.Nullable<int> GetEnum(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName)
-		{
-			if (entity.Attributes.ContainsKey(attributeLogicalName))
-			{
-				Microsoft.Xrm.Sdk.OptionSetValue value = entity.GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValue>(attributeLogicalName);
-				if (value != null)
-				{
-					return value.Value;
-				}
-			}
-			return null;
-		}
+        public static System.Nullable<int> GetEnum(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName)
+        {
+            if (entity.Attributes.ContainsKey(attributeLogicalName))
+            {
+                Microsoft.Xrm.Sdk.OptionSetValue value = entity.GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValue>(attributeLogicalName);
+                if (value != null)
+                {
+                    return value.Value;
+                }
+            }
+            return null;
+        }
 
 #if FAKE_XRM_EASY_9
 		public static System.Collections.Generic.IEnumerable<T> GetMultiEnum<T>(Microsoft.Xrm.Sdk.Entity entity, string attributeLogicalName)
@@ -54,6 +54,6 @@ namespace DataverseEntities
 		}
 #endif
 
-	}
+    }
 }
 #pragma warning restore CS1591

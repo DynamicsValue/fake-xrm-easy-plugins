@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>B1AF504D-910B-47C1-B870-CA0AB2E35816</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DataverseEntities.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyProxyTypeAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\contact.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\dv_plugin_trace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\task.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EntityOptionSetEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OptionSets\componentstate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OptionSets\msft_datastate.cs" />
+  </ItemGroup>
+</Project>

@@ -13,16 +13,16 @@ namespace DataverseEntities
 {
 	
 	
-	[System.Runtime.Serialization.DataContractAttribute()]
-	[System.CodeDom.Compiler.GeneratedCodeAttribute("CrmSvcUtil", "9.1.0.118")]
-	public enum msft_datastate
-	{
+    [System.Runtime.Serialization.DataContractAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("CrmSvcUtil", "9.1.0.118")]
+    public enum msft_datastate
+    {
 		
-		[System.Runtime.Serialization.EnumMemberAttribute()]
-		Default = 0,
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Default = 0,
 		
-		[System.Runtime.Serialization.EnumMemberAttribute()]
-		Retain = 1,
-	}
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Retain = 1,
+    }
 }
 #pragma warning restore CS1591

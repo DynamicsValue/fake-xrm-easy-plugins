@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataverseEntitiesWithPartia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginsForTesting", "tests\PluginsForTesting\PluginsForTesting.csproj", "{54E97A13-C616-4C0A-BC63-9565BFB3A471}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DataverseEntities.Shared", "tests\DataverseEntities.Shared\DataverseEntities.Shared.shproj", "{B75B5752-4643-4750-BDCB-6DCD3C743137}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 					FAKE_XRM_EASY_9|Any CPU = FAKE_XRM_EASY_9|Any CPU
@@ -275,6 +277,7 @@ Global
 		{A96911D3-DD4C-4051-BCB2-58A109692CA7} = {A8F9688E-9646-41FE-B212-0587811B519D}
 		{CACA71D9-1B19-4C56-88F8-6CC18C46523C} = {A8F9688E-9646-41FE-B212-0587811B519D}
 		{54E97A13-C616-4C0A-BC63-9565BFB3A471} = {A8F9688E-9646-41FE-B212-0587811B519D}
+		{B75B5752-4643-4750-BDCB-6DCD3C743137} = {A8F9688E-9646-41FE-B212-0587811B519D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {179999F5-10E5-4112-8539-82E291FC16AC}
