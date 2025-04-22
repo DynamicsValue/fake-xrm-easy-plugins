@@ -27,6 +27,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
             _email = new Email()
             {
                 Id = Guid.NewGuid(),
+                Subject = "FXE Test"
             };
 
             _sendEmailRequest = new SendEmailRequest()
@@ -77,7 +78,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
         [InlineData(ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
         [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
-        public void Should_not_trigger_update_email_plugin(ProcessingStepStage stage, ProcessingStepMode mode)
+        public void Should_trigger_update_email_plugin(ProcessingStepStage stage, ProcessingStepMode mode)
         {
             _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
             {
@@ -95,7 +96,13 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
             var pluginStepAudit = _context.GetPluginStepAudit();
             var auditedSteps = pluginStepAudit.CreateQuery().ToList();
 
-            Assert.Empty(auditedSteps);
+            Assert.Single(auditedSteps);
+
+            var auditedStep = auditedSteps[0];
+            Assert.Equal(MessageNameConstants.Update, auditedStep.MessageName);
+            Assert.Equal(typeof(TracerPlugin), auditedStep.PluginAssemblyType);
+            Assert.Equal(stage, auditedStep.Stage);
+            Assert.Equal(mode, auditedStep.Mode);
         }
     }
 }

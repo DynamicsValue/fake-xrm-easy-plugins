@@ -10,6 +10,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
 {
     public class TracerPlugin : IPlugin
     {
+        private const int CONTEXT_MAX_LENGTH = 8000;
         public void Execute(IServiceProvider serviceProvider)
         {
             var context = (IPluginExecutionContext4)serviceProvider.GetService(typeof(IPluginExecutionContext4));
@@ -39,7 +40,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
                     dv_message = context.MessageName,
                     dv_stage = context.Stage,
                     dv_isasyncmode = false,
-                    dv_context = serialisedContext,
+                    dv_context = serialisedContext.Length > CONTEXT_MAX_LENGTH ? serialisedContext.Substring(0, CONTEXT_MAX_LENGTH) : serialisedContext
                 };
 
                 service.Create(trace);
@@ -180,7 +181,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
                         }
                         break;
                     default:
-                        sb.AppendLine($"\t{key} : {context.InputParameters[key]}");
+                        sb.AppendLine($"\t{key} : {context.OutputParameters[key]}");
                         break;
                 }
             }
