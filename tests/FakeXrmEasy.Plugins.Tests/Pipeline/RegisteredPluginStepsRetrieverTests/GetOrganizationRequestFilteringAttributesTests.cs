@@ -25,7 +25,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         [Fact]
         public void Should_return_primary_key_when_no_explicit_attributes_are_added()
         {
-            var attributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(_updateRequest);
+            var attributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(_context, _updateRequest);
             Assert.NotEmpty(attributes);
 
             Assert.Contains("accountid", attributes);
@@ -37,7 +37,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             _account.Telephone1 = "tel_1";
             _account.Name = "Test account";
             
-            var attributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(_updateRequest);
+            var attributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(_context, _updateRequest);
             Assert.NotEmpty(attributes);
             
             Assert.Contains("telephone1", attributes);
@@ -63,7 +63,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
                 }
             };
             
-            var attributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(updateMultipleRequest);
+            var attributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(_context, updateMultipleRequest);
             Assert.NotEmpty(attributes);
             
             Assert.Contains("telephone1", attributes);

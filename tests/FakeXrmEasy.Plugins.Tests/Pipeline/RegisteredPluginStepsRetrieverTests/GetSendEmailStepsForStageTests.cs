@@ -6,6 +6,7 @@ using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using System.Reflection;
+using FakeXrmEasy.Pipeline.Exceptions;
 using Microsoft.Crm.Sdk.Messages;
 using Xunit;
 
@@ -39,6 +40,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             _pipelineParameters.Stage = ProcessingStepStage.Preoperation;
             _pipelineParameters.Mode = ProcessingStepMode.Synchronous;
             
+            _context.Initialize(_email);
+            
             var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, _pipelineParameters);
             Assert.Empty(steps);
         }
@@ -60,6 +63,8 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
 
             _pipelineParameters.Stage = stage;
             _pipelineParameters.Mode = mode;
+            
+            _context.Initialize(_email);
             
             var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, _pipelineParameters);
             Assert.Single(steps);
@@ -85,7 +90,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         {
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
-                MessageName = "Update",
+                MessageName = "Delete",
                 Stage = stage,
                 Mode = mode,
                 EntityLogicalName = EntityLogicalNameConstants.Email
@@ -94,8 +99,31 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             _pipelineParameters.Stage = stage;
             _pipelineParameters.Mode = mode;
             
+            _context.Initialize(_email);
+            
             var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, _pipelineParameters);
             Assert.Empty(steps);
+        }
+
+        [Theory]
+        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_throw_exception_if_request_is_executed_but_the_email_does_not_exist(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
+        {
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                MessageName = "Send",
+                Stage = stage,
+                Mode = mode,
+                EntityLogicalName = EntityLogicalNameConstants.Email
+            });
+
+            _pipelineParameters.Stage = stage;
+            _pipelineParameters.Mode = mode;
+            
+            Assert.Throws<PreEntityImageNotFoundException>(() => RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, _pipelineParameters));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Pipeline.Exceptions;
 using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginInstances;
@@ -52,9 +53,9 @@ namespace FakeXrmEasy.Pipeline
         /// Returns the distinct set of attributes that was sent in a given organization request
         /// </summary>
         /// <returns></returns>
-        internal static string[] GetOrganizationRequestFilteringAttributes(OrganizationRequest request)
+        internal static string[] GetOrganizationRequestFilteringAttributes(IXrmFakedContext context, OrganizationRequest request)
         {
-            var target = GetTargetForRequest(request);
+            var target = GetTargetForRequest(context, request);
             if (target != null)
             {
                 var entity = target as Entity;
@@ -96,7 +97,7 @@ namespace FakeXrmEasy.Pipeline
             return null;
         }
         
-        internal static string GetOrganizationRequestEntityLogicalName(OrganizationRequest request)
+        internal static string GetOrganizationRequestEntityLogicalName(IXrmFakedContext context, OrganizationRequest request)
         {
             var nonTargetEntityLogicalName = GetNonTargetOrganizationRequestEntityLogicalName(request);
             if (nonTargetEntityLogicalName != null)
@@ -104,7 +105,7 @@ namespace FakeXrmEasy.Pipeline
                 return nonTargetEntityLogicalName;
             }
  
-            var target = GetTargetForRequest(request);
+            var target = GetTargetForRequest(context, request);
             if (target != null)
             {
                 var entity = target as Entity;
@@ -137,8 +138,8 @@ namespace FakeXrmEasy.Pipeline
         {
             int? entityTypeCode = null;
             
-            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(parameters.Request);
-            string entityLogicalName = GetOrganizationRequestEntityLogicalName(parameters.Request);
+            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(context, parameters.Request);
+            string entityLogicalName = GetOrganizationRequestEntityLogicalName(context, parameters.Request);
             if (entityLogicalName != null)
             {
                 var entityType = context.FindReflectedType(entityLogicalName);
@@ -208,14 +209,31 @@ namespace FakeXrmEasy.Pipeline
                     select pluginStepImage).AsEnumerable();
         }
 
-        internal static object GetTargetForRequest(OrganizationRequest request)
+        internal static object GetTargetForRequest(IXrmFakedContext context, OrganizationRequest request)
         {
             if (request.Parameters.ContainsKey("Target"))
             {
                 return request.Parameters["Target"];
             }
 
-            return null;
+            string logicalName;
+            Guid id;
+            
+            switch (request.RequestName)
+            {
+                case OrganizationRequestNameConstants.SEND_EMAIL:
+                    logicalName = "email";
+                    id = (Guid)request.Parameters["EmailId"];
+                    break;
+                default:
+                    return null;
+            }
+
+            if (!context.ContainsEntity(logicalName, id))
+            {
+                throw new PreEntityImageNotFoundException(logicalName, id);
+            }
+            return context.GetEntityById("email", (Guid)request.Parameters["EmailId"]);
         }
         
         internal static object GetTargetsForRequest(OrganizationRequest request)
