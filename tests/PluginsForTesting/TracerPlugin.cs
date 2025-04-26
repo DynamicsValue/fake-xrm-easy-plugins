@@ -63,13 +63,24 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
                 switch (key)
                 {
                     case "Target":
-                        sb.AppendLine($"\tTarget (Entity) :");
-                        Entity target = (Entity)context.InputParameters["Target"];
-                        sb.AppendLine($"\t\tLogicalName : {target.LogicalName}");
-                        sb.AppendLine("\t\tAttributes :");
-                        foreach (string attributeKey in target.Attributes.Keys.OrderBy(k => k))
+                        
+                        var target = context.InputParameters["Target"];
+                        if (target is Entity entity)
                         {
-                            sb.AppendLine($"\t\t\t{attributeKey} : {target.Attributes[attributeKey]}");
+                            sb.AppendLine($"\tTarget (Entity) :");
+                            sb.AppendLine($"\t\tLogicalName : {entity.LogicalName}");
+                            sb.AppendLine("\t\tAttributes :");
+                            foreach (string attributeKey in entity.Attributes.Keys.OrderBy(k => k))
+                            {
+                                sb.AppendLine($"\t\t\t{attributeKey} : {entity.Attributes[attributeKey]}");
+                            }
+                        }
+                        else if (target is EntityReference entityRef)
+                        {
+                            sb.AppendLine($"\tTarget (EntityReference) :");
+                            sb.AppendLine($"\t\tLogicalName : {entityRef.LogicalName}");
+                            sb.AppendLine($"\t\tId : {entityRef.Id}");
+
                         }
 
                         break;

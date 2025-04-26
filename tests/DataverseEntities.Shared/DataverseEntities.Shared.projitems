@@ -11,8 +11,18 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AssemblyProxyTypeAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\activityparty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\contact.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\dv_plugin_trace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\dv_test.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\email.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\organization.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\plugintype.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\sdkmessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\sdkmessagefilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\sdkmessageprocessingstep.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\sdkmessageprocessingstepsecureconfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\systemuser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\task.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EntityOptionSetEnum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OptionSets\componentstate.cs" />

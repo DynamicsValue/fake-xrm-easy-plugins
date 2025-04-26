@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Crm;
 using Microsoft.Xrm.Sdk;
 using System.Collections.Generic;
 using System.Reflection;
@@ -39,8 +38,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
                 EmailId = _email.Id
             };
     
-            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Email)));
-            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(dv_plugin_trace)));
+            //_context.EnableProxyTypes(Assembly.GetAssembly(typeof(Email)));
         }
         
         
@@ -116,11 +114,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
         [InlineData(ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
         public void Should_pass_preimage_when_there_is_a_registered_preimage(ProcessingStepStage stage, ProcessingStepMode mode)
         {
-            _context.Initialize(new List<Entity>()
-            {
-                _email
-            });
-
             string registeredPreImageName = "PreImage";
             PluginImageDefinition preImageDefinition = new PluginImageDefinition(registeredPreImageName, ProcessingStepImageType.PreImage);
 
@@ -136,6 +129,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
                 }
             });
 
+            _context.Initialize(new List<Entity>()
+            {
+                _email
+            });
+            
             //Act
             var response = _service.Execute(_sendEmailRequest);
             Assert.IsType<SendEmailResponse>(response);

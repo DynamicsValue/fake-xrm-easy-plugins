@@ -28,6 +28,7 @@ namespace FakeXrmEasy.Plugins.Tests.Images
         [InlineData(MessageNameConstants.Update, true)]
         [InlineData(MessageNameConstants.Delete, true)]
         [InlineData(MessageNameConstants.Send, true)]
+        [InlineData(MessageNameConstants.Assign, true)]
         public void Should_return_valid_availability(string messageName, bool isAvailable)
         {
             Assert.Equal(isAvailable, PreImage.IsAvailableFor(messageName));

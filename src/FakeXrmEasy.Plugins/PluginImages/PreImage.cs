@@ -34,7 +34,8 @@ namespace FakeXrmEasy.Plugins.PluginImages
         {
             return MessageNameConstants.Update.Equals(messageName)
                    || MessageNameConstants.Delete.Equals(messageName)
-                   || MessageNameConstants.Send.Equals(messageName);
+                   || MessageNameConstants.Send.Equals(messageName)
+                   || MessageNameConstants.Assign.Equals(messageName);
         }
     }
 }
