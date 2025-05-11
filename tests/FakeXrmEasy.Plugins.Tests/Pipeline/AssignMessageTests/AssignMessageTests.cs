@@ -20,6 +20,9 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.AssignMessageTests
         private readonly Account _account;
         private readonly AssignRequest _request;
         
+        private const string preImageStoredAttributeName = "preimagename";
+        private const string postImageStoredAttributeName = "postimagename";
+        
         public AssignMessageTests()
         {
             _user = new SystemUser()
@@ -117,6 +120,47 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.AssignMessageTests
             Assert.NotNull(preImage);
             Assert.Equal(_account.Id, preImage.Id);
             Assert.Equal(Account.EntityLogicalName, preImage.LogicalName);
+        }
+        
+        [Fact]
+        public void Should_pass_post_image_when_there_is_a_registered_post_image()
+        {
+            string imageName = "PostImage";
+            PluginImageDefinition imageDefinition = new PluginImageDefinition(imageName, ProcessingStepImageType.PostImage);
+
+            _context.RegisterPluginStep<EntityImagesInPluginPipeline>(new PluginStepDefinition()
+            {
+                MessageName = MessageNameConstants.Assign,
+                ImagesDefinitions = new List<PluginImageDefinition>()
+                {
+                    imageDefinition
+                }
+            });
+
+            _context.Initialize(new List<Entity>()
+            {
+                _account, _user
+            });
+            
+            //Act
+            var response = _service.Execute(_request);
+            Assert.IsType<AssignResponse>(response);
+            
+
+            //Assert
+            var allAccounts = _context.CreateQuery<Account>().ToList();
+
+            var updatedAccount = allAccounts.Where(a => a.Id == _account.Id);
+            Assert.NotNull(updatedAccount);
+
+            var preImages = allAccounts.Where(a => a.Contains(preImageStoredAttributeName)).ToList();
+            var postImages = allAccounts.Where(a => a.Contains(postImageStoredAttributeName)).ToList();
+
+            Assert.Empty(preImages);
+            Assert.Single(postImages);
+
+            var postImage = postImages.First();
+            Assert.Equal(imageName, postImage.GetAttributeValue<string>("postimagename"));
         }
     }
 }

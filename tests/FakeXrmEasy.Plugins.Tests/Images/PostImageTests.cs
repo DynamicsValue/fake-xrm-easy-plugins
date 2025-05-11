@@ -27,6 +27,7 @@ namespace FakeXrmEasy.Plugins.Tests.Images
         [InlineData(MessageNameConstants.Update, ProcessingStepStage.Postoperation, true)]
         [InlineData(MessageNameConstants.Delete, ProcessingStepStage.Postoperation, false)]
         [InlineData(MessageNameConstants.Send, ProcessingStepStage.Postoperation, true)]
+        [InlineData(MessageNameConstants.Assign, ProcessingStepStage.Postoperation, true)]
         public void Should_return_valid_availability(string messageName, ProcessingStepStage stage, bool isAvailable)
         {
             Assert.Equal(isAvailable, PostImage.IsAvailableFor(messageName, stage));
