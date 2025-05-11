@@ -188,12 +188,7 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
             this.UnsecureConfig = unsecureConfig;
             this.SecureConfig = secureConfig;
         }
-
-        //internal BasePlugin()
-        //{
-        //    this.UnsecureConfig = null;
-        //    this.SecureConfig = null;
-        //}
+        
         /// <summary>
         /// Un secure configuration specified during the registration of the plugin step
         /// </summary>

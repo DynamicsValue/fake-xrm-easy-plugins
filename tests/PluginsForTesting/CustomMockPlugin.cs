@@ -9,7 +9,6 @@ namespace FakeXrmEasy.Tests
     {
         public void Execute(IServiceProvider serviceProvider)
         {
-            var tracing = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
             var context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
             var factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
             var service = factory.CreateOrganizationService(context.UserId);

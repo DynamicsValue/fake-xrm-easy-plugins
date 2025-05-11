@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using System.Collections.Generic;
-using System.Reflection;
 using DataverseEntities;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
@@ -19,8 +18,6 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.SendMessageTests
     public class SendEmailTests: FakeXrmEasyPipelineWithAuditAndMessagesTestsBase
     {
         private readonly Email _email;
-        private List<Entity> _entities;
-
         private readonly SendEmailRequest _sendEmailRequest;
         
         private const string preImageStoredAttributeName = "preimagename";

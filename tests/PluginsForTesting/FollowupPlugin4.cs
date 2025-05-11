@@ -15,10 +15,6 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
         /// </remarks>
         public void Execute(IServiceProvider serviceProvider)
         {
-            //Extract the tracing service for use in debugging sandboxed plug-ins.
-            ITracingService tracingService =
-                (ITracingService)serviceProvider.GetService(typeof(ITracingService));
-
             // Obtain the execution context from the service provider.
             IPluginExecutionContext4 context = (IPluginExecutionContext4)
                 serviceProvider.GetService(typeof(IPluginExecutionContext4));
@@ -27,8 +23,7 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
             if (context.InputParameters.Contains("Targets") &&
                 context.InputParameters["Targets"] is EntityCollection)
             {
-                // Obtain the target entity from the input parameters.
-                EntityCollection entityCollection = (EntityCollection)context.InputParameters["Targets"];
+
                 
 
                 

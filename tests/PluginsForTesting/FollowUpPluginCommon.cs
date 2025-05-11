@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace PluginsForTesting
 {
-    public class FollowUpPluginCommon
+    public static class FollowUpPluginCommon
     {
         public static void Execute(IServiceProvider serviceProvider)
         {

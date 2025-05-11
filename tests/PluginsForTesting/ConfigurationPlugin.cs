@@ -5,8 +5,8 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
 {
     public class ConfigurationPlugin : IPlugin
     {
-        private string _unsecureConfiguration;
-        private string _secureConfiguration;
+        private readonly string _unsecureConfiguration;
+        private readonly string _secureConfiguration;
 
         public ConfigurationPlugin() : this(string.Empty, string.Empty)
         {

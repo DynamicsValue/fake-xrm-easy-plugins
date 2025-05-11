@@ -1,6 +1,6 @@
 namespace FakeXrmEasy.Plugins
 {
-    public class OrganizationRequestNameConstants
+    internal static class OrganizationRequestNameConstants
     {
         internal const string CREATE = "Create";
         internal const string UPDATE = "Update";

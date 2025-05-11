@@ -82,11 +82,11 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         }
 
         [Theory]
-        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
-        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
-        public void Should_not_return_registered_plugin_step_for_another_request_name(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
+        [InlineData( ProcessingStepStage.Prevalidation, ProcessingStepMode.Synchronous)]
+        [InlineData( ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
+        [InlineData( ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
+        [InlineData( ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
+        public void Should_not_return_registered_plugin_step_for_another_request_name(ProcessingStepStage stage, ProcessingStepMode mode)
         {
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
@@ -114,7 +114,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         {
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
-                MessageName = "Send",
+                MessageName = requestName,
                 Stage = stage,
                 Mode = mode,
                 EntityLogicalName = EntityLogicalNameConstants.Email

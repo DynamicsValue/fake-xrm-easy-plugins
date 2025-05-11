@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
@@ -19,10 +18,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.AssignMessageTests
     {
         private readonly SystemUser _user;
         private readonly Account _account;
-        private List<Entity> _entities;
-
         private readonly AssignRequest _request;
-
         
         public AssignMessageTests()
         {

@@ -39,7 +39,7 @@ namespace FakeXrmEasy.Tests.PluginsForTesting
 
                     // An accountnumber attribute should not already exist because
                     // it is system generated.
-                    if (entity.Attributes.Contains("accountnumber") == false)
+                    if (!entity.Attributes.Contains("accountnumber"))
                     {
                         // Create a new accountnumber attribute, set its value, and add
                         // the attribute to the entity's attribute collection.
