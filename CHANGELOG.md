@@ -2,6 +2,8 @@
 
 ### Changed
 
+- Pipeline Simulation: Extended PreImage and PostImage support for these messages: Send, - https://github.com/DynamicsValue/fake-xrm-easy/issues/187
+- Pipeline Simulation: Extended support for new messages that don't match request names (Send message, and SendEmail, SendTemplate requests) - https://github.com/DynamicsValue/fake-xrm-easy/issues/185
 
 ## [2.6.1]
 
