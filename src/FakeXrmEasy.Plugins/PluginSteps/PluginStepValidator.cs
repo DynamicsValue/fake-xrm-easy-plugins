@@ -35,6 +35,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
         {
             _combinations = new Dictionary<string, Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>>()
             {
+                { "send", GetSendValidPluginStepRules() },
                 { "upsert", GetUpsertValidPluginStepRules() },
                 { "upsertmultiple", GetUpsertValidPluginStepRules() },
                 { "create", new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>()
@@ -104,6 +105,26 @@ namespace FakeXrmEasy.Plugins.PluginSteps
             }
 
             return validUpsertRules;
+        }
+        
+        private Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>> GetSendValidPluginStepRules()
+        {
+            var validEntityNames = new string[]
+            {
+                EntityLogicalNameConstants.Email,
+                EntityLogicalNameConstants.Fax,
+                EntityLogicalNameConstants.Template
+            };
+            
+            var validRules =
+                new Dictionary<string, Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>>();
+
+            foreach (var entityName in validEntityNames)
+            {
+                validRules.Add(entityName, GetDefaultValidPluginStepAndModeRules());
+            }
+
+            return validRules;
         }
 
         private Dictionary<ProcessingStepStage, Dictionary<ProcessingStepMode, int>>
@@ -188,7 +209,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
 
             foreach(var preImage in preImages)
             {
-                if (!PreImage.IsAvailableFor(stepDefinition.MessageName.ToOrganizationCrudRequestType()))
+                if (!PreImage.IsAvailableFor(stepDefinition.MessageName))
                 {
                     throw new PreImageNotAvailableException(preImage.Name);
                 }
@@ -196,7 +217,7 @@ namespace FakeXrmEasy.Plugins.PluginSteps
 
             foreach (var postImage in postImages)
             {
-                if (!PostImage.IsAvailableFor(stepDefinition.MessageName.ToOrganizationCrudRequestType(), stepDefinition.Stage))
+                if (!PostImage.IsAvailableFor(stepDefinition.MessageName, stepDefinition.Stage))
                 {
                     throw new PostImageNotAvailableException(postImage.Name);
                 }
