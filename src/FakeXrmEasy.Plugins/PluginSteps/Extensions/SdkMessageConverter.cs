@@ -15,6 +15,8 @@ namespace FakeXrmEasy.Plugins.PluginSteps.Extensions
             switch (requestName)
             {
                 case OrganizationRequestNameConstants.SEND_EMAIL:
+                case OrganizationRequestNameConstants.SEND_FAX:
+                case OrganizationRequestNameConstants.SEND_TEMPLATE:
                     return MessageNameConstants.Send;
                 default:
                     return requestName;

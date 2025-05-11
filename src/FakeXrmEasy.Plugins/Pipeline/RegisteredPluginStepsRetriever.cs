@@ -93,6 +93,11 @@ namespace FakeXrmEasy.Pipeline
             {
                 return EntityLogicalNameConstants.Email;
             }
+            
+            if (request.RequestName.Equals(OrganizationRequestNameConstants.SEND_FAX))
+            {
+                return EntityLogicalNameConstants.Fax;
+            }
 
             return null;
         }
@@ -225,6 +230,14 @@ namespace FakeXrmEasy.Pipeline
                     logicalName = "email";
                     id = (Guid)request.Parameters["EmailId"];
                     break;
+                case OrganizationRequestNameConstants.SEND_FAX:
+                    logicalName = "fax";
+                    id = (Guid)request.Parameters["FaxId"];
+                    break;
+                case OrganizationRequestNameConstants.SEND_TEMPLATE:
+                    logicalName = "template";
+                    id = (Guid)request.Parameters["TemplateId"];
+                    break;
                 default:
                     return null;
             }
@@ -233,7 +246,7 @@ namespace FakeXrmEasy.Pipeline
             {
                 throw new PreEntityImageNotFoundException(logicalName, id);
             }
-            return context.GetEntityById("email", (Guid)request.Parameters["EmailId"]);
+            return context.GetEntityById(logicalName, id);
         }
         
         internal static object GetTargetsForRequest(OrganizationRequest request)

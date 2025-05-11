@@ -14,5 +14,7 @@ namespace FakeXrmEasy.Plugins
         internal const string UPSERT_MULTIPLE = "UpsertMultiple";
         
         internal const string SEND_EMAIL = "SendEmail";
+        internal const string SEND_TEMPLATE = "SendTemplate";
+        internal const string SEND_FAX = "SendFax";
     }
 }
