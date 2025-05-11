@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataverseEntities
+namespace FakeXrmEasy.Plugins.Pipeline.PipelineTypes
 {
 	[ExcludeFromCodeCoverage]
 	internal static class EntityOptionSetEnum

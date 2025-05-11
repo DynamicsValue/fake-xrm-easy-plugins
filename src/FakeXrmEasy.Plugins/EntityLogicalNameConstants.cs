@@ -21,5 +21,8 @@
         internal const string SharedWorkspaceNr = "sharedworkspacenr";
         
         internal const string Account = "account";
+        internal const string Email = "email";
+        internal const string Fax = "fax";
+        internal const string Template = "template";
     }
 }

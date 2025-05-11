@@ -10,6 +10,7 @@
         internal const string Disassociate = "Disassociate";
         internal const string Retrieve = "Retrieve";
         internal const string RetrieveMultiple = "RetrieveMultiple";
+        internal const string Send = "Send";
         internal const string Update = "Update";
         internal const string UpdateMultiple = "UpdateMultiple";
         internal const string Upsert = "Upsert";

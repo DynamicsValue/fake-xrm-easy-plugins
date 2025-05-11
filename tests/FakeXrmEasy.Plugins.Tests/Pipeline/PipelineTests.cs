@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Crm;
+using DataverseEntities;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -23,7 +23,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             {
                 Id = Guid.NewGuid(),
                 AccountNumber = "1234567890",
-                AccountCategoryCode = new OptionSetValue(1),
+                AccountCategoryCode = account_accountcategorycode.PreferredCustomer,
                 NumberOfEmployees = 5,
                 Revenue = new Money(20000),
                 Telephone1 = "+123456"

@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataverseEntities
+namespace FakeXrmEasy.Plugins.Pipeline.PipelineTypes
 {
 	
 	
@@ -877,16 +877,16 @@ namespace DataverseEntities
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("eventhandler")]
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("plugintype_sdkmessageprocessingstep")]
-		public DataverseEntities.PluginType plugintype_sdkmessageprocessingstep
+		public FakeXrmEasy.Plugins.Pipeline.PipelineTypes.PluginType plugintype_sdkmessageprocessingstep
 		{
 			get
 			{
-				return this.GetRelatedEntity<DataverseEntities.PluginType>("plugintype_sdkmessageprocessingstep", null);
+				return this.GetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.PluginType>("plugintype_sdkmessageprocessingstep", null);
 			}
 			set
 			{
 				this.OnPropertyChanging("plugintype_sdkmessageprocessingstep");
-				this.SetRelatedEntity<DataverseEntities.PluginType>("plugintype_sdkmessageprocessingstep", null, value);
+				this.SetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.PluginType>("plugintype_sdkmessageprocessingstep", null, value);
 				this.OnPropertyChanged("plugintype_sdkmessageprocessingstep");
 			}
 		}
@@ -896,16 +896,16 @@ namespace DataverseEntities
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("plugintypeid")]
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("plugintypeid_sdkmessageprocessingstep")]
-		public DataverseEntities.PluginType plugintypeid_sdkmessageprocessingstep
+		public FakeXrmEasy.Plugins.Pipeline.PipelineTypes.PluginType plugintypeid_sdkmessageprocessingstep
 		{
 			get
 			{
-				return this.GetRelatedEntity<DataverseEntities.PluginType>("plugintypeid_sdkmessageprocessingstep", null);
+				return this.GetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.PluginType>("plugintypeid_sdkmessageprocessingstep", null);
 			}
 			set
 			{
 				this.OnPropertyChanging("plugintypeid_sdkmessageprocessingstep");
-				this.SetRelatedEntity<DataverseEntities.PluginType>("plugintypeid_sdkmessageprocessingstep", null, value);
+				this.SetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.PluginType>("plugintypeid_sdkmessageprocessingstep", null, value);
 				this.OnPropertyChanged("plugintypeid_sdkmessageprocessingstep");
 			}
 		}
@@ -915,16 +915,16 @@ namespace DataverseEntities
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessagefilterid")]
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessagefilterid_sdkmessageprocessingstep")]
-		public DataverseEntities.SdkMessageFilter sdkmessagefilterid_sdkmessageprocessingstep
+		public FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessageFilter sdkmessagefilterid_sdkmessageprocessingstep
 		{
 			get
 			{
-				return this.GetRelatedEntity<DataverseEntities.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null);
+				return this.GetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null);
 			}
 			set
 			{
 				this.OnPropertyChanging("sdkmessagefilterid_sdkmessageprocessingstep");
-				this.SetRelatedEntity<DataverseEntities.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null, value);
+				this.SetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null, value);
 				this.OnPropertyChanged("sdkmessagefilterid_sdkmessageprocessingstep");
 			}
 		}
@@ -934,16 +934,16 @@ namespace DataverseEntities
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageid")]
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessageid_sdkmessageprocessingstep")]
-		public DataverseEntities.SdkMessage sdkmessageid_sdkmessageprocessingstep
+		public FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessage sdkmessageid_sdkmessageprocessingstep
 		{
 			get
 			{
-				return this.GetRelatedEntity<DataverseEntities.SdkMessage>("sdkmessageid_sdkmessageprocessingstep", null);
+				return this.GetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessage>("sdkmessageid_sdkmessageprocessingstep", null);
 			}
 			set
 			{
 				this.OnPropertyChanging("sdkmessageid_sdkmessageprocessingstep");
-				this.SetRelatedEntity<DataverseEntities.SdkMessage>("sdkmessageid_sdkmessageprocessingstep", null, value);
+				this.SetRelatedEntity<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessage>("sdkmessageid_sdkmessageprocessingstep", null, value);
 				this.OnPropertyChanged("sdkmessageid_sdkmessageprocessingstep");
 			}
 		}
