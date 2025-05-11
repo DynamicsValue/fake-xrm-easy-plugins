@@ -124,13 +124,26 @@ namespace DataverseEntities
 			public const string ParticipationTypeMaskName = "participationtypemaskname";
 			public const string PartyId = "partyid";
 			public const string PartyIdName = "partyidname";
+			public const string ResourceSpecId = "resourcespecid";
+			public const string ResourceSpecIdName = "resourcespecidname";
 			public const string ScheduledEnd = "scheduledend";
 			public const string ScheduledStart = "scheduledstart";
 			public const string UnresolvedPartyName = "unresolvedpartyname";
 			public const string VersionNumber = "versionnumber";
 			public const string account_activity_parties = "account_activity_parties";
+			public const string activitypointer_activity_parties = "activitypointer_activity_parties";
 			public const string contact_activity_parties = "contact_activity_parties";
+			public const string contract_activity_parties = "contract_activity_parties";
 			public const string email_activity_parties = "email_activity_parties";
+			public const string fax_activity_parties = "fax_activity_parties";
+			public const string incident_activity_parties = "incident_activity_parties";
+			public const string incidentresolution_activity_parties = "incidentresolution_activity_parties";
+			public const string lead_activity_parties = "lead_activity_parties";
+			public const string opportunity_activity_parties = "opportunity_activity_parties";
+			public const string opportunityclose_activity_parties = "opportunityclose_activity_parties";
+			public const string phonecall_activity_parties = "phonecall_activity_parties";
+			public const string queue_activity_parties = "queue_activity_parties";
+			public const string quote_activity_parties = "quote_activity_parties";
 			public const string system_user_activity_parties = "system_user_activity_parties";
 			public const string task_activity_parties = "task_activity_parties";
 		}
@@ -545,6 +558,38 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
+		/// Unique identifier of the resource specification for the activity party.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("resourcespecid")]
+		public Microsoft.Xrm.Sdk.EntityReference ResourceSpecId
+		{
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("resourcespecid");
+			}
+			set
+			{
+				this.SetAttributeValue("resourcespecid", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("resourcespecidname")]
+		public string ResourceSpecIdName
+		{
+			get
+			{
+				if (this.FormattedValues.Contains("resourcespecid"))
+				{
+					return this.FormattedValues["resourcespecid"];
+				}
+				else
+				{
+					return default(string);
+				}
+			}
+		}
+		
+		/// <summary>
 		/// Scheduled end time of the activity.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("scheduledend")]
@@ -611,6 +656,23 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
+		/// N:1 activitypointer_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("activityid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("activitypointer_activity_parties")]
+		public DataverseEntities.ActivityPointer activitypointer_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.ActivityPointer>("activitypointer_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.ActivityPointer>("activitypointer_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
 		/// N:1 contact_activity_parties
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
@@ -628,6 +690,23 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
+		/// N:1 contract_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("contract_activity_parties")]
+		public DataverseEntities.Contract contract_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Contract>("contract_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Contract>("contract_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
 		/// N:1 email_activity_parties
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("activityid")]
@@ -641,6 +720,159 @@ namespace DataverseEntities
 			set
 			{
 				this.SetRelatedEntity<DataverseEntities.Email>("email_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 fax_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("activityid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("fax_activity_parties")]
+		public DataverseEntities.Fax fax_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Fax>("fax_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Fax>("fax_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 incident_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("incident_activity_parties")]
+		public DataverseEntities.Incident incident_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Incident>("incident_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Incident>("incident_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 incidentresolution_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("activityid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("incidentresolution_activity_parties")]
+		public DataverseEntities.IncidentResolution incidentresolution_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.IncidentResolution>("incidentresolution_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.IncidentResolution>("incidentresolution_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 lead_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("lead_activity_parties")]
+		public DataverseEntities.Lead lead_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Lead>("lead_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Lead>("lead_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 opportunity_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("opportunity_activity_parties")]
+		public DataverseEntities.Opportunity opportunity_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Opportunity>("opportunity_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Opportunity>("opportunity_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 opportunityclose_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("activityid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("opportunityclose_activity_parties")]
+		public DataverseEntities.OpportunityClose opportunityclose_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.OpportunityClose>("opportunityclose_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.OpportunityClose>("opportunityclose_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 phonecall_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("activityid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("phonecall_activity_parties")]
+		public DataverseEntities.PhoneCall phonecall_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.PhoneCall>("phonecall_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.PhoneCall>("phonecall_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 queue_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("queue_activity_parties")]
+		public DataverseEntities.Queue queue_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Queue>("queue_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Queue>("queue_activity_parties", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 quote_activity_parties
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("partyid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("quote_activity_parties")]
+		public DataverseEntities.Quote quote_activity_parties
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Quote>("quote_activity_parties", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Quote>("quote_activity_parties", null, value);
 			}
 		}
 		
