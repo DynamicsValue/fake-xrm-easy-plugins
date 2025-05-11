@@ -1,7 +1,9 @@
-#if FAKE_XRM_EASY_9 
+
 using DataverseEntities;
 using Microsoft.Xrm.Sdk;
+#if FAKE_XRM_EASY_9 
 using Microsoft.Xrm.Sdk.Extensions;
+#endif
 using System;
 using System.Linq;
 using System.Text;
@@ -13,14 +15,23 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
         private const int CONTEXT_MAX_LENGTH = 8000;
         public void Execute(IServiceProvider serviceProvider)
         {
+            #if FAKE_XRM_EASY_9
             var context = (IPluginExecutionContext4)serviceProvider.GetService(typeof(IPluginExecutionContext4));
+            #else
+            var context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
+            #endif
+            
             var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
 
             ITracingService tracingService =
                     (ITracingService)serviceProvider.GetService(typeof(ITracingService));
 
+            #if FAKE_XRM_EASY_9
             var service = serviceProvider.GetOrganizationService(context.InitiatingUserId);
-
+            #else
+            var service = serviceFactory.CreateOrganizationService(context.UserId);
+            #endif
+            
             try
             {
                 tracingService.Trace($@"TracerPlugin -
@@ -52,7 +63,11 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
             }
         }
 
+        #if FAKE_XRM_EASY_9
         private string SerializeContext(IPluginExecutionContext4 context)
+        #else
+        private string SerializeContext(IPluginExecutionContext context)
+        #endif
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"MessageName: {context.MessageName}");
@@ -139,6 +154,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
             }
 
             // Only sampling first image to avoid filling up limited trace space
+            #if FAKE_XRM_EASY_9
             sb.AppendLine("PreEntityImagesCollection[0]:");
             if (context.PreEntityImagesCollection.Length > 0)
             {
@@ -175,7 +191,8 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
                     }
                 }
             }
-
+            #endif
+            
             sb.AppendLine("OutputParameters:");
             foreach (string key in context.OutputParameters.Keys.OrderBy(k => k))
             {
@@ -201,4 +218,3 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
         }
     }
 }
-#endif
