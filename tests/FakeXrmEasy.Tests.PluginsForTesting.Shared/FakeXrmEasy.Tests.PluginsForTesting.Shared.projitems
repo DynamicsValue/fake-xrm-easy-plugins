@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>36CB6F21-B98A-4A30-B57B-805DE46ADF72</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FakeXrmEasy.Tests.PluginsForTesting.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AccountNumberPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AccountSetTerritories.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BasePlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationPluginPipeline.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContextTestsPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CreateAccountPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CustomInstancePluginPipeline.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CustomMockPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeletePlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DepthPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EntityImagesInPluginPipeline.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EntityImagesPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExceptionLoverPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FollowupPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FollowupPlugin2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FollowupPlugin4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FollowUpPluginCommon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InfiniteUpdatePlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InheritedPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LoggerPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PostOperationUpdatePlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PreAccountCreate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetrieveMultipleDataProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RetrieveServicesPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServiceEndpointNotificationPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestContextOrgNamePlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestContextPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestPropertiesPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestSharedVariablesPropertyPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TracerPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValidatePipelinePlugin.cs" />
+  </ItemGroup>
+</Project>

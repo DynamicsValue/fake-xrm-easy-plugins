@@ -28,4 +28,7 @@ Write-Host "Packing test packages..."
 ./pack-tests.ps1 -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix
 ./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.PluginsTests"   
 
+./pack-tests.ps1 -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
+./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.Tests.PluginsForTesting"   
+
 Write-Host "Pack Succeeded  :)" -ForegroundColor Green
