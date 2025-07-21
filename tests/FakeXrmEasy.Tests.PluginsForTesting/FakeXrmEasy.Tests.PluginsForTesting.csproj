@@ -16,7 +16,7 @@
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
     <PublicSign Condition="'$(OS)'=='Unix'">true</PublicSign>
-    <RootNamespace>PluginsForTesting</RootNamespace>
+    <RootNamespace>FakeXrmEasy.Tests.PluginsForTesting</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -90,7 +90,6 @@
   </ItemGroup>
 
   <Import Project="..\DataverseEntities.Shared\DataverseEntities.Shared.projitems" Label="Shared" />
-
   <Import Project="..\FakeXrmEasy.Tests.PluginsForTesting.Shared\FakeXrmEasy.Tests.PluginsForTesting.Shared.projitems" Label="Shared" />
   
 
