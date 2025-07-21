@@ -39,11 +39,8 @@ else
 }
 $tempNupkgFolder = './nupkgs'
 
-if($packTests -eq "") {
-    Write-Host "Building..."
-    ./build.ps1 -targetFrameworks $targetFrameworks -configuration $configuration -packTests $packTests
-}
-
+Write-Host "Building..."
+./build.ps1 -targetFrameworks $targetFrameworks -configuration $configuration -packTests $packTests
 
 Write-Host "Packing assembly for targetFrameworks $($targetFrameworks)..."
 if($targetFrameworks -eq "all")
