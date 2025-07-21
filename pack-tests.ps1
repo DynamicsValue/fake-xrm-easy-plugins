@@ -1,15 +1,14 @@
 param (
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "netcoreapp3.1"
+    [string]$targetFrameworks = "netcoreapp3.1",
+    [string]$packageIdPrefix = "FakeXrmEasy.PluginsTests",
+    [string]$projectName = "FakeXrmEasy.Plugins.Tests",
+    [string]$projectPath = "tests/FakeXrmEasy.Plugins.Tests"
  )
 
 Write-Host "Running with versionSuffix '$($versionSuffix)'..."
 
 $tempNupkgFolder = './nupkgs'
-
-$packageIdPrefix = "FakeXrmEasy.PluginsTests"
-$projectName = "FakeXrmEasy.Plugins.Tests"
-$projectPath = "tests/FakeXrmEasy.Plugins.Tests"
 
 Write-Host "Packing All Configurations for project $($projectName)" -ForegroundColor Green
 
