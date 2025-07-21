@@ -118,9 +118,46 @@ jobs:
           NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Pack Push
-        run: pwsh ./pack-push.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}" -packageSource "github"
+      - name: Pack Src
+        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
         env: 
           NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
+      - name: Push Src
+        run: nuget.exe push .\nupkgs\FakeXrmEasy.Plugins.*.nupkg -Source ${{ env.source-url }}
+        env: 
+          NUGET_USERNAME: ${{github.repository_owner}}
+          NUGET_AUTH_TOKEN: ${{ github.token }}
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pack PluginsForTesting
+        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}" -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
+        env:
+          NUGET_USERNAME: ${{github.repository_owner}}
+          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: Push PluginsForTesting
+        run: nuget.exe push .\nupkgs\FakeXrmEasy.Tests.PluginsForTesting.*.nupkg -Source ${{ env.source-url }}
+        env:
+          NUGET_USERNAME: ${{github.repository_owner}}
+          NUGET_AUTH_TOKEN: ${{ github.token }}
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Pack Tests
+        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
+        env: 
+          NUGET_USERNAME: ${{github.repository_owner}}
+          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: Push Tests
+        run: nuget.exe push .\nupkgs\FakeXrmEasy.PluginsTests.*.nupkg -Source ${{ env.source-url }}
+        env: 
+          NUGET_USERNAME: ${{github.repository_owner}}
+          NUGET_AUTH_TOKEN: ${{ github.token }}
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    
+    
+    
+    
