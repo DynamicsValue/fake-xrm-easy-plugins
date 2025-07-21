@@ -3,7 +3,7 @@ param (
     [string]$targetFrameworks = "netcoreapp3.1",
     [string]$packageIdPrefix = "FakeXrmEasy.PluginsTests",
     [string]$projectName = "FakeXrmEasy.Plugins.Tests",
-    [string]$projectPath = "tests/FakeXrmEasy.Plugins.Tests"
+    [string]$projectPath = "tests/FakeXrmEasy.Plugins.Tests",
     [string]$packTests = "true"
  )
 
