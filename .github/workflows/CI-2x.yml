@@ -132,7 +132,7 @@ jobs:
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack PluginsForTesting
-        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}" -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
+        run: pwsh ./pack-tests.ps1 -packTests "" -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}" -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
         env:
           NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
