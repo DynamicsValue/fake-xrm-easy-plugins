@@ -14,6 +14,7 @@ using FakeXrmEasy.Plugins.Definitions;
 using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginImages;
 using FakeXrmEasy.Plugins.PluginSteps;
+using FakeXrmEasy.Plugins.PluginSteps.Extensions;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using Microsoft.Xrm.Sdk;
 
@@ -312,7 +313,7 @@ namespace FakeXrmEasy.Pipeline
         internal static void PopulatePreEntityImagesForRequest(IXrmFakedContext context,
             PipelineStageExecutionParameters pipelineParameters)
         {
-            if (!PreImage.IsAvailableFor(pipelineParameters.Request.GetType()))
+            if (!PreImage.IsAvailableFor(pipelineParameters.Request.RequestName.ToMessageName()))
             {
                 return;
             }
@@ -332,7 +333,7 @@ namespace FakeXrmEasy.Pipeline
         internal static void PopulatePostEntityImagesForRequest(IXrmFakedContext context,
             PipelineStageExecutionParameters pipelineParameters)
         {
-            if (!PostImage.IsAvailableFor(pipelineParameters.Request.GetType(), ProcessingStepStage.Postoperation))
+            if (!PostImage.IsAvailableFor(pipelineParameters.Request.RequestName.ToMessageName(), ProcessingStepStage.Postoperation))
             {
                 return;
             }
@@ -351,7 +352,7 @@ namespace FakeXrmEasy.Pipeline
         
         internal static Entity GetPreImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
         {
-            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(request);
+            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(context, request);
             if (target == null)
             {
                 return null;
@@ -447,7 +448,7 @@ namespace FakeXrmEasy.Pipeline
 
         internal static Entity GetPostImageEntityForRequest(IXrmFakedContext context, OrganizationRequest request)
         {
-            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(request);
+            var target = RegisteredPluginStepsRetriever.GetTargetForRequest(context, request);
             if (target == null)
             {
                 return null;

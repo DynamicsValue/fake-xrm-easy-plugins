@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using FakeXrmEasy.Pipeline.Exceptions;
+using FakeXrmEasy.Plugins;
 using FakeXrmEasy.Plugins.Extensions;
 using FakeXrmEasy.Plugins.PluginInstances;
 using FakeXrmEasy.Plugins.PluginSteps;
@@ -51,9 +53,9 @@ namespace FakeXrmEasy.Pipeline
         /// Returns the distinct set of attributes that was sent in a given organization request
         /// </summary>
         /// <returns></returns>
-        internal static string[] GetOrganizationRequestFilteringAttributes(OrganizationRequest request)
+        internal static string[] GetOrganizationRequestFilteringAttributes(IXrmFakedContext context, OrganizationRequest request)
         {
-            var target = GetTargetForRequest(request);
+            var target = GetTargetForRequest(context, request);
             if (target != null)
             {
                 var entity = target as Entity;
@@ -80,9 +82,35 @@ namespace FakeXrmEasy.Pipeline
             return new string[] { };
         }
 
-        internal static string GetOrganizationRequestEntityLogicalName(OrganizationRequest request)
+        /// <summary>
+        /// Retrieves the logical name for requests that don't have a generic target or targets parameters
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private static string GetNonTargetOrganizationRequestEntityLogicalName(OrganizationRequest request)
         {
-            var target = GetTargetForRequest(request);
+            if (request.RequestName.Equals(OrganizationRequestNameConstants.SEND_EMAIL))
+            {
+                return EntityLogicalNameConstants.Email;
+            }
+            
+            if (request.RequestName.Equals(OrganizationRequestNameConstants.SEND_FAX))
+            {
+                return EntityLogicalNameConstants.Fax;
+            }
+
+            return null;
+        }
+        
+        internal static string GetOrganizationRequestEntityLogicalName(IXrmFakedContext context, OrganizationRequest request)
+        {
+            var nonTargetEntityLogicalName = GetNonTargetOrganizationRequestEntityLogicalName(request);
+            if (nonTargetEntityLogicalName != null)
+            {
+                return nonTargetEntityLogicalName;
+            }
+ 
+            var target = GetTargetForRequest(context, request);
             if (target != null)
             {
                 var entity = target as Entity;
@@ -115,8 +143,8 @@ namespace FakeXrmEasy.Pipeline
         {
             int? entityTypeCode = null;
             
-            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(parameters.Request);
-            string entityLogicalName = GetOrganizationRequestEntityLogicalName(parameters.Request);
+            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(context, parameters.Request);
+            string entityLogicalName = GetOrganizationRequestEntityLogicalName(context, parameters.Request);
             if (entityLogicalName != null)
             {
                 var entityType = context.FindReflectedType(entityLogicalName);
@@ -128,6 +156,7 @@ namespace FakeXrmEasy.Pipeline
             }
 
             var pluginInstancesRepository = context.GetProperty<IPluginInstancesRepository>();
+            var messageName = parameters.Request.RequestName.ToMessageName();
             
             var pluginSteps = (from step in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
                                join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
@@ -140,14 +169,14 @@ namespace FakeXrmEasy.Pipeline
                                
                                where (step[SdkMessageProcessingStepFieldNames.Stage] as OptionSetValue).Value == (int)parameters.Stage
                                where (step[SdkMessageProcessingStepFieldNames.Mode] as OptionSetValue).Value == (int)parameters.Mode
-                               where (message[SdkMessageFieldNames.Name] as string) == parameters.Request.RequestName
+                               where (message[SdkMessageFieldNames.Name] as string) == messageName
                                select new PluginStepDefinition
                                {
                                    Id = step.Id,
                                    Rank = (int)step[SdkMessageProcessingStepFieldNames.Rank],
                                    Stage = parameters.Stage,
                                    Mode = parameters.Mode,
-                                   MessageName = parameters.Request.RequestName,
+                                   MessageName = messageName,
                                    FilteringAttributes = step.GetPluginStepFilteringAttributes(),
                                    EntityTypeCode = messageFilter.GetMessageFilterPrimaryObjectCode(),
                                    EntityLogicalName = messageFilter.GetMessageFilterEntityLogicalName(),
@@ -185,14 +214,39 @@ namespace FakeXrmEasy.Pipeline
                     select pluginStepImage).AsEnumerable();
         }
 
-        internal static object GetTargetForRequest(OrganizationRequest request)
+        internal static object GetTargetForRequest(IXrmFakedContext context, OrganizationRequest request)
         {
             if (request.Parameters.ContainsKey("Target"))
             {
                 return request.Parameters["Target"];
             }
 
-            return null;
+            string logicalName;
+            Guid id;
+            
+            switch (request.RequestName)
+            {
+                case OrganizationRequestNameConstants.SEND_EMAIL:
+                    logicalName = "email";
+                    id = (Guid)request.Parameters["EmailId"];
+                    break;
+                case OrganizationRequestNameConstants.SEND_FAX:
+                    logicalName = "fax";
+                    id = (Guid)request.Parameters["FaxId"];
+                    break;
+                case OrganizationRequestNameConstants.SEND_TEMPLATE:
+                    logicalName = "template";
+                    id = (Guid)request.Parameters["TemplateId"];
+                    break;
+                default:
+                    return null;
+            }
+
+            if (!context.ContainsEntity(logicalName, id))
+            {
+                throw new PreEntityImageNotFoundException(logicalName, id);
+            }
+            return context.GetEntityById(logicalName, id);
         }
         
         internal static object GetTargetsForRequest(OrganizationRequest request)

@@ -3,7 +3,6 @@ using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Pipeline.PipelineTypes;
 using FakeXrmEasy.Plugins.PluginSteps;
-using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using System;
 using System.Linq;
@@ -24,7 +23,7 @@ namespace FakeXrmEasy.Plugins.Tests.Issues
                 Stage = ProcessingStepStage.Postoperation
             });
 
-            var sdkMessages = _context.CreateQuery<SdkMessage>().ToList();
+            var sdkMessages = _context.CreateQuery<DataverseEntities.SdkMessage>().ToList();
             Assert.Single(sdkMessages);
         }
         
