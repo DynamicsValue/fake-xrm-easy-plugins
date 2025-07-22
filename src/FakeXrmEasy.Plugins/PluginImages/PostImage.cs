@@ -18,23 +18,25 @@ namespace FakeXrmEasy.Plugins.PluginImages
     ///      Delete       POST            Yes            No
     ///      Upsert       POST            ??             ??
     /// </summary>
-    internal class PostImage
+    internal static class PostImage
     {
         /// <summary>
         /// Determines if a PostImage is available for the given request and plugin stage
         /// </summary>
-        /// <param name="organizationRequestType">The request to check the availability for</param>
+        /// <param name="messageName">The message name to check the availability for</param>
         /// <param name="stage">The plugin stage to check such availability</param>
         /// <returns></returns>
-        internal static bool IsAvailableFor(Type organizationRequestType, ProcessingStepStage stage)
+        internal static bool IsAvailableFor(string messageName, ProcessingStepStage stage)
         {
             if (stage != ProcessingStepStage.Postoperation)
             {
                 return false;
             }
             
-            return organizationRequestType == typeof(CreateRequest)
-                || organizationRequestType == typeof(UpdateRequest);
+            return MessageNameConstants.Create.Equals(messageName)
+                || MessageNameConstants.Update.Equals(messageName)
+                || MessageNameConstants.Send.Equals(messageName)
+                || MessageNameConstants.Assign.Equals(messageName);
         }
     }
 }

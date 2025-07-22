@@ -25,6 +25,9 @@ Write-Host "Packing src packages..."
 ./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.Plugins"
 
 Write-Host "Packing test packages..."
+./pack-tests.ps1 -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
+./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.Tests.PluginsForTesting"   
+
 ./pack-tests.ps1 -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix
 ./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.PluginsTests"   
 

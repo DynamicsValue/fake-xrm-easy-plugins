@@ -40,14 +40,14 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         [Fact]
         public void Should_return_entity_logical_name_for_a_single_request()
         {
-            var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_updateRequest);
+            var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_context, _updateRequest);
             Assert.Equal(Account.EntityLogicalName, entityLogicalName);
         }
         
         [Fact]
         public void Should_return_entity_logical_name_for_a_single_entity_reference()
         {
-            var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_deleteRequest);
+            var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_context, _deleteRequest);
             Assert.Equal(Account.EntityLogicalName, entityLogicalName);
         }
         
@@ -55,7 +55,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         [Fact]
         public void Should_return_entity_logical_name_for_a_multiple_request()
         {
-            var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_updateMultipleRequest);
+            var entityLogicalName = RegisteredPluginStepsRetriever.GetOrganizationRequestEntityLogicalName(_context, _updateMultipleRequest);
             Assert.Equal(Account.EntityLogicalName, entityLogicalName);
         }
         #endif
