@@ -9,10 +9,6 @@ param (
 
 Write-Host "Running with versionSuffix '$($versionSuffix)'..."
 
-$packageIdPrefix = "FakeXrmEasy.PluginsTests"
-$projectName = "FakeXrmEasy.Plugins.Tests"
-$projectPath = "tests/FakeXrmEasy.Plugins.Tests"
-
 Write-Host "Packing All Configurations for project $($projectName)" -ForegroundColor Green
 
 ./pack-configuration.ps1 -targetFrameworks $targetFrameworks -projectName $projectName -projectPath $projectPath -packageIdPrefix $packageIdPrefix -versionSuffix $versionSuffix -packTests $packTests -configuration "FAKE_XRM_EASY_2013"
