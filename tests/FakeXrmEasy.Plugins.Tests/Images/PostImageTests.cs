@@ -3,6 +3,7 @@ using FakeXrmEasy.Plugins.PluginImages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
+using Microsoft.Crm.Sdk.Messages;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Images
@@ -22,13 +23,14 @@ namespace FakeXrmEasy.Plugins.Tests.Images
         ///      Upsert       POST            ??             ??
         ///      
         [Theory]
-        [InlineData(typeof(OrganizationRequest), ProcessingStepStage.MainOperation, false)]
-        [InlineData(typeof(CreateRequest), ProcessingStepStage.Postoperation, true)]
-        [InlineData(typeof(UpdateRequest), ProcessingStepStage.Postoperation, true)]
-        [InlineData(typeof(DeleteRequest), ProcessingStepStage.Postoperation, false)]
-        public void Should_return_valid_availability(Type orgRequestType, ProcessingStepStage stage, bool isAvailable)
+        [InlineData(MessageNameConstants.Create, ProcessingStepStage.Postoperation, true)]
+        [InlineData(MessageNameConstants.Update, ProcessingStepStage.Postoperation, true)]
+        [InlineData(MessageNameConstants.Delete, ProcessingStepStage.Postoperation, false)]
+        [InlineData(MessageNameConstants.Send, ProcessingStepStage.Postoperation, true)]
+        [InlineData(MessageNameConstants.Assign, ProcessingStepStage.Postoperation, true)]
+        public void Should_return_valid_availability(string messageName, ProcessingStepStage stage, bool isAvailable)
         {
-            Assert.Equal(isAvailable, PostImage.IsAvailableFor(orgRequestType, stage));
+            Assert.Equal(isAvailable, PostImage.IsAvailableFor(messageName, stage));
         }
     }
 }
