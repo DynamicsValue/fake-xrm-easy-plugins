@@ -1,3 +1,10 @@
+## [3.8.0]
+
+### Changed
+
+- Upgrade to DataverseClient 1.2.9
+- Upgrade to net8.0
+
 ## [3.7.0]
 
 ### Changed
