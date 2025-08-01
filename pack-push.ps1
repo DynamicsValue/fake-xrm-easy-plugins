@@ -1,7 +1,7 @@
 param (
     [string]$packageSource = "local-packages",
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "net6.0"
+    [string]$targetFrameworks = "net8.0"
  )
 
 Write-Host "Running with versionSuffix '$($versionSuffix)'..."
@@ -25,7 +25,7 @@ Write-Host "Packing src packages..."
 ./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.Plugins"
 
 Write-Host "Packing test packages..."
-./pack-tests.ps1 -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
+./pack-tests.ps1 -packTests "" -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix -packageIdPrefix "FakeXrmEasy.Tests.PluginsForTesting" -projectName "FakeXrmEasy.Tests.PluginsForTesting" -projectPath "tests/FakeXrmEasy.Tests.PluginsForTesting"
 ./push.ps1 -packageSource $packageSource -packagePrefix "FakeXrmEasy.Tests.PluginsForTesting"   
 
 ./pack-tests.ps1 -targetFrameworks $targetFrameworks -versionSuffix $versionSuffix
