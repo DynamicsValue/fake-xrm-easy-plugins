@@ -1,6 +1,6 @@
 param (
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "net6.0",
+    [string]$targetFrameworks = "net8.0",
     [string]$packageIdPrefix = "FakeXrmEasy.PluginsTests",
     [string]$projectName = "FakeXrmEasy.Plugins.Tests",
     [string]$projectPath = "tests/FakeXrmEasy.Plugins.Tests",
