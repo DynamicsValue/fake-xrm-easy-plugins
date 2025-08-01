@@ -39,7 +39,8 @@ else
 }
 $tempNupkgFolder = './nupkgs'
 
-Write-Host "Building..."
+Write-Host "Building for target Framework $($targetFrameworks), config=$($configuration), and packTests=$($packTests)..."
+
 ./build.ps1 -targetFrameworks $targetFrameworks -configuration $configuration -packTests $packTests
 
 Write-Host "Packing assembly for targetFrameworks $($targetFrameworks)..."
