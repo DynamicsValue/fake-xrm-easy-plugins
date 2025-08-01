@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataverseEntities
+namespace FakeXrmEasy.Plugins.Pipeline.PipelineTypes
 {
 	/// <summary>
 	/// Non-public custom configuration that is passed to a plug-in's constructor.
@@ -228,16 +228,16 @@ namespace DataverseEntities
 		/// 1:N sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep
 		/// </summary>
 		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep")]
-		public System.Collections.Generic.IEnumerable<DataverseEntities.SdkMessageProcessingStep> sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep
+		public System.Collections.Generic.IEnumerable<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessageProcessingStep> sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep
 		{
 			get
 			{
-				return this.GetRelatedEntities<DataverseEntities.SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null);
+				return this.GetRelatedEntities<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null);
 			}
 			set
 			{
 				this.OnPropertyChanging("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep");
-				this.SetRelatedEntities<DataverseEntities.SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null, value);
+				this.SetRelatedEntities<FakeXrmEasy.Plugins.Pipeline.PipelineTypes.SdkMessageProcessingStep>("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep", null, value);
 				this.OnPropertyChanged("sdkmessageprocessingstepsecureconfigid_sdkmessageprocessingstep");
 			}
 		}
