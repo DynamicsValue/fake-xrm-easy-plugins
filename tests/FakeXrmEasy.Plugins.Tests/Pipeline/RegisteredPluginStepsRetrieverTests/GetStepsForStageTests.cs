@@ -258,7 +258,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
         [InlineData("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous)]
         [InlineData("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous)]
-        public void Should_not_return_registered_plugin_step_with_filtering_attributes_if_request_does_not_contain_such_attribute(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
+        public void Should_return_registered_plugin_step_with_filtering_attributes_if_request_does_not_contain_such_attribute_because_these_are_evaluated_later_on_so_that_they_depend_on_other_plugin_executions(string requestName, ProcessingStepStage stage, ProcessingStepMode mode)
         {
             _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
             {
@@ -272,7 +272,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline.RegisteredPluginStepsRetrieverTests
             _pipelineParameters.Mode = mode;
             
             var steps = RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, _pipelineParameters);
-            Assert.Empty(steps);
+            Assert.Single(steps);
         }
 
         [Theory]

@@ -163,6 +163,16 @@ namespace FakeXrmEasy.Pipeline
             
             return methodInfo.MakeGenericMethod(pluginType);
         }
+
+        private static bool SatisfiesFilteringAttributes(IXrmFakedContext context,
+            PluginStepDefinition pluginStep,
+            PipelineStageExecutionParameters parameters)
+        {
+            var requestDistinctAttributes = RegisteredPluginStepsRetriever.GetOrganizationRequestFilteringAttributes(context, parameters.Request);
+
+            return !pluginStep.FilteringAttributes.Any() ||
+                   pluginStep.FilteringAttributes.Any(attr => requestDistinctAttributes.Contains(attr));
+        }
         
         /// <summary>
         /// Executes all the relevant plugin steps for the current request
@@ -179,6 +189,11 @@ namespace FakeXrmEasy.Pipeline
             
             foreach (var pluginStep in pluginSteps)
             {
+                if (!SatisfiesFilteringAttributes(context, pluginStep, parameters))
+                {
+                    continue;
+                }
+                
                 IEnumerable<Entity> preImageDefinitions = null;
                 if (parameters.PreEntitySnapshot != null)
                 {
