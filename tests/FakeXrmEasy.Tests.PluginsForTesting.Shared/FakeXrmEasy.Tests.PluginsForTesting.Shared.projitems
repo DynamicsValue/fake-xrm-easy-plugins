@@ -12,6 +12,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)AccountNumberPlugin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AccountSetTerritories.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BasePlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bug195Plugins\Plugin1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Bug195Plugins\Plugin2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationPlugin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationPluginPipeline.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ContextTestsPlugin.cs" />
