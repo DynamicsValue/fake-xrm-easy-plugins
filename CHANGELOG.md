@@ -1,3 +1,9 @@
+## [3.8.1]
+
+### Changed
+
+- Moves plugin step attribute filtering later on in the execution so that it can depend on other plugin executions that might be registered against the same message, stage, etc - https://github.com/DynamicsValue/fake-xrm-easy/issues/195
+
 ## [3.8.0]
 
 ### Changed
