@@ -143,7 +143,7 @@ namespace FakeXrmEasy.Pipeline
         {
             int? entityTypeCode = null;
             
-            var requestDistinctAttributes = GetOrganizationRequestFilteringAttributes(context, parameters.Request);
+            GetOrganizationRequestFilteringAttributes(context, parameters.Request);
             string entityLogicalName = GetOrganizationRequestEntityLogicalName(context, parameters.Request);
             if (entityLogicalName != null)
             {
