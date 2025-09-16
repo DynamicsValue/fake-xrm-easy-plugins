@@ -196,7 +196,7 @@ namespace FakeXrmEasy.Pipeline
                         .Where(ps => ps.EntityLogicalName != null && ps.EntityLogicalName == entityLogicalName || //Matches logical name
                                         ps.EntityTypeCode != null && ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode || //Or matches entity type code
                                         ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none (Custom Apis)
-                        .Where(ps => !ps.FilteringAttributes.Any() || ps.FilteringAttributes.Any(attr => requestDistinctAttributes.Contains(attr))).ToList();
+                        .ToList();
         }
 
         internal static IEnumerable<Entity> GetPluginImageDefinitions(IXrmFakedContext context, Guid stepId, ProcessingStepImageType imageType)
