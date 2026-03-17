@@ -11,7 +11,7 @@
 
     <IsPackable>true</IsPackable>
     <PackageId>FakeXrmEasy.Tests.PluginsForTesting</PackageId>
-    <VersionPrefix>2.7.0</VersionPrefix>
+    <VersionPrefix>2.9.0</VersionPrefix>
     
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
@@ -53,7 +53,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.52" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.60" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
