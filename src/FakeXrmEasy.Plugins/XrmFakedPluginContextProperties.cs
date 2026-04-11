@@ -353,6 +353,7 @@ namespace FakeXrmEasy.Plugins
             A.CallTo(() => context.Stage).ReturnsLazily(() => ctx.Stage);
         }
         
+        #if FAKE_XRM_EASY_9
         /// <summary>
         /// Populates IPluginExecutionContext2 properties from a XrmFakedPluginExecutionContext2
         /// </summary>
@@ -430,5 +431,7 @@ namespace FakeXrmEasy.Plugins
             PopulatePluginExecutionContextPropertiesFromFakedContext6(context, ctx);
             A.CallTo(() => context.IsApplicationUser).ReturnsLazily(() => ctx.IsApplicationUser);
         }
+#endif
+        
     }
 }

@@ -1,8 +1,6 @@
 
 
 using System;
-using FakeXrmEasy.Abstractions.Exceptions;
-using FakeXrmEasy.Plugins.PluginExecutionContext;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Xunit;
@@ -85,6 +83,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
             Assert.NotNull(pluginExecutionContext);
         }
         
+        #if FAKE_XRM_EASY_9
         [Fact]
         public void Should_return_fake_plugin_execution_context2_with_defaults()
         {
@@ -165,5 +164,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
             var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext7;
             Assert.Equal(expectedPlugCtx.IsApplicationUser, pluginExecutionContext.IsApplicationUser);
         }
+        #endif
+        
     }
 }
