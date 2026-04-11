@@ -5,6 +5,10 @@ using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Xunit;
 
+#if FAKE_XRM_EASY_9
+using FakeXrmEasy.Plugins.PluginExecutionContext;
+#endif
+
 namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
 {
     public class XrmFakedPluginContextPropertiesTests : FakeXrmEasyTestsBase
