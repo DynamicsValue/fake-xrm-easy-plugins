@@ -2,6 +2,7 @@
 
 using System;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Plugins.PluginExecutionContext;
 using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Xunit;
@@ -82,6 +83,87 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
             var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext));
 
             Assert.NotNull(pluginExecutionContext);
+        }
+        
+        [Fact]
+        public void Should_return_fake_plugin_execution_context2_with_defaults()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+            var plugCtx = _context.GetDefaultPluginContext();
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(plugCtx);
+            var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext2)) as IPluginExecutionContext2;
+            Assert.NotNull(pluginExecutionContext);
+            
+            var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext2;
+            Assert.Equal(expectedPlugCtx.UserAzureActiveDirectoryObjectId, pluginExecutionContext.UserAzureActiveDirectoryObjectId);
+            Assert.Equal(expectedPlugCtx.InitiatingUserAzureActiveDirectoryObjectId, pluginExecutionContext.InitiatingUserAzureActiveDirectoryObjectId);
+        }
+        
+        [Fact]
+        public void Should_return_fake_plugin_execution_context3_with_defaults()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+            var plugCtx = _context.GetDefaultPluginContext();
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(plugCtx);
+            var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext3)) as IPluginExecutionContext3;
+            Assert.NotNull(pluginExecutionContext);
+            
+            var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext3;
+            Assert.Equal(expectedPlugCtx.AuthenticatedUserId, pluginExecutionContext.AuthenticatedUserId);
+        }
+        
+        [Fact]
+        public void Should_return_fake_plugin_execution_context4_with_defaults()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+            var plugCtx = _context.GetDefaultPluginContext();
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(plugCtx);
+            var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext4)) as IPluginExecutionContext4;
+            Assert.NotNull(pluginExecutionContext);
+            
+            var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext4;
+            Assert.Equal(expectedPlugCtx.PreEntityImagesCollection, pluginExecutionContext.PreEntityImagesCollection);
+            Assert.Equal(expectedPlugCtx.PostEntityImagesCollection, pluginExecutionContext.PostEntityImagesCollection);
+        }
+        
+        [Fact]
+        public void Should_return_fake_plugin_execution_context5_with_defaults()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+            var plugCtx = _context.GetDefaultPluginContext();
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(plugCtx);
+            var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext5)) as IPluginExecutionContext5;
+            Assert.NotNull(pluginExecutionContext);
+            
+            var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext5;
+            Assert.Equal(expectedPlugCtx.InitiatingUserAgent, pluginExecutionContext.InitiatingUserAgent);
+        }
+        
+        [Fact]
+        public void Should_return_fake_plugin_execution_context6_with_defaults()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+            var plugCtx = _context.GetDefaultPluginContext();
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(plugCtx);
+            var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext6)) as IPluginExecutionContext6;
+            Assert.NotNull(pluginExecutionContext);
+            
+            var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext6;
+            Assert.Equal(expectedPlugCtx.EnvironmentId, pluginExecutionContext.EnvironmentId);
+            Assert.Equal(expectedPlugCtx.TenantId, pluginExecutionContext.TenantId);
+        }
+        
+        [Fact]
+        public void Should_return_fake_plugin_execution_context7_with_defaults()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+            var plugCtx = _context.GetDefaultPluginContext();
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(plugCtx);
+            var pluginExecutionContext = serviceProvider.GetService(typeof(IPluginExecutionContext7)) as IPluginExecutionContext7;
+            Assert.NotNull(pluginExecutionContext);
+            
+            var expectedPlugCtx = plugCtx as XrmFakedPluginExecutionContext7;
+            Assert.Equal(expectedPlugCtx.IsApplicationUser, pluginExecutionContext.IsApplicationUser);
         }
     }
 }

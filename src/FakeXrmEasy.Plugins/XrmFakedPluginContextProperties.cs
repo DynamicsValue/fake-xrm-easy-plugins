@@ -121,9 +121,34 @@ namespace FakeXrmEasy.Plugins
                    }
 
 #if FAKE_XRM_EASY_9
+                   if (t == typeof(IPluginExecutionContext2))
+                   {
+                       return GetFakedPluginContext2((XrmFakedPluginExecutionContext2) plugCtx);
+                   }
+                   
+                   if (t == typeof(IPluginExecutionContext3))
+                   {
+                       return GetFakedPluginContext3((XrmFakedPluginExecutionContext3) plugCtx);
+                   }
+                   
                    if (t == typeof(IPluginExecutionContext4))
                    {
                        return GetFakedPluginContext4((XrmFakedPluginExecutionContext4) plugCtx);
+                   }
+                   
+                   if (t == typeof(IPluginExecutionContext5))
+                   {
+                       return GetFakedPluginContext5((XrmFakedPluginExecutionContext5) plugCtx);
+                   }
+                   
+                   if (t == typeof(IPluginExecutionContext6))
+                   {
+                       return GetFakedPluginContext6((XrmFakedPluginExecutionContext6) plugCtx);
+                   }
+                   
+                   if (t == typeof(IPluginExecutionContext7))
+                   {
+                       return GetFakedPluginContext7((XrmFakedPluginExecutionContext7) plugCtx);
                    }
 #endif
                    
@@ -180,15 +205,72 @@ namespace FakeXrmEasy.Plugins
         /// </summary>
         /// <param name="ctx">The fake plugin context with support for xMultiple messages</param>
         /// <returns></returns>
+        protected IPluginExecutionContext2 GetFakedPluginContext2(XrmFakedPluginExecutionContext2 ctx)
+        {
+            var context = A.Fake<IPluginExecutionContext2>();
+
+            PopulatePluginExecutionContextPropertiesFromFakedContext2(context, ctx);
+            
+            return context;
+        }
+        
+        /// <summary>
+        /// Returns a fake plugin execution context3
+        /// </summary>
+        /// <param name="ctx">The default plugin context 3 class</param>
+        /// <returns></returns>
+        protected IPluginExecutionContext3 GetFakedPluginContext3(XrmFakedPluginExecutionContext3 ctx)
+        {
+            var context = A.Fake<IPluginExecutionContext3>();
+
+            PopulatePluginExecutionContextPropertiesFromFakedContext3(context, ctx);
+
+            return context;
+        }
+        
+        /// <summary>
+        /// Returns a fake plugin execution context for xMultiple messages from a default plugin context in code
+        /// </summary>
+        /// <param name="ctx">The fake plugin context with support for xMultiple messages</param>
+        /// <returns></returns>
         protected IPluginExecutionContext4 GetFakedPluginContext4(XrmFakedPluginExecutionContext4 ctx)
         {
             var context = A.Fake<IPluginExecutionContext4>();
 
-            PopulatePluginExecutionContextPropertiesFromFakedContext(context, ctx);
+            PopulatePluginExecutionContextPropertiesFromFakedContext4(context, ctx);
+            
+            return context;
+        }
+        
+        /// <summary>
+        /// Returns a fake plugin execution context5
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        protected IPluginExecutionContext5 GetFakedPluginContext5(XrmFakedPluginExecutionContext5 ctx)
+        {
+            var context = A.Fake<IPluginExecutionContext5>();
 
-            A.CallTo(() => context.PreEntityImagesCollection).ReturnsLazily(() => ctx.PreEntityImagesCollection);
-            A.CallTo(() => context.PostEntityImagesCollection).ReturnsLazily(() => ctx.PostEntityImagesCollection);
+            PopulatePluginExecutionContextPropertiesFromFakedContext5(context, ctx);
+            
+            return context;
+        }
+        
+        protected IPluginExecutionContext6 GetFakedPluginContext6(XrmFakedPluginExecutionContext6 ctx)
+        {
+            var context = A.Fake<IPluginExecutionContext6>();
 
+            PopulatePluginExecutionContextPropertiesFromFakedContext6(context, ctx);
+            
+            return context;
+        }
+        
+        protected IPluginExecutionContext7 GetFakedPluginContext7(XrmFakedPluginExecutionContext7 ctx)
+        {
+            var context = A.Fake<IPluginExecutionContext7>();
+
+            PopulatePluginExecutionContextPropertiesFromFakedContext7(context, ctx);
+            
             return context;
         }
         #endif
@@ -269,6 +351,84 @@ namespace FakeXrmEasy.Plugins
             PopulateExecutionContextPropertiesFromFakedContext(context, ctx);
             A.CallTo(() => context.ParentContext).ReturnsLazily(() => ctx.ParentContext);
             A.CallTo(() => context.Stage).ReturnsLazily(() => ctx.Stage);
+        }
+        
+        /// <summary>
+        /// Populates IPluginExecutionContext2 properties from a XrmFakedPluginExecutionContext2
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext2(IPluginExecutionContext2 context,
+            XrmFakedPluginExecutionContext2 ctx)
+        {
+            PopulateExecutionContextPropertiesFromFakedContext(context, ctx);
+            A.CallTo(() => context.UserAzureActiveDirectoryObjectId).ReturnsLazily(() => ctx.UserAzureActiveDirectoryObjectId);
+            A.CallTo(() => context.InitiatingUserAzureActiveDirectoryObjectId).ReturnsLazily(() => ctx.InitiatingUserAzureActiveDirectoryObjectId);
+            A.CallTo(() => context.InitiatingUserApplicationId).ReturnsLazily(() => ctx.InitiatingUserApplicationId);
+            A.CallTo(() => context.PortalsContactId).ReturnsLazily(() => ctx.PortalsContactId);
+            A.CallTo(() => context.IsPortalsClientCall).ReturnsLazily(() => ctx.IsPortalsClientCall);
+        }
+        
+        /// <summary>
+        /// Populates IPluginExecutionContext3 properties from a XrmFakedPluginExecutionContext3
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext3(IPluginExecutionContext3 context,
+            XrmFakedPluginExecutionContext3 ctx)
+        {
+            PopulatePluginExecutionContextPropertiesFromFakedContext2(context, ctx);
+            A.CallTo(() => context.AuthenticatedUserId).ReturnsLazily(() => ctx.AuthenticatedUserId);
+        }
+        
+        /// <summary>
+        /// Populates IPluginExecutionContext4 properties from a XrmFakedPluginExecutionContext4
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext4(IPluginExecutionContext4 context,
+            XrmFakedPluginExecutionContext4 ctx)
+        {
+            PopulatePluginExecutionContextPropertiesFromFakedContext3(context, ctx);
+            A.CallTo(() => context.PreEntityImagesCollection).ReturnsLazily(() => ctx.PreEntityImagesCollection);
+            A.CallTo(() => context.PostEntityImagesCollection).ReturnsLazily(() => ctx.PostEntityImagesCollection);
+        }
+        
+        /// <summary>
+        /// Populates IPluginExecutionContext5 properties from a XrmFakedPluginExecutionContext5
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext5(IPluginExecutionContext5 context,
+            XrmFakedPluginExecutionContext5 ctx)
+        {
+            PopulatePluginExecutionContextPropertiesFromFakedContext4(context, ctx);
+            A.CallTo(() => context.InitiatingUserAgent).ReturnsLazily(() => ctx.InitiatingUserAgent);
+        }
+        
+        /// <summary>
+        /// Populates IPluginExecutionContext6 properties from a XrmFakedPluginExecutionContext6
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext6(IPluginExecutionContext6 context,
+            XrmFakedPluginExecutionContext6 ctx)
+        {
+            PopulatePluginExecutionContextPropertiesFromFakedContext5(context, ctx);
+            A.CallTo(() => context.EnvironmentId).ReturnsLazily(() => ctx.EnvironmentId);
+            A.CallTo(() => context.TenantId).ReturnsLazily(() => ctx.TenantId);
+        }
+        
+        /// <summary>
+        /// Populates IPluginExecutionContext7 properties from a XrmFakedPluginExecutionContext7
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="ctx"></param>
+        protected void PopulatePluginExecutionContextPropertiesFromFakedContext7(IPluginExecutionContext7 context,
+            XrmFakedPluginExecutionContext7 ctx)
+        {
+            PopulatePluginExecutionContextPropertiesFromFakedContext6(context, ctx);
+            A.CallTo(() => context.IsApplicationUser).ReturnsLazily(() => ctx.IsApplicationUser);
         }
     }
 }
