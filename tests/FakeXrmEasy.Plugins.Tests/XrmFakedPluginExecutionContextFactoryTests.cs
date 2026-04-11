@@ -1,5 +1,4 @@
 using System;
-using FakeXrmEasy.Plugins.PluginExecutionContext;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests
