@@ -18,11 +18,20 @@ namespace FakeXrmEasy.Plugins
         /// <returns></returns>
         public static XrmFakedPluginExecutionContext GetDefaultPluginContext(this IXrmBaseContext context)
         {
+            XrmFakedPluginExecutionContext plugCtx;
+            if (context.HasProperty<IXrmFakedPluginExecutionContextFactory>())
+            {
+                var pluginContextFactory = context.GetProperty<IXrmFakedPluginExecutionContextFactory>();
+                plugCtx = pluginContextFactory.New();
+            }
+            else
+            {
+                plugCtx = XrmFakedPluginExecutionContext.New();
+            }
+            
             var userId = context.CallerProperties.CallerId?.Id ?? Guid.NewGuid();
             Guid businessUnitId = context.CallerProperties.BusinessUnitId?.Id ?? Guid.NewGuid();
-
-            var plugCtx = XrmFakedPluginExecutionContext.New();
-
+            
             plugCtx.Depth = 1;
             plugCtx.IsExecutingOffline = false;
             plugCtx.MessageName = "Create";

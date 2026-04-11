@@ -1,3 +1,9 @@
+## [2.9.1]
+
+### Added
+
+- Adds a new XrmFakedPluginExecutionContextFactory that allows setting custom plugin execution context properties in plugin execution and pipeline execution other than those set by FXE - https://github.com/DynamicsValue/fake-xrm-easy/issues/229
+
 ## [2.9.0]
 
 ### Changed
