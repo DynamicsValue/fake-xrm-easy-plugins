@@ -256,6 +256,11 @@ namespace FakeXrmEasy.Plugins
             return context;
         }
         
+        /// <summary>
+        /// Returns a fake plugin execution context6
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         protected IPluginExecutionContext6 GetFakedPluginContext6(XrmFakedPluginExecutionContext6 ctx)
         {
             var context = A.Fake<IPluginExecutionContext6>();
@@ -265,6 +270,11 @@ namespace FakeXrmEasy.Plugins
             return context;
         }
         
+        /// <summary>
+        /// Returns a fake plugin execution context7
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         protected IPluginExecutionContext7 GetFakedPluginContext7(XrmFakedPluginExecutionContext7 ctx)
         {
             var context = A.Fake<IPluginExecutionContext7>();
