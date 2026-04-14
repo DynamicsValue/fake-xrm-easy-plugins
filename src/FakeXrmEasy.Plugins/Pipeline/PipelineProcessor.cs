@@ -104,7 +104,10 @@ namespace FakeXrmEasy.Pipeline
                             .Where(attribute => attribute.AttributeType == AttributeTypeCode.Boolean).ToList();
                         foreach (var booleanAttribute in booleanAttributes)
                         {
-                            targetEntity[booleanAttribute.LogicalName] = false;
+                            if (!targetEntity.Contains(booleanAttribute.LogicalName))
+                            {
+                                targetEntity[booleanAttribute.LogicalName] = false;
+                            }
                         }
                     }
                 }
@@ -146,7 +149,11 @@ namespace FakeXrmEasy.Pipeline
                             .Where(attribute => attribute.AttributeType == AttributeTypeCode.Boolean).ToList();
                         foreach (var booleanAttribute in booleanAttributes)
                         {
-                            targetEntity[booleanAttribute.LogicalName] = false;
+                            if (!targetEntity.Contains(booleanAttribute.LogicalName))
+                            {
+                                targetEntity[booleanAttribute.LogicalName] = false;
+                            }
+                            
                         }
                     }
                 }

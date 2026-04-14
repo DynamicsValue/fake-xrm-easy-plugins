@@ -5,6 +5,10 @@
 - Adds a new XrmFakedPluginExecutionContextFactory that allows setting custom plugin execution context properties in plugin execution and pipeline execution other than those set by FXE - https://github.com/DynamicsValue/fake-xrm-easy/issues/229
 - Adds support for the new IPluginExecutionContext5, IPluginExecutionContext6, and IPluginExecutionContext7 interfaces - https://github.com/DynamicsValue/fake-xrm-easy/issues/210
 
+### Changed
+
+- Pipeline simulation now passes different default values to the target Entity based on stage for Create message - https://github.com/DynamicsValue/fake-xrm-easy/issues/234
+
 ## [2.9.0]
 
 ### Changed
