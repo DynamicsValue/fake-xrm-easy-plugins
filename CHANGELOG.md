@@ -2,6 +2,7 @@
 
 ### Added
 
+- Added net48 as the target framework along with net462 - https://github.com/DynamicsValue/fake-xrm-easy/issues/233
 - Adds a new XrmFakedPluginExecutionContextFactory that allows setting custom plugin execution context properties in plugin execution and pipeline execution other than those set by FXE - https://github.com/DynamicsValue/fake-xrm-easy/issues/229
 - Adds support for the new IPluginExecutionContext5, IPluginExecutionContext6, and IPluginExecutionContext7 interfaces - https://github.com/DynamicsValue/fake-xrm-easy/issues/210
 
