@@ -1010,6 +1010,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9
 		/// <summary>
 		/// File that contains description content.
 		/// </summary>
@@ -1021,6 +1022,7 @@ namespace DataverseEntities
 				return this.GetAttributeValue<object>("descriptionblobid");
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("descriptionblobid_name")]
 		public string DescriptionBlobId_Name

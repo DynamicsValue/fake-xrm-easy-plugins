@@ -10,7 +10,7 @@
 
     <IsPackable>true</IsPackable>
     <PackageId>FakeXrmEasy.Tests.PluginsForTesting</PackageId>
-    <VersionPrefix>3.9.0</VersionPrefix>
+    <VersionPrefix>3.9.1</VersionPrefix>
     
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
@@ -52,8 +52,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.9" />
-    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.9" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.10" />
   </ItemGroup>
 
   <Import Project="..\DataverseEntities.Shared\DataverseEntities.Shared.projitems" Label="Shared" />

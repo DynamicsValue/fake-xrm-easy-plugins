@@ -905,6 +905,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
 		/// <summary>
 		/// Shows the default image for the record.
 		/// </summary>
@@ -920,6 +921,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("entityimage", value);
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("entityimage_timestamp")]
 		public System.Nullable<long> EntityImage_Timestamp

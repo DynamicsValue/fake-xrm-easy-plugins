@@ -196,7 +196,7 @@ namespace FakeXrmEasy.Plugins
         public static XrmFakedPluginExecutionContext New()
         {
             #if FAKE_XRM_EASY_9
-            return new XrmFakedPluginExecutionContext4();
+            return new XrmFakedPluginExecutionContext7();
             #else
             return new XrmFakedPluginExecutionContext();
             #endif

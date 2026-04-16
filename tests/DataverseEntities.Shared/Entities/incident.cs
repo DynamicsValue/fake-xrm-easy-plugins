@@ -1222,6 +1222,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
 		/// <summary>
 		/// The default image for the entity.
 		/// </summary>
@@ -1237,6 +1238,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("entityimage", value);
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("entityimage_timestamp")]
 		public System.Nullable<long> EntityImage_Timestamp
