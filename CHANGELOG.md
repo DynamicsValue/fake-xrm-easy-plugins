@@ -7,6 +7,7 @@
 
 ### Changed
 
+- Upgraded Microsoft.PowerPlatform.Dataverse.Client package to 1.2.10
 - Pipeline simulation now passes different default values to the target Entity based on stage for Create message - https://github.com/DynamicsValue/fake-xrm-easy/issues/234
 
 ## [3.9.0]
