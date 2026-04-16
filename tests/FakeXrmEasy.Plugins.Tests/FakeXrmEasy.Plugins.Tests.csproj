@@ -108,23 +108,23 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2013'">
-    <PackageReference Include="FakeXrmEasy.Plugins.v2013" Version="3.8.1-*" />
+    <PackageReference Include="FakeXrmEasy.Plugins.v2013" Version="3.9.1-*" />
     <PackageReference Include="FakeXrmEasy.Tests.PluginsForTesting.v2013" Version="3.9.1-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2015'">
-    <PackageReference Include="FakeXrmEasy.Plugins.v2015" Version="3.8.1-*" />
+    <PackageReference Include="FakeXrmEasy.Plugins.v2015" Version="3.9.1-*" />
     <PackageReference Include="FakeXrmEasy.Tests.PluginsForTesting.v2015" Version="3.9.1-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2016'">
-    <PackageReference Include="FakeXrmEasy.Plugins.v2016" Version="3.8.1-*" />
+    <PackageReference Include="FakeXrmEasy.Plugins.v2016" Version="3.9.1-*" />
     <PackageReference Include="FakeXrmEasy.Tests.PluginsForTesting.v2016" Version="3.9.1-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
-    <PackageReference Include="FakeXrmEasy.Plugins.v365" Version="3.8.1-*" />
+    <PackageReference Include="FakeXrmEasy.Plugins.v365" Version="3.9.1-*" />
     <PackageReference Include="FakeXrmEasy.Tests.PluginsForTesting.v365" Version="3.9.1-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="FakeXrmEasy.Plugins.v9" Version="3.8.1-*" />
+    <PackageReference Include="FakeXrmEasy.Plugins.v9" Version="3.9.1-*" />
     <PackageReference Include="FakeXrmEasy.Tests.PluginsForTesting.v9" Version="3.9.1-*" />
   </ItemGroup>
 </Project>
