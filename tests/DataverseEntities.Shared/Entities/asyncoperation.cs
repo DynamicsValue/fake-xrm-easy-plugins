@@ -794,6 +794,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9
 		/// <summary>
 		/// File Id for the blob url used for file storage.
 		/// </summary>
@@ -805,6 +806,7 @@ namespace DataverseEntities
 				return this.GetAttributeValue<object>("datablobid");
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("datablobid_name")]
 		public string DataBlobId_Name
