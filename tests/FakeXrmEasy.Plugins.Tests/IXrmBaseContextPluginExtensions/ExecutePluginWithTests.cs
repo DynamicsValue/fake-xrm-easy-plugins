@@ -217,5 +217,19 @@ namespace FakeXrmEasy.Plugins.Tests.IXrmBaseContextPluginExtensions
             Assert.Null(ex);
         }
         #endif
+
+        [Fact]
+        public void Should_use_custom_plugin_execution_factory_when_set_in_the_context()
+        {
+            var organizationId = Guid.NewGuid();
+            var customPluginContext = XrmFakedPluginExecutionContext.New();
+            customPluginContext.OrganizationId = organizationId;
+            
+            IXrmFakedPluginExecutionContextFactory factory = new XrmFakedPluginExecutionContextFactory(customPluginContext);
+            _context.SetProperty(factory);
+            
+            var pluginContext = _context.GetDefaultPluginContext();
+            Assert.Equal(organizationId,  pluginContext.OrganizationId);
+        }
     }
 }

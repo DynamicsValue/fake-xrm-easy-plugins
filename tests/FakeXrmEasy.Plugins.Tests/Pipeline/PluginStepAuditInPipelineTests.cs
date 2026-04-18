@@ -119,7 +119,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(stage, auditedStep.Stage);
             Assert.Equal(typeof(AccountNumberPlugin), auditedStep.PluginAssemblyType);
         }
-
+        
         [Fact]
         public void Should_capture_multiple_plugin_step_executions_if_audit_is_enabled()
         {
@@ -333,6 +333,49 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(stage, auditedStep.Stage);
             Assert.Equal(typeof(CustomInstancePluginPipeline), auditedStep.PluginAssemblyType);
             Assert.Equal(pluginInstance, auditedStep.PluginStepDefinition.PluginInstance);
+        }
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_use_custom_plugin_execution_factory_when_set_in_the_context(ProcessingStepStage stage)
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            
+            var organizationId = Guid.NewGuid();
+            var customPluginContext = XrmFakedPluginExecutionContext.New();
+            customPluginContext.OrganizationId = organizationId;
+            
+            IXrmFakedPluginExecutionContextFactory factory = new XrmFakedPluginExecutionContextFactory(customPluginContext);
+            _context.SetProperty(factory);
+            
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = Account.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage
+            });
+
+            var account = new Account() { Name = "Some name" };
+
+            _service.Execute(new CreateRequest()
+            {
+                Target = account
+            });
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            var auditedStep = stepsAudit[0];
+
+            Assert.Equal(organizationId, auditedStep.PluginContext.OrganizationId);
+            Assert.Equal(stage, auditedStep.Stage);
+            Assert.Equal(typeof(AccountNumberPlugin), auditedStep.PluginAssemblyType);
         }
         
         /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented 

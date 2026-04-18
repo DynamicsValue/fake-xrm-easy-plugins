@@ -17,6 +17,7 @@ using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.PluginSteps.Extensions;
 using FakeXrmEasy.Plugins.PluginSteps.PluginStepRegistrationFieldNames;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Pipeline
 {
@@ -56,6 +57,7 @@ namespace FakeXrmEasy.Pipeline
         {
             pipelineParameters.Stage = ProcessingStepStage.Prevalidation;
             pipelineParameters.Mode = ProcessingStepMode.Synchronous;
+            AddPreValidationAttributesToParameters(context, pipelineParameters);
             ExecutePipelineStage(context, pipelineParameters);
         }
         
@@ -64,6 +66,7 @@ namespace FakeXrmEasy.Pipeline
         {  
             pipelineParameters.Stage = ProcessingStepStage.Preoperation;
             pipelineParameters.Mode = ProcessingStepMode.Synchronous;
+            AddPreOperationAttributesToParameters(context, pipelineParameters);
             ExecutePipelineStage(context, pipelineParameters);
         }
 
@@ -76,6 +79,85 @@ namespace FakeXrmEasy.Pipeline
 
             pipelineParameters.Mode = ProcessingStepMode.Asynchronous;
             ExecutePipelineStage(context, pipelineParameters);
+        }
+
+        /// <summary>
+        /// Adds the necessary default attribute values for PreValidation stage
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="pipelineParameters"></param>
+        private static void AddPreValidationAttributesToParameters(IXrmFakedContext context,
+            PipelineStageExecutionParameters pipelineParameters)
+        {
+            var inputParams = pipelineParameters.Request.Parameters;
+            if (inputParams.ContainsKey("Target"))
+            {
+                var targetEntity = inputParams["Target"] as Entity;
+                if (targetEntity != null)
+                {
+                    var entityMetadata = context.CreateMetadataQuery()
+                        .FirstOrDefault(metadata => metadata.LogicalName.Equals(targetEntity.LogicalName));
+
+                    if (entityMetadata != null)
+                    {
+                        var booleanAttributes = entityMetadata.Attributes
+                            .Where(attribute => attribute.AttributeType == AttributeTypeCode.Boolean).ToList();
+                        foreach (var booleanAttribute in booleanAttributes)
+                        {
+                            if (!targetEntity.Contains(booleanAttribute.LogicalName))
+                            {
+                                targetEntity[booleanAttribute.LogicalName] = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Adds the necessary default attribute values for PreValidation stage
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="pipelineParameters"></param>
+        private static void AddPreOperationAttributesToParameters(IXrmFakedContext context,
+            PipelineStageExecutionParameters pipelineParameters)
+        {
+            var inputParams = pipelineParameters.Request.Parameters;
+            if (inputParams.ContainsKey("Target"))
+            {
+                var targetEntity = inputParams["Target"] as Entity;
+                if (targetEntity != null)
+                {
+                    if (pipelineParameters.Request.IsCreateRequest() && targetEntity.Id == Guid.Empty)
+                    {
+                        targetEntity.Id = Guid.NewGuid();
+                    }
+                    targetEntity["ownerid"] = context.CallerProperties.CallerId;
+                    targetEntity["createdby"] = context.CallerProperties.CallerId;
+                    targetEntity["modifiedby"] = context.CallerProperties.CallerId;
+                    if (context.CallerProperties.CallerId.LogicalName.Equals("systemuser"))
+                    {
+                        targetEntity["owninguser"] = context.CallerProperties.CallerId;
+                    }
+                    
+                    var entityMetadata = context.CreateMetadataQuery()
+                        .FirstOrDefault(metadata => metadata.LogicalName.Equals(targetEntity.LogicalName));
+
+                    if (entityMetadata != null)
+                    {
+                        var booleanAttributes = entityMetadata.Attributes
+                            .Where(attribute => attribute.AttributeType == AttributeTypeCode.Boolean).ToList();
+                        foreach (var booleanAttribute in booleanAttributes)
+                        {
+                            if (!targetEntity.Contains(booleanAttribute.LogicalName))
+                            {
+                                targetEntity[booleanAttribute.LogicalName] = false;
+                            }
+                            
+                        }
+                    }
+                }
+            }
         }
         
         /// <summary>
