@@ -143,7 +143,7 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
         {
             #if FAKE_XRM_EASY_9
             var plugCtx = XrmFakedPluginExecutionContext.New();
-            Assert.IsType<XrmFakedPluginExecutionContext4>(plugCtx);
+            Assert.IsType<XrmFakedPluginExecutionContext7>(plugCtx);
             #else
             var plugCtx = XrmFakedPluginExecutionContext.New();
             Assert.IsType<XrmFakedPluginExecutionContext>(plugCtx);

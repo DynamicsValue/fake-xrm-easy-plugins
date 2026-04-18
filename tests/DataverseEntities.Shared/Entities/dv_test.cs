@@ -561,6 +561,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file")]
 		public object dv_file
 		{
@@ -569,6 +570,7 @@ namespace DataverseEntities
 				return this.GetAttributeValue<object>("dv_file");
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file_name")]
 		public string dv_file_Name
@@ -599,6 +601,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image")]
 		public byte[] dv_image
 		{
@@ -611,6 +614,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("dv_image", value);
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image_timestamp")]
 		public System.Nullable<long> dv_image_Timestamp
