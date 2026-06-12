@@ -89,6 +89,11 @@ namespace FakeXrmEasy.Pipeline
         private static void AddPreValidationAttributesToParameters(IXrmFakedContext context,
             PipelineStageExecutionParameters pipelineParameters)
         {
+            if (!pipelineParameters.Request.IsCreateRequest())
+            {
+                return;
+            }
+            
             var inputParams = pipelineParameters.Request.Parameters;
             if (inputParams.ContainsKey("Target"))
             {
@@ -122,6 +127,11 @@ namespace FakeXrmEasy.Pipeline
         private static void AddPreOperationAttributesToParameters(IXrmFakedContext context,
             PipelineStageExecutionParameters pipelineParameters)
         {
+            if (!pipelineParameters.Request.IsCreateRequest())
+            {
+                return;
+            }
+            
             var inputParams = pipelineParameters.Request.Parameters;
             if (inputParams.ContainsKey("Target"))
             {
