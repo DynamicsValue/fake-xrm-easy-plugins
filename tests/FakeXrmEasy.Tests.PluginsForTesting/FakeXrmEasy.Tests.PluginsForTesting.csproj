@@ -10,7 +10,7 @@
 
     <IsPackable>true</IsPackable>
     <PackageId>FakeXrmEasy.Tests.PluginsForTesting</PackageId>
-    <VersionPrefix>3.9.1</VersionPrefix>
+    <VersionPrefix>3.9.2</VersionPrefix>
     
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>

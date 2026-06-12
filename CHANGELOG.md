@@ -1,3 +1,10 @@
+
+## [3.9.2]
+
+### Changed 
+
+- Resolves issue where default values in PipelineSimulation where being populated not just in create but other messages - https://github.com/DynamicsValue/fake-xrm-easy/issues/246
+
 ## [3.9.1]
 
 ### Added
