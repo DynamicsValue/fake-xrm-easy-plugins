@@ -1,3 +1,10 @@
+## [2.9.3]
+
+### Changed 
+
+- Resolves OnwerId field being overriden in target entity of Create message - https://github.com/DynamicsValue/fake-xrm-easy/issues/246
+- Increment version
+
 ## [2.9.2]
 
 ### Changed 
