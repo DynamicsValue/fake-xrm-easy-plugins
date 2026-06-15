@@ -142,12 +142,17 @@ namespace FakeXrmEasy.Pipeline
                     {
                         targetEntity.Id = Guid.NewGuid();
                     }
-                    targetEntity["ownerid"] = context.CallerProperties.CallerId;
+
+                    if (!targetEntity.Contains("ownerid"))
+                    {
+                        targetEntity["ownerid"] = context.CallerProperties.CallerId;
+                    }
+                    
                     targetEntity["createdby"] = context.CallerProperties.CallerId;
                     targetEntity["modifiedby"] = context.CallerProperties.CallerId;
                     if (context.CallerProperties.CallerId.LogicalName.Equals("systemuser"))
                     {
-                        targetEntity["owninguser"] = context.CallerProperties.CallerId;
+                        targetEntity["owninguser"] = targetEntity["ownerid"];
                     }
                     
                     var entityMetadata = context.CreateMetadataQuery()
