@@ -6,6 +6,7 @@ using FakeXrmEasy.Pipeline;
 using FakeXrmEasy.Plugins.Audit;
 using FakeXrmEasy.Plugins.PluginSteps;
 using FakeXrmEasy.Plugins.Tests.PluginsForTesting;
+using Microsoft.Xrm.Sdk;
 using Xunit;
 
 namespace FakeXrmEasy.Plugins.Tests.Pipeline
@@ -200,11 +201,19 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
                 Mode = ProcessingStepMode.Synchronous,
             });
 
+            var owner = new SystemUser()
+            {
+                Id = Guid.NewGuid()
+            };
+            
+            _context.Initialize(owner);
+            
             var guid = Guid.NewGuid();
             var id = _service.Create(new dv_test()
             {
                 Id = guid,
-                dv_bool = true
+                dv_bool = true,
+                OwnerId = owner.ToEntityReference(),
             });
             
             var executedPluginSteps = _context.GetPluginStepAudit().CreateQuery().ToList();
@@ -215,14 +224,15 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.True(target.dv_bool);
             Assert.Equal(id, target.Id);
             Assert.Equal(guid, target.Id);
+            Assert.Equal(owner.Id, target.OwnerId.Id);
+            Assert.Equal(owner.LogicalName, target.OwnerId.LogicalName);
+            Assert.Equal(owner.Id, target.OwningUser.Id);
+            Assert.Equal(owner.LogicalName, target.OwningUser.LogicalName);
+            
             Assert.Equal(_context.CallerProperties.CallerId.Id, target.CreatedBy.Id);
             Assert.Equal(_context.CallerProperties.CallerId.LogicalName, target.CreatedBy.LogicalName);
             Assert.Equal(_context.CallerProperties.CallerId.Id, target.ModifiedBy.Id);
             Assert.Equal(_context.CallerProperties.CallerId.LogicalName, target.ModifiedBy.LogicalName);
-            Assert.Equal(_context.CallerProperties.CallerId.Id, target.OwnerId.Id);
-            Assert.Equal(_context.CallerProperties.CallerId.LogicalName, target.OwnerId.LogicalName);
-            Assert.Equal(_context.CallerProperties.CallerId.Id, target.OwningUser.Id);
-            Assert.Equal(_context.CallerProperties.CallerId.LogicalName, target.OwningUser.LogicalName);
         }
     }
 }
