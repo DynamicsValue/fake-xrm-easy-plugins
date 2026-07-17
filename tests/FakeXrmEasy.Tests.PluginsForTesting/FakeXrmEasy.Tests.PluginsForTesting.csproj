@@ -11,7 +11,7 @@
 
     <IsPackable>true</IsPackable>
     <PackageId>FakeXrmEasy.Tests.PluginsForTesting</PackageId>
-    <VersionPrefix>2.9.3</VersionPrefix>
+    <VersionPrefix>2.9.4</VersionPrefix>
     
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
