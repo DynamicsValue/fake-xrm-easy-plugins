@@ -378,6 +378,77 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(typeof(AccountNumberPlugin), auditedStep.PluginAssemblyType);
         }
         
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_not_store_a_direct_reference_to_the_target_entity(ProcessingStepStage stage)
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = Account.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage
+            });
+
+            var account = new Account() { Name = "Some name" };
+
+            _service.Execute(new CreateRequest()
+            {
+                Target = account
+            });
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            var auditedStep = stepsAudit[0];
+            Assert.NotSame(account, auditedStep.TargetEntity);
+        }
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_not_store_a_direct_reference_to_the_target_entity_reference(ProcessingStepStage stage)
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = Account.EntityLogicalName,
+                MessageName = "Delete",
+                Stage = stage
+            });
+
+            var account = new Account() { 
+                Id = Guid.NewGuid(),
+                Name = "Some name" 
+            };
+
+            _context.Initialize(account);
+
+            var entityRef = account.ToEntityReference();
+            
+            _service.Execute(new DeleteRequest()
+            {
+                Target = entityRef
+            });
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            var auditedStep = stepsAudit[0];
+            Assert.NotSame(entityRef, auditedStep.TargetEntityReference);
+        }
+        
         /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented 
 
         [Theory]

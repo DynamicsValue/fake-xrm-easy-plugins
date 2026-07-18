@@ -2,6 +2,8 @@
 
 ### Changed 
 
+- Resolves an issue in plugin step auditing where a direct reference was stored instead of an object copy - https://github.com/DynamicsValue/fake-xrm-easy/issues/263
+- Resolves an issue where the PrimaryEntityId and PrimaryEntityName were not correctly populated for Create message in pipelinesimulation - https://github.com/DynamicsValue/fake-xrm-easy/issues/262
 - Increment version
 
 ## [2.9.3]

@@ -379,7 +379,7 @@ namespace FakeXrmEasy.Pipeline
 
                 var targetEntityRef = target as EntityReference;
                 if (targetEntityRef != null)
-                    pluginStepAuditDetails.TargetEntityReference = targetEntityRef;
+                    pluginStepAuditDetails.TargetEntityReference = targetEntityRef.Clone();
             }
 
             var pluginStepAudit = context.GetProperty<IPluginStepAudit>() as PluginStepAudit;
