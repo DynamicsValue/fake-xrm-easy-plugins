@@ -138,10 +138,7 @@ namespace FakeXrmEasy.Pipeline
                 var targetEntity = inputParams["Target"] as Entity;
                 if (targetEntity != null)
                 {
-                    if (pipelineParameters.Request.IsCreateRequest() && targetEntity.Id == Guid.Empty)
-                    {
-                        targetEntity.Id = Guid.NewGuid();
-                    }
+                    targetEntity.Id = pipelineParameters.PrimaryEntityId;
 
                     if (!targetEntity.Contains("ownerid"))
                     {
@@ -313,6 +310,9 @@ namespace FakeXrmEasy.Pipeline
                 pluginContext.PostEntityImages = GetEntityImageCollection(postImageDefinitions, parameters.PostEntitySnapshot);
                 pluginContext.Depth = 1;
                 
+                pluginContext.PrimaryEntityName = parameters.PrimaryEntityName;
+                pluginContext.PrimaryEntityId = parameters.PrimaryEntityId;
+                
                 if (parameters.Scope != null)
                 {
                     pluginContext.Depth = parameters.Scope.PluginContext.Depth + 1;
@@ -375,7 +375,7 @@ namespace FakeXrmEasy.Pipeline
                 var target = pluginContext.InputParameters["Target"];
                 var targetEntity = target as Entity;
                 if (targetEntity != null)
-                    pluginStepAuditDetails.TargetEntity = targetEntity;
+                    pluginStepAuditDetails.TargetEntity = targetEntity.Clone(target.GetType());
 
                 var targetEntityRef = target as EntityReference;
                 if (targetEntityRef != null)
