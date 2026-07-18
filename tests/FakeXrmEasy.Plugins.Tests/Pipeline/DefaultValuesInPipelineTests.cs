@@ -234,5 +234,115 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Equal(_context.CallerProperties.CallerId.Id, target.ModifiedBy.Id);
             Assert.Equal(_context.CallerProperties.CallerId.LogicalName, target.ModifiedBy.LogicalName);
         }
+
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_pass_primary_entity_name_for_create_message_regardless_of_stage(ProcessingStepStage stage)
+        {
+            _context.InitializeMetadata(typeof(dv_test).Assembly);
+            
+            _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = dv_test.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage,
+                Mode = ProcessingStepMode.Synchronous,
+            });
+
+            var id = _service.Create(new dv_test() { });
+            
+            var executedPluginSteps = _context.GetPluginStepAudit().CreateQuery().ToList();
+            Assert.Single(executedPluginSteps);
+
+            var plugContext = executedPluginSteps.First().PluginContext;
+            
+            Assert.Equal(dv_test.EntityLogicalName, plugContext.PrimaryEntityName);
+        }
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_pass_primary_entity_id_for_create_message_regardless_of_stage(ProcessingStepStage stage)
+        {
+            _context.InitializeMetadata(typeof(dv_test).Assembly);
+            
+            _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = dv_test.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage,
+                Mode = ProcessingStepMode.Synchronous,
+            });
+
+            var id = _service.Create(new dv_test() { });
+            
+            var executedPluginSteps = _context.GetPluginStepAudit().CreateQuery().ToList();
+            Assert.Single(executedPluginSteps);
+
+            var plugContext = executedPluginSteps.First().PluginContext;
+            
+            Assert.NotEqual(Guid.Empty, plugContext.PrimaryEntityId);
+            Assert.Equal(id, plugContext.PrimaryEntityId);
+        }
+        
+        [Fact]
+        public void Should_not_pass_primary_entity_id_to_target_entity_for_create_message_in_prevalidation_but_should_pass_primary_entity_id_to_the_plugin_context()
+        {
+            _context.InitializeMetadata(typeof(dv_test).Assembly);
+            
+            _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = dv_test.EntityLogicalName,
+                MessageName = "Create",
+                Stage = ProcessingStepStage.Prevalidation,
+                Mode = ProcessingStepMode.Synchronous,
+            });
+
+            var id = _service.Create(new dv_test() { });
+            
+            var executedPluginSteps = _context.GetPluginStepAudit().CreateQuery().ToList();
+            Assert.Single(executedPluginSteps);
+
+            var executedPluginStep = executedPluginSteps.First();
+            var plugContext = executedPluginStep.PluginContext;
+            var targetEntity = executedPluginStep.TargetEntity;
+            
+            Assert.NotEqual(Guid.Empty, plugContext.PrimaryEntityId);
+            Assert.Equal(id, plugContext.PrimaryEntityId);
+            Assert.Equal(Guid.Empty, targetEntity.Id);
+        }
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Prevalidation)]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        [InlineData(ProcessingStepStage.Postoperation)]
+        public void Should_not_override_primary_entity_id_for_create_message_regardless_of_stage(ProcessingStepStage stage)
+        {
+            _context.InitializeMetadata(typeof(dv_test).Assembly);
+            
+            _context.RegisterPluginStep<TracerPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = dv_test.EntityLogicalName,
+                MessageName = "Create",
+                Stage = stage,
+                Mode = ProcessingStepMode.Synchronous,
+            });
+
+            var createId = Guid.NewGuid();
+            var id = _service.Create(new dv_test() { Id = createId });
+            
+            var executedPluginSteps = _context.GetPluginStepAudit().CreateQuery().ToList();
+            Assert.Single(executedPluginSteps);
+
+            var plugContext = executedPluginSteps.First().PluginContext;
+            
+            Assert.NotEqual(Guid.Empty, plugContext.PrimaryEntityId);
+            Assert.Equal(createId, plugContext.PrimaryEntityId);
+            Assert.Equal(createId, id);
+        }
+
     }
 }
