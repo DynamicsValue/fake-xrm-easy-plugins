@@ -72,6 +72,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"MessageName: {context.MessageName}");
             sb.AppendLine($"PrimaryEntityName: {context.PrimaryEntityName}");
+            sb.AppendLine($"PrimaryEntityId: {context.PrimaryEntityId}");
             sb.AppendLine("InputParameters:");
             foreach (string key in context.InputParameters.Keys.OrderBy(k => k))
             {
