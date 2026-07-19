@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
 using FakeXrmEasy.Pipeline.Scope;
 using FakeXrmEasy.Plugins;
@@ -9,7 +10,14 @@ namespace FakeXrmEasy.Pipeline
 {
     internal class PipelineStageExecutionParameters
     {
+        /// <summary>
+        /// The event pipeline stage
+        /// </summary>
         internal ProcessingStepStage Stage { get; set; }
+        
+        /// <summary>
+        /// The event pipeline mode
+        /// </summary>
         internal ProcessingStepMode Mode { get; set; }
 
         /// <summary>
@@ -46,6 +54,16 @@ namespace FakeXrmEasy.Pipeline
         /// The current event pipeline scope
         /// </summary>
         internal EventPipelineScope Scope { get; set; }
+        
+        /// <summary>
+        /// The primary entity name of this pipeline execution
+        /// </summary>
+        internal string PrimaryEntityName { get; set; }
+        
+        /// <summary>
+        /// The primary entity id of this pipeline execution
+        /// </summary>
+        internal Guid PrimaryEntityId { get; set; }
         
         /// <summary>
         /// Converts the current bulk operation pipeline request parameters into an array of multiple non-bulk operation pipeline execution parameters 
@@ -96,12 +114,38 @@ namespace FakeXrmEasy.Pipeline
             {
                 scope = pipelineOrganizationRequest.CurrentScope;
             }
+
+            var organizationRequest = pipelineOrganizationRequest != null
+                ? pipelineOrganizationRequest.OriginalRequest
+                : request;
             
-            return new PipelineStageExecutionParameters()
+            var pipelineExecutionParameters = new PipelineStageExecutionParameters()
             {
-                Request = pipelineOrganizationRequest != null ? pipelineOrganizationRequest.OriginalRequest : request,
+                Request = organizationRequest,
                 Scope = scope
             };
+
+            PopulatePrimaryEntityParameters(pipelineExecutionParameters);
+            return pipelineExecutionParameters;
+        }
+
+        private static void PopulatePrimaryEntityParameters(PipelineStageExecutionParameters parameters)
+        {
+            var inputParams = parameters.Request.Parameters;
+            if (inputParams.ContainsKey("Target"))
+            {
+                var targetEntity = inputParams["Target"] as Entity;
+                if (targetEntity != null)
+                {
+                    parameters.PrimaryEntityName = targetEntity.LogicalName;
+                    parameters.PrimaryEntityId = targetEntity.Id;
+                    
+                    if (parameters.Request.IsCreateRequest() && targetEntity.Id == Guid.Empty)
+                    {
+                        parameters.PrimaryEntityId = Guid.NewGuid();
+                    }
+                }
+            }
         }
     }
 }
