@@ -67,6 +67,7 @@ namespace FakeXrmEasy.Pipeline
             pipelineParameters.Stage = ProcessingStepStage.Preoperation;
             pipelineParameters.Mode = ProcessingStepMode.Synchronous;
             AddPreOperationAttributesToParameters(context, pipelineParameters);
+            TransformUpdatePreOperationAttributes(context, pipelineParameters);
             ExecutePipelineStage(context, pipelineParameters);
         }
 
@@ -166,6 +167,44 @@ namespace FakeXrmEasy.Pipeline
                                 targetEntity[booleanAttribute.LogicalName] = false;
                             }
                             
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Transforms values received in the target entity inside pipeline execution
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="pipelineParameters"></param>
+        private static void TransformUpdatePreOperationAttributes(IXrmFakedContext context,
+            PipelineStageExecutionParameters pipelineParameters)
+        {
+            if (!pipelineParameters.Request.IsUpdateRequest())
+            {
+                return;
+            }
+            
+            var inputParams = pipelineParameters.Request.Parameters;
+            if (inputParams.ContainsKey("Target"))
+            {
+                var targetEntity = inputParams["Target"] as Entity;
+                if (targetEntity != null)
+                {
+                    var entityMetadata = context.CreateMetadataQuery()
+                        .FirstOrDefault(metadata => metadata.LogicalName.Equals(targetEntity.LogicalName));
+
+                    if (entityMetadata != null)
+                    {
+                        var stringAttributes = entityMetadata.Attributes
+                            .Where(attribute => attribute.AttributeType == AttributeTypeCode.String).ToList();
+                        foreach (var stringAttribute in stringAttributes)
+                        {
+                            if (targetEntity.Contains(stringAttribute.LogicalName) && targetEntity[stringAttribute.LogicalName] == null)
+                            {
+                                targetEntity[stringAttribute.LogicalName] = "";
+                            }
                         }
                     }
                 }

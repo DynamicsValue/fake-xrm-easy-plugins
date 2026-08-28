@@ -2,6 +2,7 @@
 
 ### Changed 
 
+- Should pass string fields that are updated to null as empty strings in Pipeline Simulation - https://github.com/DynamicsValue/fake-xrm-easy/issues/215
 - Resolves an issue where the 2x branch would not build on Linux - https://github.com/DynamicsValue/fake-xrm-easy/issues/273
 - Increment version
 
