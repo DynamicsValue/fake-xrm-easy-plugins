@@ -58,7 +58,22 @@ namespace FakeXrmEasy.Plugins
             _tracingService = tracingService;
 
             _organizationServiceFactory = A.Fake<IOrganizationServiceFactory>();
-            A.CallTo(() => _organizationServiceFactory.CreateOrganizationService(A<Guid?>._)).ReturnsLazily((Guid? g) => _service);
+            A.CallTo(() => _organizationServiceFactory.CreateOrganizationService(A<Guid?>._)).ReturnsLazily((Guid? g) =>
+            {
+                if (g == null)
+                {
+                    _context.CallerProperties.CallerId.Id = _context.CallerProperties.SystemUserId.Id;
+                }
+                else
+                {
+                    if (g != Guid.Empty)
+                    {
+                        _context.CallerProperties.CallerId.Id = g.Value;
+                    }
+                }
+                
+                return _service;
+            });
 
             _serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>();
 
