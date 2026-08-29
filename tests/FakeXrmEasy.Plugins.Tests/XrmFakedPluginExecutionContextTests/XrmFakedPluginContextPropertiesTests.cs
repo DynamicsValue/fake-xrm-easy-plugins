@@ -87,6 +87,47 @@ namespace FakeXrmEasy.Plugins.Tests.XrmFakedPluginExecutionContextTests
             Assert.NotNull(pluginExecutionContext);
         }
         
+        [Fact]
+        public void Should_set_caller_id_to_the_same_value_passed_into_the_create_organization_service_factory()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(_context.GetDefaultPluginContext());
+            var orgServiceFactory = serviceProvider.GetService(typeof(IOrganizationServiceFactory)) as IOrganizationServiceFactory;
+
+            var userId = Guid.NewGuid();
+            var service = orgServiceFactory.CreateOrganizationService(userId);
+            
+            Assert.Equal(_context.CallerProperties.CallerId.Id, userId);
+        }
+        
+        [Fact]
+        public void Should_set_caller_id_to_the_system_user_value_when_null_is_the_default_value_passed_into_the_create_organization_service_factory()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(_context.GetDefaultPluginContext());
+            var orgServiceFactory = serviceProvider.GetService(typeof(IOrganizationServiceFactory)) as IOrganizationServiceFactory;
+            
+            var service = orgServiceFactory.CreateOrganizationService(null);
+            
+            Assert.Equal(_context.CallerProperties.CallerId.Id, _context.CallerProperties.SystemUserId.Id);
+        }
+        
+        [Fact]
+        public void Should_use_default_caller_when_guid_empty_is_passed_into_the_create_organization_service_factory()
+        {
+            _context.PluginContextProperties = new XrmFakedPluginContextProperties(_context, _context.GetOrganizationService(), _context.GetTracingService());
+
+            var serviceProvider = _context.PluginContextProperties.GetServiceProvider(_context.GetDefaultPluginContext());
+            var orgServiceFactory = serviceProvider.GetService(typeof(IOrganizationServiceFactory)) as IOrganizationServiceFactory;
+            
+            var service = orgServiceFactory.CreateOrganizationService(Guid.Empty);
+            var plugCtx = serviceProvider.GetService(typeof(IPluginExecutionContext)) as IPluginExecutionContext;
+            
+            Assert.Equal(_context.CallerProperties.CallerId.Id, plugCtx.UserId);
+        }
+        
         #if FAKE_XRM_EASY_9
         [Fact]
         public void Should_return_fake_plugin_execution_context2_with_defaults()
