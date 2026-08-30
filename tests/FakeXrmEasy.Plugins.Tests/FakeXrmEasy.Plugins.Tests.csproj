@@ -28,6 +28,7 @@
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly>True</SignAssembly>
     <PublicSign Condition="'$(OS)'=='Unix'">true</PublicSign>
+    <FrameworkPathOverride Condition="'$(OS)'=='Unix' And '$(TargetFramework)' == 'net452'">/usr/lib/mono/4.5/</FrameworkPathOverride>
   </PropertyGroup>
 
   <ItemGroup>
@@ -68,7 +69,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
-    
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[8.2.0.2,9.0)" />
   </ItemGroup>
 
