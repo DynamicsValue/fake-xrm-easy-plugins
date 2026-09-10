@@ -15,6 +15,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
+using System.Reflection;
 using FakeXrmEasy.Tests;
 using Xunit;
 
@@ -447,6 +448,39 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
 
             var auditedStep = stepsAudit[0];
             Assert.NotSame(entityRef, auditedStep.TargetEntityReference);
+        }
+        
+        [Theory]
+        [InlineData(ProcessingStepStage.Preoperation)]
+        public void Should_pass_a_null_value_as_an_empty_string(ProcessingStepStage stage)
+        {
+            _context = CreatePluginStepAuditEnabledContext();
+            _service = _context.GetOrganizationService();
+
+            _context.RegisterPluginStep<AccountNumberPlugin>(new PluginStepDefinition()
+            {
+                EntityLogicalName = Account.EntityLogicalName,
+                MessageName = "Update",
+                Stage = stage
+            });
+
+            var account = new Account() { Id = Guid.NewGuid(), Name = "Some name" };
+            _context.Initialize(account);
+            _context.InitializeMetadata(Assembly.GetAssembly(typeof(Account)));
+            
+            _service.Update(new Account()
+            {
+                Id = account.Id,
+                Name = null
+            });
+
+            var pluginStepAudit = _context.GetPluginStepAudit();
+            var stepsAudit = pluginStepAudit.CreateQuery().ToList();
+
+            Assert.Single(stepsAudit);
+
+            var auditedStep = stepsAudit[0];
+            Assert.Equal("", auditedStep.TargetEntity.ToEntity<Account>().Name);
         }
         
         /* Will work once DynamicsValue/fake-xrm-easy#31 is implemented 
