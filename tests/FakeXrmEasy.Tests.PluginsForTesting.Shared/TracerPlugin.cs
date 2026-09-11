@@ -34,7 +34,7 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
             
             try
             {
-                tracingService.Trace($@"TracerPlugin -
+                tracingService.Trace($@"TracerPlugin - 
                                     Message: '{context.MessageName}', 
                                     Stage: '{context.Stage}', 
                                     Mode: '{context.Mode}',
@@ -70,6 +70,8 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
         #endif
         {
             StringBuilder sb = new StringBuilder();
+            const string sUpdateFlag = "v2";
+            sb.AppendLine($"Version: {sUpdateFlag}");
             sb.AppendLine($"MessageName: {context.MessageName}");
             sb.AppendLine($"PrimaryEntityName: {context.PrimaryEntityName}");
             sb.AppendLine($"PrimaryEntityId: {context.PrimaryEntityId}");
@@ -88,7 +90,10 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
                             sb.AppendLine("\t\tAttributes :");
                             foreach (string attributeKey in entity.Attributes.Keys.OrderBy(k => k))
                             {
-                                sb.AppendLine($"\t\t\t{attributeKey} : {entity.Attributes[attributeKey]}");
+                                var value = entity.Attributes[attributeKey] == null
+                                    ? "null"
+                                    : entity.Attributes[attributeKey];
+                                sb.AppendLine($"\t\t\t{attributeKey} : {value}");
                             }
                         }
                         else if (target is EntityReference entityRef)
@@ -113,7 +118,10 @@ namespace FakeXrmEasy.Plugins.Tests.PluginsForTesting
                         sb.AppendLine("\t\t\tAttributes :");
                         foreach (string attributeKey in firstTarget.Attributes.Keys.OrderBy(k => k))
                         {
-                            sb.AppendLine($"\t\t\t\t{attributeKey} : {firstTarget.Attributes[attributeKey]}");
+                            var value = firstTarget.Attributes[attributeKey] == null
+                                ? "null"
+                                : firstTarget.Attributes[attributeKey];
+                            sb.AppendLine($"\t\t\t{attributeKey} : {value}");
                         }
                         break;
                     default:
