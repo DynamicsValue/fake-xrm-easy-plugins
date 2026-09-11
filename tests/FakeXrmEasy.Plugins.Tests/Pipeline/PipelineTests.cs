@@ -164,7 +164,7 @@ namespace FakeXrmEasy.Plugins.Tests.Pipeline
             Assert.Contains($"Entity Logical Name: {Contact.EntityLogicalName}", trace);
             Assert.Contains($"Entity ID: {_contact.Id}", trace);
         }
-
+        
         [Fact]
         public void Should_trigger_plugin_registered_on_sync_update_postoperation()
         {
