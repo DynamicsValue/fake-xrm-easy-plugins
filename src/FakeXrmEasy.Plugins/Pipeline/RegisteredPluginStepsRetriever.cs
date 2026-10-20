@@ -138,7 +138,68 @@ namespace FakeXrmEasy.Pipeline
             return null;
         }
         
-        private static List<PluginStepDefinition> GetStepsForStage(IXrmFakedContext context,
+        internal static List<PluginStepDefinition> GetStepsForStageWithoutEnumerableEval(IXrmFakedContext context,
+                                                                            PipelineStageExecutionParameters parameters)
+        {
+            int? entityTypeCode = null;
+            
+            GetOrganizationRequestFilteringAttributes(context, parameters.Request);
+            string entityLogicalName = GetOrganizationRequestEntityLogicalName(context, parameters.Request);
+            if (entityLogicalName != null)
+            {
+                var entityType = context.FindReflectedType(entityLogicalName);
+                if (entityType != null)
+                {
+                    var entity = Activator.CreateInstance(entityType);
+                    entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
+                }
+            }
+
+            var pluginInstancesRepository = context.GetProperty<IPluginInstancesRepository>();
+            var messageName = parameters.Request.RequestName.ToMessageName();
+            
+            var pluginSteps = (from step in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStep)
+                               join message in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessage) on (step[SdkMessageProcessingStepFieldNames.SdkMessageId] as EntityReference).Id equals message.Id
+                               join pluginAssembly in context.CreateQuery(PluginStepRegistrationEntityNames.PluginType) on (step[SdkMessageProcessingStepFieldNames.EventHandler] as EntityReference).Id equals pluginAssembly.Id
+                               join mFilter in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageFilter) on (step[SdkMessageProcessingStepFieldNames.SdkMessageFilterId] != null ? (step[SdkMessageProcessingStepFieldNames.SdkMessageFilterId] as EntityReference).Id : Guid.Empty) equals mFilter.Id into mesFilter
+                               join stepSecConfig in context.CreateQuery(PluginStepRegistrationEntityNames.SdkMessageProcessingStepSecureConfig) on (step[SdkMessageProcessingStepFieldNames.SdkMessageProcessingStepSecureConfigId] != null ? (step[SdkMessageProcessingStepFieldNames.SdkMessageProcessingStepSecureConfigId] as EntityReference).Id : Guid.Empty) equals stepSecConfig.Id into secureConfig
+
+                               from messageFilter in mesFilter.DefaultIfEmpty()
+                               from secureConfiguration in secureConfig.DefaultIfEmpty()
+                               
+                               where (step[SdkMessageProcessingStepFieldNames.Stage] as OptionSetValue).Value == (int)parameters.Stage
+                               where (step[SdkMessageProcessingStepFieldNames.Mode] as OptionSetValue).Value == (int)parameters.Mode
+                               where (message[SdkMessageFieldNames.Name] as string) == messageName
+                               select new PluginStepDefinition
+                               {
+                                   Id = step.Id,
+                                   Rank = (int)step[SdkMessageProcessingStepFieldNames.Rank],
+                                   Stage = parameters.Stage,
+                                   Mode = parameters.Mode,
+                                   MessageName = messageName,
+                                   FilteringAttributes = step.GetPluginStepFilteringAttributes(),
+                                   EntityTypeCode = messageFilter.GetMessageFilterPrimaryObjectCode(),
+                                   EntityLogicalName = messageFilter.GetMessageFilterEntityLogicalName(),
+                                   AssemblyName = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.AssemblyName),
+                                   PluginType = pluginAssembly.GetAttributeValue<string>(PluginTypeFieldNames.TypeName),
+                                   Configurations = secureConfiguration != null ? new PluginStepConfigurations()
+                                   {
+                                       SecureConfigId = secureConfiguration.Id,
+                                       SecureConfig = secureConfiguration.GetAttributeValue<string>(SdkMessageProcessingStepSecureConfigFieldNames.SecureConfig),
+                                       UnsecureConfig = step.GetAttributeValue<string>(SdkMessageProcessingStepFieldNames.Configuration)
+                                   } : null,
+                                   PluginInstance = pluginInstancesRepository.GetPluginInstance(step.Id)
+                               }).OrderBy(ps => ps.Rank)
+                                 .ToList();
+
+            return pluginSteps
+                        .Where(ps => ps.EntityLogicalName != null && ps.EntityLogicalName == entityLogicalName || //Matches logical name
+                                        ps.EntityTypeCode != null && ps.EntityTypeCode.HasValue && ps.EntityTypeCode.Value == entityTypeCode || //Or matches entity type code
+                                        ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none (Custom Apis)
+                        .ToList();
+        }
+        
+        internal static List<PluginStepDefinition> GetStepsForStage(IXrmFakedContext context,
                                                                             PipelineStageExecutionParameters parameters)
         {
             int? entityTypeCode = null;
