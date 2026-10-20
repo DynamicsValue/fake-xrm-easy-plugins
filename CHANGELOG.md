@@ -1,3 +1,9 @@
+## [2.9.6]
+
+### Changed
+
+- Added performance improvement when retrieving plugin steps in pipeline simulation and added benchmark tests to evaluate them. Thanks @mivra! - https://github.com/DynamicsValue/fake-xrm-easy/issues/281
+
 ## [2.9.5]
 
 ### Changed 
