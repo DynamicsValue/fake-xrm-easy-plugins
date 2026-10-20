@@ -65,6 +65,7 @@ namespace FakeXrmEasy.Plugins.Performance
             RegisteredPluginStepsRetriever.GetStepsForStage(_context, parameters);
         }
         
+        /*
         [Benchmark]
         public void GetPluginStepsWithoutEnumerableEvaluation()
         {
@@ -76,6 +77,7 @@ namespace FakeXrmEasy.Plugins.Performance
             };
             RegisteredPluginStepsRetriever.GetStepsForStageWithoutEnumerableEval(_context, parameters);
         }
+        */
         
         [Benchmark]
         public void GetPluginStepImageWithQuery()
