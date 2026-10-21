@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
 
 namespace FakeXrmEasy.Plugins.Performance
 {
@@ -41,14 +42,6 @@ namespace FakeXrmEasy.Plugins.Performance
                 });
             }
         }
-
-        /* Significantly slower than GetPluginStepsWithQuery below
-        [Benchmark]
-        public void GetPluginStepsWithRetrieveMultiple()
-        {
-            RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequestWithRetrieveMultiple(_context, "Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, _createRequest);
-        }
-        */
         
         [Benchmark]
         public void GetPluginStepsWithQuery()
@@ -61,14 +54,20 @@ namespace FakeXrmEasy.Plugins.Performance
             };
             RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, parameters);
         }
-
-        /*
+        
+        
         [Benchmark]
-        public void GetPluginStepImageWithRetrieveMultiple()
+        public void GetPluginStepsWithEnumerableEvaluation()
         {
-            RegisteredPluginStepsRetriever.GetPluginImageDefinitionsWithRetrieveMultiple(_context, _lastPluginStepId, ProcessingStepImageType.PostImage).ToList();
+            var parameters = new PipelineStageExecutionParameters()
+            {
+                Stage = ProcessingStepStage.Postoperation,
+                Mode = ProcessingStepMode.Synchronous,
+                Request = _createRequest
+            };
+            RegisteredPluginStepsRetriever.GetStepsForStage(_context, parameters);
         }
-        */
+
         
         [Benchmark]
         public void GetPluginStepImageWithQuery()
