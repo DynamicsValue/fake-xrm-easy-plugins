@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">net8.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">net8.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">net8.0</TargetFrameworks>
@@ -34,6 +35,10 @@
     <DefineConstants>TRACE;FAKE_XRM_EASY_9</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>TRACE;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.10" />
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client.Dynamics" Version="1.2.10" />
@@ -41,7 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="[6.0.0,7.0)" />
-    <PackageReference Include="BenchmarkDotNet" Version="[0.13.1]" />
+    <PackageReference Include="BenchmarkDotNet" Version="[0.15.8]" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == ''">

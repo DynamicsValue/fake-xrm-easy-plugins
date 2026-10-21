@@ -138,7 +138,7 @@ namespace FakeXrmEasy.Pipeline
             return null;
         }
         
-        /*
+        
         internal static List<PluginStepDefinition> GetStepsForStageWithoutEnumerableEval(IXrmFakedContext context,
                                                                             PipelineStageExecutionParameters parameters)
         {
@@ -199,7 +199,7 @@ namespace FakeXrmEasy.Pipeline
                                         ps.EntityTypeCode == null && ps.EntityLogicalName == null) //Or matches plugins steps with none (Custom Apis)
                         .ToList();
         }
-        */
+        
         
         internal static List<PluginStepDefinition> GetStepsForStage(IXrmFakedContext context,
                                                                             PipelineStageExecutionParameters parameters)

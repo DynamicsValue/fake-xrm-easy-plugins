@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
 
 namespace FakeXrmEasy.Plugins.Performance
 {
@@ -54,6 +55,7 @@ namespace FakeXrmEasy.Plugins.Performance
             RegisteredPluginStepsRetriever.GetPluginStepsForOrganizationRequest(_context, parameters);
         }
         
+        
         [Benchmark]
         public void GetPluginStepsWithEnumerableEvaluation()
         {
@@ -66,7 +68,7 @@ namespace FakeXrmEasy.Plugins.Performance
             RegisteredPluginStepsRetriever.GetStepsForStage(_context, parameters);
         }
         
-        /*
+        
         [Benchmark]
         public void GetPluginStepsWithoutEnumerableEvaluation()
         {
@@ -78,7 +80,7 @@ namespace FakeXrmEasy.Plugins.Performance
             };
             RegisteredPluginStepsRetriever.GetStepsForStageWithoutEnumerableEval(_context, parameters);
         }
-        */
+        
         
         [Benchmark]
         public void GetPluginStepImageWithQuery()
