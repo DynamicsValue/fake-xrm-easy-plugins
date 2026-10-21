@@ -67,20 +67,7 @@ namespace FakeXrmEasy.Plugins.Performance
             };
             RegisteredPluginStepsRetriever.GetStepsForStage(_context, parameters);
         }
-        
-        
-        [Benchmark]
-        public void GetPluginStepsWithoutEnumerableEvaluation()
-        {
-            var parameters = new PipelineStageExecutionParameters()
-            {
-                Stage = ProcessingStepStage.Postoperation,
-                Mode = ProcessingStepMode.Synchronous,
-                Request = _createRequest
-            };
-            RegisteredPluginStepsRetriever.GetStepsForStageWithoutEnumerableEval(_context, parameters);
-        }
-        
+
         
         [Benchmark]
         public void GetPluginStepImageWithQuery()
