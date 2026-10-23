@@ -13,7 +13,7 @@ namespace FakeXrmEasy.Plugins.Performance
             //config.WithOption(ConfigOptions.DisableOptimizationsValidator, true);
             
             //Job.Default.WithCustomBuildConfiguration("FAKE_XRN_EASY_9");
-            //Job.Default.WithMsBuildArguments("/p:NuGetRestorePackages=false /p:Configuration=FAKE_XRM_EASY_9 /p:TargetFrameworkVersion=net8.0");
+            //Job.Default.WithMsBuildArguments("/p:NuGetRestorePackages=false /p:Configuration=FAKE_XRM_EASY_9 /p:TargetFrameworkVersion=net10.0");
             BenchmarkRunner.Run(typeof(PipelineBenchmarks), config);
         }
     }
