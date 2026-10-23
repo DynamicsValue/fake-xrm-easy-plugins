@@ -22,11 +22,12 @@
     <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
     <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-plugins</RepositoryUrl>
 
-    <Configurations>FAKE_XRM_EASY;FAKE_XRM_EASY_2013;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_365;FAKE_XRM_EASY_9</Configurations>
+    <Configurations>FAKE_XRM_EASY_2013;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_365;FAKE_XRM_EASY_9</Configurations>
 
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly>True</SignAssembly>
     <PublicSign Condition="'$(OS)'=='Unix'">true</PublicSign>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
   <ItemGroup>
@@ -65,11 +66,11 @@
   
   <ItemGroup>   
       <PackageReference Include="FakeItEasy" Version="[6.0.0,7.0)" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-      <PackageReference Include="xunit" Version="2.4.1" />
-      <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-      <PackageReference Include="xunit.runner.console" Version="2.4.1" />
-      <PackageReference Include="coverlet.collector" Version="10.0.1" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+      <PackageReference Include="xunit.v3.mtp-v2" Version="4.0.2" />
+      <PackageReference Include="coverlet.MTP" Version="10.1.0" />
+      <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
+      
   </ItemGroup>
 
   <ItemGroup>
