@@ -1,3 +1,7 @@
+## [3.10.0]
+
+- Increment version
+
 ## [3.9.6]
 
 ### Changed

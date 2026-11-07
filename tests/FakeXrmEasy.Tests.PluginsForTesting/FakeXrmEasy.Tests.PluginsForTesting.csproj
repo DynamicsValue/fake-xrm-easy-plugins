@@ -10,8 +10,7 @@
 
     <IsPackable>true</IsPackable>
     <PackageId>FakeXrmEasy.Tests.PluginsForTesting</PackageId>
-    <VersionPrefix>3.9.6</VersionPrefix>
-    
+    <VersionPrefix>3.10.0</VersionPrefix>
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
     <PublicSign Condition="'$(OS)'=='Unix'">true</PublicSign>
